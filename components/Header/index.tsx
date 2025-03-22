@@ -1,23 +1,6 @@
 import Link from "next/link";
+import { headerLinks } from "./data/item";
 
-const headerLinks = [
-  {
-    label: "홈",
-    href: "/",
-  },
-  {
-    label: "유저Pick",
-    href: "/user-pick",
-  },
-  {
-    label: "에디터Pick",
-    href: "/editor-pick",
-  },
-  {
-    label: "그루밍 지수 검사",
-    href: "/grooming-test",
-  },
-];
 const Header = () => {
   return (
     <header className="flex h-[64px] w-full items-center justify-between border-b-[1px] text-base">
