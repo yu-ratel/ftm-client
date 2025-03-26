@@ -18,7 +18,12 @@
       }
     ],
     "paths": {
-      "@/*": ["./*"]
+      "@/*": ["./*"],
+      "@components/*": ["./components/*"],
+      "@assets/*": ["./assets/*"],
+      "@userPick/*": ["./app/user-pick/*"],
+      "@editorPick/*": ["./app/editor-pick/*"],
+      "@groomingTest/*": ["./app/grooming-test/*"]
     }
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
