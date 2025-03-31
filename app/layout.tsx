@@ -1,5 +1,6 @@
 import "./globals.css";
 import QueryProvider from "./Provider";
+import ModalContainer from "@/components/modals/ModalContainer";
 
 export default function RootLayout({
   children,
@@ -9,7 +10,10 @@ export default function RootLayout({
   return (
     <html lang="ko">
       <body>
-        <QueryProvider>{children}</QueryProvider>
+        <QueryProvider>
+          {children}
+          <ModalContainer />
+        </QueryProvider>
       </body>
     </html>
   );
