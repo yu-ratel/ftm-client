@@ -84,6 +84,24 @@ const EmailStep = ({ email, onEmailSubmit }: EmailStepProps) => {
     sendAuthenticationMutation.mutate(inputEmail);
   };
 
+  // 입력창 스타일 동적 생성
+  const getInputClassName = () => {
+    const baseStyle =
+      "h-[38px] w-full rounded-[10px] border bg-input-bg px-4 text-sm text-black placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500";
+
+    if (!message) return `${baseStyle} border-input-border`;
+    if (message.includes("사용 가능")) return `${baseStyle} border-green-500`;
+    return `${baseStyle} border-red-error`;
+  };
+
+  // 버튼 스타일 동적 생성
+  const getAuthButtonClassName = () => {
+    const baseStyle = "h-[38px] w-full rounded-[10px] text-center font-medium";
+    return isEmailValid
+      ? `${baseStyle} bg-blue-500 text-white`
+      : `${baseStyle} bg-button-primary text-black`;
+  };
+
   return (
     <>
       {/* 이메일 입력 */}
@@ -99,7 +117,7 @@ const EmailStep = ({ email, onEmailSubmit }: EmailStepProps) => {
           placeholder="이메일 입력"
           value={inputEmail}
           onChange={(e) => setInputEmail(e.target.value)}
-          className="h-[38px] w-full rounded-[10px] border border-input-border bg-input-bg px-4 text-sm text-black placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className={getInputClassName()}
         />
 
         {/* 버튼과 메시지를 나란히 배치 */}
@@ -110,7 +128,7 @@ const EmailStep = ({ email, onEmailSubmit }: EmailStepProps) => {
                 className={`ml-4 text-xs ${
                   message.includes("사용 가능")
                     ? "text-green-500"
-                    : "text-red-500"
+                    : "text-red-error"
                 }`}
               >
                 {message}
@@ -131,7 +149,7 @@ const EmailStep = ({ email, onEmailSubmit }: EmailStepProps) => {
       <div className="mt-8 w-full max-w-[392px] space-y-4">
         <button
           onClick={handleSendAuthentication}
-          className="h-[38px] w-full rounded-[10px] bg-button-primary text-center font-medium text-black"
+          className={getAuthButtonClassName()}
         >
           메일 인증하기
         </button>
