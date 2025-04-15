@@ -17,10 +17,12 @@ const config: Config = {
         gray: {
           100: "#F1F1F1",
           200: "#EAEAEC",
+          300: "#E1E1E7",
           400: "#9CA3AF",
         },
         blue: {
           100: "#E7F2FE",
+          300: "#14AFFD",
           500: "#1481FD",
         },
         input: {
