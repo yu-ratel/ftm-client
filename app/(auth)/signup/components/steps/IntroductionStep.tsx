@@ -100,6 +100,15 @@ const IntroductionStep = ({
     }
   };
 
+  // 버튼 스타일 동적 생성
+  const getSubmitButtonClassName = () => {
+    const baseStyle =
+      "h-[38px] w-full rounded-[10px] text-center font-medium text-black disabled:opacity-50";
+    return selectedHashtags.length > 0
+      ? `${baseStyle} bg-blue-500 text-white`
+      : `${baseStyle} bg-button-primary`;
+  };
+
   return (
     <>
       <h2 className="mb-8 text-[24px] font-semibold text-black">
@@ -154,7 +163,7 @@ const IntroductionStep = ({
           <button
             onClick={handleSubmit}
             disabled={signupMutation.isPending}
-            className="h-[38px] w-full rounded-[10px] bg-button-primary text-center font-medium text-black disabled:opacity-50"
+            className={getSubmitButtonClassName()}
           >
             완료
           </button>
