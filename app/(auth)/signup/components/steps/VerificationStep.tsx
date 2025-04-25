@@ -3,7 +3,7 @@
 import React, { useState } from "react";
 import { useMutation } from "@tanstack/react-query";
 import { verifyEmailCode, sendEmailAuthentication } from "../../api";
-import { openAlert } from "@/utils/modal/OpenAlert";
+import { AxiosError } from "axios";
 
 interface VerificationStepProps {
   email: string;
@@ -48,7 +48,7 @@ const VerificationStep = ({
         setMessage("인증번호가 일치하지 않습니다.");
       }
     },
-    onError: (error: any) => {
+    onError: (error: AxiosError<{ message?: string }>) => {
       const errorMessage =
         error.response?.data?.message || "인증 확인에 실패했습니다.";
       setMessage(errorMessage);
@@ -62,7 +62,7 @@ const VerificationStep = ({
       setMessage("인증번호가 재전송되었습니다.");
       setCode("");
     },
-    onError: (error: any) => {
+    onError: (error: AxiosError<{ message?: string }>) => {
       const errorMessage =
         error.response?.data?.message || "인증번호 재전송에 실패했습니다.";
       setMessage(errorMessage);

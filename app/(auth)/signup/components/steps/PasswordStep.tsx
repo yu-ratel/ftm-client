@@ -1,8 +1,8 @@
 "use client";
 
 import React, { useState } from "react";
-import { openAlert } from "@/utils/modal/OpenAlert";
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 interface PasswordStepProps {
   onPasswordSubmit: (password: string) => void;
   onPrevStep: () => void;
@@ -10,6 +10,7 @@ interface PasswordStepProps {
 
 const PasswordStep = ({ onPasswordSubmit, onPrevStep }: PasswordStepProps) => {
   const [password, setPassword] = useState("");
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [confirmPassword, setConfirmPassword] = useState("");
   const [message, setMessage] = useState("");
   const [confirmMessage, setConfirmMessage] = useState("");
@@ -67,7 +68,7 @@ const PasswordStep = ({ onPasswordSubmit, onPrevStep }: PasswordStepProps) => {
     }
   };
 
-  // 비밀번호 확인 핸들러
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const handleConfirmPasswordChange = (
     e: React.ChangeEvent<HTMLInputElement>
   ) => {

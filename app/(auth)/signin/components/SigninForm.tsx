@@ -9,6 +9,7 @@ import { showModal } from "@/stores/ModalStore";
 import AlertModal from "@/components/modals/common/AlertModal";
 import { openAlert } from "@/utils/modal/OpenAlert";
 import { setUser } from "@/stores/AuthStore";
+import { AxiosError } from "axios";
 
 const SigninForm = () => {
   const router = useRouter();
@@ -21,7 +22,7 @@ const SigninForm = () => {
       setUser(response.data);
       router.push(ROUTES.HOME);
     },
-    onError: (error: any) => {
+    onError: (error: AxiosError<{ message?: string }>) => {
       const errorMessage =
         error.response?.data?.message || "로그인에 실패했습니다.";
       openAlert(errorMessage);

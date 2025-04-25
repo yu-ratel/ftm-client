@@ -5,6 +5,7 @@ import { useMutation } from "@tanstack/react-query";
 import { checkEmailDuplication, sendEmailAuthentication } from "../../api";
 import { openAlert } from "@/utils/modal/OpenAlert";
 import { useRouter } from "next/navigation";
+import { AxiosError } from "axios";
 
 interface EmailStepProps {
   email: string;
@@ -36,7 +37,7 @@ const EmailStep = ({ email, onEmailSubmit }: EmailStepProps) => {
         setIsEmailValid(true);
       }
     },
-    onError: (error: any) => {
+    onError: (error: AxiosError<{ message?: string }>) => {
       setMessage(
         error.response?.data?.message || "이메일 중복 확인에 실패했습니다."
       );
@@ -53,7 +54,7 @@ const EmailStep = ({ email, onEmailSubmit }: EmailStepProps) => {
         onEmailSubmit(inputEmail)
       );
     },
-    onError: (error: any) => {
+    onError: (error: AxiosError<{ message?: string }>) => {
       const errorMessage =
         error.response?.data?.message || "이메일 인증 요청에 실패했습니다.";
       openAlert(errorMessage);

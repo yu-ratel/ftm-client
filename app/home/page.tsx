@@ -4,12 +4,13 @@ import { handleSignOut } from "@/utils/auth/handleSignOut";
 import { openSigninSelectModal } from "@/utils/modal/OpenSigninSelectModal";
 import React, { useEffect } from "react";
 
-const page = () => {
+const Page = () => {
   useEffect(() => {
     const user = getUser();
     if (!user) {
       openSigninSelectModal();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (
@@ -20,4 +21,4 @@ const page = () => {
   );
 };
 
-export default page;
+export default Page;
