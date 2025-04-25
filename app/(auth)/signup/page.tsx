@@ -1,4 +1,4 @@
-import React from "react";
+import React, { Suspense } from "react";
 import SignupFlow from "./components/SignupFlow";
 
 const SignupPage = () => {
@@ -12,7 +12,9 @@ const SignupPage = () => {
           className="h-full object-contain"
         /> */}
       </div>
-      <SignupFlow />
+      <Suspense>
+        <SignupFlow />
+      </Suspense>
     </div>
   );
 };

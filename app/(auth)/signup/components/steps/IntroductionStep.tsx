@@ -9,6 +9,7 @@ import { useRouter } from "next/navigation";
 import { ROUTES } from "@/constants/routes";
 import { AGE } from "../../constants";
 import { setUser } from "@/stores/AuthStore";
+import { AxiosError } from "axios";
 
 interface IntroductionStepProps {
   email: string;
@@ -41,7 +42,7 @@ const IntroductionStep = ({
         router.push(ROUTES.SIGNIN);
       });
     },
-    onError: (error: any) => {
+    onError: (error: AxiosError<{ message?: string }>) => {
       const errorMessage =
         error.response?.data?.message || "회원가입에 실패했습니다.";
       openAlert(errorMessage);
@@ -56,7 +57,7 @@ const IntroductionStep = ({
 
       router.push(ROUTES.HOME);
     },
-    onError: (error: any) => {
+    onError: (error: AxiosError<{ message?: string }>) => {
       const errorMessage =
         error.response?.data?.message || "회원가입에 실패했습니다.";
       openAlert(errorMessage);
