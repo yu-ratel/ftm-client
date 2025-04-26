@@ -13,8 +13,8 @@ const LandingView = () => {
           {LANDING_TITLE}
         </h1>
         <p className="mt-6 text-xl">{LANDING_DESCRIPTION}</p>
-        {/* <DefaultLandingAction /> */}
-        <SignInLandingAction />
+        <DefaultLandingAction />
+        {/* <SignInLandingAction /> */}
       </section>
       <section className="relative w-1/2">
         <div className="absolute inset-9">

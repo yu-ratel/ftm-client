@@ -23,7 +23,7 @@
       "@assets/*": ["./assets/*"],
       "@userPick/*": ["./app/user-pick/*"],
       "@editorPick/*": ["./app/editor-pick/*"],
-      "@groomingTest/*": ["./app/grooming-test/*"]
+      "@grooming/*": ["./app/grooming/*"]
     }
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
