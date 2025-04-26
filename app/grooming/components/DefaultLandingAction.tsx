@@ -3,7 +3,7 @@ import LoginButton from "@/public/grooming-test/svgs/landing_button.svg";
 
 const DefaultLandingAction = () => {
   return (
-    <section className="mt-20 flex flex-col gap-4 pr-32">
+    <section className="flex flex-col gap-4 pr-32">
       <div className="flex h-52 gap-4 text-white *:w-1/2 *:rounded-[32px] *:p-6">
         <Link href="/grooming/check" className="relative bg-blue-500">
           <h3 className="text-2xl font-bold">그루밍 지수 검사</h3>
