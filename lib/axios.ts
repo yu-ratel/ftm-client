@@ -9,7 +9,7 @@ import { clearUser } from "@/stores/AuthStore";
 
 // 비인증용 (쿠키 없음)
 const api: AxiosInstance = axios.create({
-  baseURL: "", // rewrites를 통해 처리
+  baseURL: process.env.NEXT_PUBLIC_API_URL,
   headers: {
     "Content-Type": "application/json",
   },
@@ -18,7 +18,7 @@ const api: AxiosInstance = axios.create({
 
 // 인증용 (쿠키 포함)
 export const authApi: AxiosInstance = axios.create({
-  baseURL: "", // rewrites를 통해 처리
+  baseURL: process.env.NEXT_PUBLIC_API_URL,
   headers: {
     "Content-Type": "application/json",
   },
