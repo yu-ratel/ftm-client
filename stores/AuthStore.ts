@@ -5,21 +5,23 @@ import { UserInfo } from "@/types/user";
 interface AuthState {
   user: UserInfo | null;
   setUser: (user: UserInfo | null) => void;
+  getUser: () => UserInfo | null;
   clearUser: () => void;
 }
 
 export const useAuthStore = create<AuthState>()(
   persist(
-    (set) => ({
+    (set, get) => ({
       user: null,
       setUser: (user) => set({ user }),
+      getUser: () => get().user,
       clearUser: () => set({ user: null }),
     }),
     {
-      name: "auth-storage", // localStorage에 저장될 키 이름
+      name: "userInfo",
     }
   )
 );
 
 // 액션들을 직접 export
-export const { setUser, clearUser } = useAuthStore.getState();
+export const { setUser, getUser, clearUser } = useAuthStore.getState();

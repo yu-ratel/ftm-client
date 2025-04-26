@@ -33,7 +33,7 @@ const AlertModal: React.FC<AlertModalProps> = ({
           className="transitio h-[38px] w-[168px] rounded-[10px] bg-blue-500 text-sm font-medium text-white"
           onClick={handleConfirm}
         >
-          확인
+          {buttonText}
         </button>
       </div>
     </div>

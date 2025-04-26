@@ -1,13 +1,24 @@
 "use client";
+import { getUser } from "@/stores/AuthStore";
+import { handleSignOut } from "@/utils/auth/handleSignOut";
 import { openSigninSelectModal } from "@/utils/modal/OpenSigninSelectModal";
 import React, { useEffect } from "react";
 
-const page = () => {
-  // 카카오 로그인 테스트를 위한 임시 코드
+const Page = () => {
   useEffect(() => {
-    openSigninSelectModal();
+    const user = getUser();
+    if (!user) {
+      openSigninSelectModal();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-  return <div>홈</div>;
+
+  return (
+    <>
+      <div>홈</div>
+      <button onClick={handleSignOut}>로그아웃 테스트</button>
+    </>
+  );
 };
 
-export default page;
+export default Page;

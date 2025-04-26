@@ -1,33 +1,65 @@
-import axios from "axios";
+import axios, {
+  AxiosError,
+  AxiosInstance,
+  InternalAxiosRequestConfig,
+} from "axios";
+import { ROUTES } from "@/constants/routes";
+import { openAlert } from "@/utils/modal/OpenAlert";
+import { clearUser } from "@/stores/AuthStore";
 
-// Axios 기본 인스턴스 생성
-const api = axios.create({
-  baseURL: process.env.NEXT_PUBLIC_API_URL,
+// 비인증용 (쿠키 없음)
+const api: AxiosInstance = axios.create({
+  baseURL: "", // rewrites를 통해 처리
+  headers: {
+    "Content-Type": "application/json",
+  },
+  withCredentials: false,
+});
+
+// 인증용 (쿠키 포함)
+export const authApi: AxiosInstance = axios.create({
+  baseURL: "", // rewrites를 통해 처리
   headers: {
     "Content-Type": "application/json",
   },
   withCredentials: true,
 });
 
-api.interceptors.request.use(
-  (config) => {
-    return config;
-  },
-  (error) => {
-    return Promise.reject(error);
-  }
-);
+//
+// ─── INTERCEPTORS ─────────────────────────────────────────────
+//
 
-api.interceptors.response.use(
-  (response) => {
-    return response;
-  },
-  (error) => {
-    if (error.response?.status === 401) {
-      // 세션만료 시  로그인 페이지로 리다이렉트?
+const requestLogger = (config: InternalAxiosRequestConfig) => {
+  console.log(`[axios] ${config.method?.toUpperCase()} ${config.url}`);
+  return config;
+};
+
+const errorHandler = (error: AxiosError) => {
+  const status = error.response?.status;
+
+  if (status === 401) {
+    // 세션 만료 시 알림 후 로그인 페이지로 이동
+    if (typeof window !== "undefined") {
+      clearUser();
+      openAlert("로그인이 만료되었습니다. 다시 로그인해주세요.", () => {
+        window.location.href = ROUTES.SIGNIN;
+      });
     }
-    return Promise.reject(error);
   }
-);
+
+  if (status === 500) {
+    openAlert("서버 오류가 발생했습니다. 잠시 후 다시 시도해주세요.");
+  }
+
+  return Promise.reject(error);
+};
+
+// 비인증 인스턴스
+api.interceptors.request.use(requestLogger);
+api.interceptors.response.use((res) => res, errorHandler);
+
+// 인증 인스턴스
+authApi.interceptors.request.use(requestLogger);
+authApi.interceptors.response.use((res) => res, errorHandler);
 
 export default api;

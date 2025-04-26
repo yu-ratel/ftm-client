@@ -33,6 +33,9 @@ const config: Config = {
           primary: "#EAEAEC",
           secondary: "#E7F2FE",
         },
+        red: {
+          error: "#FF787A",
+        },
       },
     },
   },

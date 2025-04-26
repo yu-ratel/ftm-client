@@ -9,6 +9,7 @@ import { useRouter } from "next/navigation";
 import { ROUTES } from "@/constants/routes";
 import { AGE } from "../../constants";
 import { setUser } from "@/stores/AuthStore";
+import { AxiosError } from "axios";
 
 interface IntroductionStepProps {
   email: string;
@@ -41,7 +42,7 @@ const IntroductionStep = ({
         router.push(ROUTES.SIGNIN);
       });
     },
-    onError: (error: any) => {
+    onError: (error: AxiosError<{ message?: string }>) => {
       const errorMessage =
         error.response?.data?.message || "회원가입에 실패했습니다.";
       openAlert(errorMessage);
@@ -56,7 +57,7 @@ const IntroductionStep = ({
 
       router.push(ROUTES.HOME);
     },
-    onError: (error: any) => {
+    onError: (error: AxiosError<{ message?: string }>) => {
       const errorMessage =
         error.response?.data?.message || "회원가입에 실패했습니다.";
       openAlert(errorMessage);
@@ -98,6 +99,15 @@ const IntroductionStep = ({
       };
       signupMutation.mutate(signupData);
     }
+  };
+
+  // 버튼 스타일 동적 생성
+  const getSubmitButtonClassName = () => {
+    const baseStyle =
+      "h-[38px] w-full rounded-[10px] text-center font-medium text-black disabled:opacity-50";
+    return selectedHashtags.length > 0
+      ? `${baseStyle} bg-blue-500 text-white`
+      : `${baseStyle} bg-button-primary`;
   };
 
   return (
@@ -154,7 +164,7 @@ const IntroductionStep = ({
           <button
             onClick={handleSubmit}
             disabled={signupMutation.isPending}
-            className="h-[38px] w-full rounded-[10px] bg-button-primary text-center font-medium text-black disabled:opacity-50"
+            className={getSubmitButtonClassName()}
           >
             완료
           </button>
