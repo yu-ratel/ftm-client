@@ -1,5 +1,5 @@
 interface Props {
-  questionNumber: string;
+  questionNumber: number;
   question: string;
 }
 

@@ -7,17 +7,28 @@ import { useRouter } from "next/navigation";
 import QuestionSection from "./QuestionSection";
 import AnswerSection from "./AnswerSection";
 import NavSection from "./NavSection";
+import {
+  GroomingCheckResponse,
+  GroomingCheckSelectedAnswerType,
+} from "../types";
 
-const GroomingCheck = ({ serverData }) => {
-  const { data, isLoading } = useQuery({
+//TODO: 서버 api 캐싱 관련 논의 (react query 사용)
+const GroomingCheck = ({
+  serverData,
+}: {
+  serverData: GroomingCheckResponse;
+}) => {
+  const { data, isLoading } = useQuery<GroomingCheckResponse>({
     queryKey: ["groomingCheck"],
     queryFn: () => getGroomingCheckList(),
     initialData: serverData,
   });
   const { data: totalData } = data;
-  const { groomingTests = [], totalCount = 0 } = totalData || {};
+  const { groomingTests = [], totalCount = 0 } = totalData.data || {};
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [selectedAnswers, setSelectedAnswers] = useState([]);
+  const [selectedAnswers, setSelectedAnswers] = useState<
+    GroomingCheckSelectedAnswerType[]
+  >([]);
   const router = useRouter();
   const isDisabledNextCheck =
     selectedAnswers[currentIndex]?.answerIds.length === 0;
@@ -25,13 +36,11 @@ const GroomingCheck = ({ serverData }) => {
   useEffect(() => {
     if (totalCount > 0) {
       setSelectedAnswers(
-        groomingTests.map((test) => {
-          return {
-            questionId: test.groomingTestQuestionId,
-            groomingCategory: test.groomingCategory,
-            answerIds: [],
-          };
-        })
+        groomingTests.map((test) => ({
+          questionId: test.groomingTestQuestionId,
+          groomingCategory: test.groomingCategory,
+          answerIds: [],
+        }))
       );
     }
   }, [data, totalCount, groomingTests]);
@@ -45,15 +54,18 @@ const GroomingCheck = ({ serverData }) => {
   const currentQuestion = sortedGroomingTests[currentIndex];
 
   // 답변 선택 처리 함수
-  const onClickHandleAnswer = (groomingTestAnswerId) => {
+  const onClickHandleAnswer = (groomingTestAnswerId: number) => {
     if (
       selectedAnswers[currentIndex]?.answerIds.includes(groomingTestAnswerId)
     ) {
       setSelectedAnswers((prev) => {
         const newSelectedAnswers = [...prev];
-        newSelectedAnswers[currentIndex] = prev[currentIndex].filter(
-          (id) => id !== groomingTestAnswerId
-        );
+        newSelectedAnswers[currentIndex] = {
+          ...prev[currentIndex],
+          answerIds: prev[currentIndex].answerIds.filter(
+            (id: number) => id !== groomingTestAnswerId
+          ),
+        };
         return newSelectedAnswers;
       });
       return;

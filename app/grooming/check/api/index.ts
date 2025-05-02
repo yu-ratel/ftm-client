@@ -1,17 +1,9 @@
 import api from "@/lib/axios";
-
+import { GroomingCheckResponse, GroomingCheckRequest } from "../types";
 const BASE_PATH = "/api/grooming/tests";
 
-type GroomingCheckResult = {
-  answers: {
-    questionId: number;
-    groomingCategory: string;
-    answerIds: number[];
-  }[];
-};
-
 const getGroomingCheckList = async () => {
-  const response = await api.get(BASE_PATH);
+  const response = await api.get<GroomingCheckResponse>(BASE_PATH);
   return response.data;
 };
 
@@ -20,7 +12,7 @@ const getGroomingCheckList = async () => {
 //   return response.data;
 // };
 
-const createGroomingCheckResult = async (data: GroomingCheckResult) => {
+const createGroomingCheckResult = async (data: GroomingCheckRequest) => {
   const response = await api.post(`${BASE_PATH}/submission`, {
     submissions: data,
   });
