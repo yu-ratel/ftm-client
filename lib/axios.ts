@@ -18,7 +18,7 @@ const api: AxiosInstance = axios.create({
 
 // 인증용 (쿠키 포함)
 export const authApi: AxiosInstance = axios.create({
-  baseURL: process.env.NEXT_PUBLIC_API_URL, // rewrites를 통해 처리
+  baseURL: "", // rewrites를 통해 처리
   headers: {
     "Content-Type": "application/json",
   },
