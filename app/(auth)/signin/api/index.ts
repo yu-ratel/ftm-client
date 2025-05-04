@@ -12,7 +12,7 @@ export const signin = async (
   userData: SigninRequest
 ): Promise<ApiResponse<SigninResponse>> => {
   try {
-    const response = await api.post<ApiResponse<SigninResponse>>(
+    const response = await authApi.post<ApiResponse<SigninResponse>>(
       `${BASE_PATH}/login`,
       userData
     );
