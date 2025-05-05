@@ -3,6 +3,11 @@
 import { useQuery } from "@tanstack/react-query";
 import { useSearchParams } from "next/navigation";
 import { createGroomingCheckResult } from "../check/api";
+import {
+  GroomingCheckResultResponse,
+  GroomingCheckResultGradesType,
+  LevelType,
+} from "../check/types";
 import GradeCard from "./components/GradeCard";
 import SignInRouteCard from "./components/SignInRouteCard";
 
@@ -11,16 +16,17 @@ const Page = () => {
   const answers = searchParams.get("answers");
   const parsedAnswers = JSON.parse(answers || "[]");
 
-  console.log({ submissions: parsedAnswers });
-
-  const { data: testResult, isLoading } = useQuery({
+  const { data, isLoading } = useQuery<GroomingCheckResultResponse>({
     queryKey: ["groomingResult"],
     queryFn: () => createGroomingCheckResult(parsedAnswers),
   });
 
-  if (isLoading) return <div>Loading...</div>;
+  const {
+    grades = {} as GroomingCheckResultGradesType,
+    level = {} as LevelType,
+  } = data?.data || {};
 
-  console.log(testResult);
+  if (isLoading) return <div>Loading...</div>;
 
   return (
     <main className="flex h-full px-40 py-[74px]">
@@ -30,7 +36,7 @@ const Page = () => {
             mainImg
           </div>
           <div className="flex flex-col items-center gap-6 break-keep px-40 pt-10 text-center">
-            <h3 className="text-4xl text-white">새싹형</h3>
+            <h3 className="text-4xl text-white">{level.spicyLevelName}</h3>
             <p className="text-xl text-[#AEC0DE]">
               이제 막 걸음마를 떼기 시작한 새싹형이에요 꾸준히 관심을 갖는다면
               발전의 가능성이 충분한..
@@ -49,11 +55,15 @@ const Page = () => {
 
       <section className="flex-1">
         <div className="grid size-full grid-cols-2 gap-4">
-          <GradeCard />
-          <GradeCard />
-          <GradeCard />
-          <GradeCard />
-          <GradeCard />
+          {Object.entries(grades).map(([key, grade]) => (
+            <GradeCard
+              key={key}
+              category={key}
+              grade={grade.grade}
+              level={grade.level}
+            />
+          ))}
+
           <SignInRouteCard />
         </div>
       </section>

@@ -27,8 +27,33 @@ type GroomingCheckRequest = {
   answers: GroomingCheckAnswerType[];
 };
 
+interface GradeType {
+  grade: string;
+  level: number;
+}
+
+type GroomingCheckResultGradesType = Record<
+  "beauty" | "fashion" | "hair" | "hygiene" | "workout",
+  GradeType
+>;
+
+interface LevelType {
+  groomingLevelId: number;
+  mildLevelName: string;
+  spicyLevelName: string;
+}
+
+type GroomingCheckResultResponse = ApiResponse<{
+  grades: GroomingCheckResultGradesType;
+  level: LevelType;
+  scores: Record<string, number>;
+}>;
+
 export type {
   GroomingCheckResponse,
   GroomingCheckRequest,
   GroomingCheckSelectedAnswerType,
+  GroomingCheckResultGradesType,
+  LevelType,
+  GroomingCheckResultResponse,
 };

@@ -1,4 +1,4 @@
-import { GRADE_MAX_SCORE } from "../constants/index";
+import { GRADE_CATEGORY, GRADE_MAX_SCORE } from "../constants/index";
 
 interface Props {
   category: string;
@@ -22,10 +22,12 @@ const ScoreBar = ({ score }: { score: number }) => {
 const GradeCard = ({ category, grade, level }: Props) => {
   return (
     <div className="flex flex-col items-center gap-8 rounded-3xl bg-[#F5F5F7] px-16 py-9 text-[#1481FD]">
-      <h4 className="text-2xl">{category} 스킨케어</h4>
-      <h3 className="text-5xl">{grade} 무심</h3>
+      <h4 className="text-2xl">
+        {GRADE_CATEGORY[category as keyof typeof GRADE_CATEGORY]}
+      </h4>
+      <h3 className="text-5xl">{grade}</h3>
       <div className="flex h-14 w-full items-center justify-center gap-1 rounded-3xl bg-[#E6EEFD] px-6">
-        <ScoreBar score={level || GRADE_MAX_SCORE} />
+        <ScoreBar score={level} />
       </div>
     </div>
   );
