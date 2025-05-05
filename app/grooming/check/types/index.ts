@@ -13,10 +13,8 @@ interface GroomingCheckAnswerType {
 }
 
 type GroomingCheckResponse = ApiResponse<{
-  data: {
-    groomingTests: GroomingCheckType[];
-    totalCount: number;
-  };
+  groomingTests: GroomingCheckType[];
+  totalCount: number;
 }>;
 
 interface GroomingCheckSelectedAnswerType {

@@ -23,8 +23,8 @@ const GroomingCheck = ({
     queryFn: () => getGroomingCheckList(),
     initialData: serverData,
   });
-  const { data: totalData } = data;
-  const { groomingTests = [], totalCount = 0 } = totalData.data || {};
+
+  const { groomingTests = [], totalCount = 0 } = data.data || {};
   const [currentIndex, setCurrentIndex] = useState(0);
   const [selectedAnswers, setSelectedAnswers] = useState<
     GroomingCheckSelectedAnswerType[]
