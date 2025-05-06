@@ -8,6 +8,12 @@ const config: Config = {
   ],
   theme: {
     extend: {
+      screens: {
+        sm: "543px",
+        md: "879px",
+        lg: "1503px",
+        xl: "1920px",
+      },
       fontFamily: {
         pretendard: ["Pretendard Variable", "sans-serif"],
       },
