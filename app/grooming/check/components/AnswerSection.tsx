@@ -13,7 +13,7 @@ const AnswerSection = ({
   currentIndex,
 }: Props) => {
   return (
-    <section className="flex max-h-[456px] flex-col gap-6 overflow-y-auto text-2xl *:w-[586px] *:content-center">
+    <section className="flex max-h-[586px] flex-col gap-6 overflow-y-scroll text-2xl *:w-[586px] *:content-center max-md:*:w-full max-sm:text-lg">
       {answers.map((item) => (
         <button
           onClick={() => onClickHandleAnswer(item.groomingTestAnswerId)}
@@ -23,7 +23,7 @@ const AnswerSection = ({
             )
               ? "bg-blue-500 text-white"
               : "bg-gray-100 hover:bg-gray-200"
-          } min-h-24 flex-shrink-0 break-keep rounded-xl px-20`}
+          } min-h-24 flex-shrink-0 break-keep rounded-xl px-20 max-sm:min-h-16 max-sm:px-4`}
           key={item.groomingTestAnswerId}
         >
           {item.answer}

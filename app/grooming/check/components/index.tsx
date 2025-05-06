@@ -102,7 +102,7 @@ const GroomingCheck = ({
   };
 
   return (
-    <main className="flex flex-col items-center justify-between py-16 *:w-[586px] *:content-center *:rounded-xl *:text-center">
+    <main className="flex flex-col items-center justify-between py-10 *:w-[586px] *:content-center *:rounded-xl *:text-center max-md:*:w-4/5 max-sm:justify-start max-sm:gap-9">
       <QuestionSection
         questionNumber={currentQuestion.groomingTestQuestionId}
         question={currentQuestion.question}
