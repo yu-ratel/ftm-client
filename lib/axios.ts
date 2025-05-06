@@ -31,6 +31,7 @@ export const authApi: AxiosInstance = axios.create({
 
 const requestLogger = (config: InternalAxiosRequestConfig) => {
   console.log(`[axios] ${config.method?.toUpperCase()} ${config.url}`);
+  console.log("baseUrl ===>", process.env.NEXT_PUBLIC_API_URL);
   return config;
 };
 
