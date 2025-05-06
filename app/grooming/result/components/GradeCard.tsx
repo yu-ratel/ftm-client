@@ -8,7 +8,7 @@ interface Props {
 
 const ScoreBar = ({ score }: { score: number }) => {
   return (
-    <div className="flex h-14 w-full items-center justify-center gap-1 rounded-3xl px-6">
+    <div className="flex h-14 w-full items-center justify-center gap-1 rounded-3xl px-6 max-md:px-0">
       {Array.from({ length: GRADE_MAX_SCORE }).map((_, index) => (
         <div
           key={index}
@@ -21,11 +21,11 @@ const ScoreBar = ({ score }: { score: number }) => {
 
 const GradeCard = ({ category, grade, level }: Props) => {
   return (
-    <div className="flex flex-col items-center gap-8 rounded-3xl bg-[#F5F5F7] px-16 py-9 text-[#1481FD]">
-      <h4 className="text-2xl">
+    <div className="flex flex-col items-center gap-8 rounded-3xl bg-[#F5F5F7] px-16 py-9 text-[#1481FD] max-md:px-10 max-sm:px-4">
+      <h4 className="text-2xl max-md:text-lg">
         {GRADE_CATEGORY[category as keyof typeof GRADE_CATEGORY]}
       </h4>
-      <h3 className="text-5xl">{grade}</h3>
+      <h3 className="text-5xl max-md:text-[32px]">{grade}</h3>
       <div className="flex h-14 w-full items-center justify-center gap-1 rounded-3xl bg-[#E6EEFD] px-6">
         <ScoreBar score={level} />
       </div>

@@ -23,7 +23,7 @@ const SignInRouteCard = () => {
   return (
     <Link
       href={card[type].href}
-      className="flex flex-col items-center gap-8 whitespace-pre-line rounded-3xl bg-[#1481FD] px-16 py-9 text-center text-2xl text-white"
+      className="flex flex-col items-center gap-8 whitespace-pre-line rounded-3xl bg-[#1481FD] px-16 py-9 text-center text-2xl text-white max-md:px-10 max-md:text-lg max-sm:px-2"
     >
       {card[type].icon}
       {card[type].text}
