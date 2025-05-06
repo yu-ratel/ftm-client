@@ -13,6 +13,6 @@ export const headerLinks = [
   },
   {
     label: "그루밍 지수 검사",
-    href: "/grooming-test",
+    href: "/grooming",
   },
 ];

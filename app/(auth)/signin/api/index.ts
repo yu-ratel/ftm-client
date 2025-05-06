@@ -1,4 +1,4 @@
-import api, { authApi } from "@/lib/axios";
+import { authApi } from "@/lib/axios";
 import { ApiResponse } from "@/types/api";
 import { SigninRequest, SigninResponse } from "../types";
 import { clearUser } from "@/stores/AuthStore";
