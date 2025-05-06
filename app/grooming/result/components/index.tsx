@@ -1,24 +1,24 @@
 "use client";
 
 import { useQuery } from "@tanstack/react-query";
-import { useSearchParams } from "next/navigation";
-import { createGroomingCheckResult } from "../check/api";
+import { createGroomingCheckResult } from "@/app/grooming/check/api";
 import {
   GroomingCheckResultResponse,
   GroomingCheckResultGradesType,
   LevelType,
-} from "../check/types";
-import GradeCard from "./components/GradeCard";
-import SignInRouteCard from "./components/SignInRouteCard";
+  GroomingCheckSelectedAnswerType,
+} from "@/app/grooming/check/types";
+import GradeCard from "./GradeCard";
+import SignInRouteCard from "./SignInRouteCard";
 
-const Page = () => {
-  const searchParams = useSearchParams();
-  const answers = searchParams.get("answers");
-  const parsedAnswers = JSON.parse(answers || "[]");
-
+const ResultView = ({
+  answers,
+}: {
+  answers: GroomingCheckSelectedAnswerType[];
+}) => {
   const { data, isLoading } = useQuery<GroomingCheckResultResponse>({
     queryKey: ["groomingResult"],
-    queryFn: () => createGroomingCheckResult(parsedAnswers),
+    queryFn: () => createGroomingCheckResult({ answers }),
   });
 
   const {
@@ -73,6 +73,4 @@ const Page = () => {
   );
 };
 
-export default Page;
-
-//
+export default ResultView;

@@ -1,15 +1,14 @@
 import { ApiResponse } from "@/types/api";
 
+interface GroomingCheckAnswerType {
+  groomingTestAnswerId: number;
+  answer: string;
+}
 interface GroomingCheckType {
   groomingTestQuestionId: number;
   question: string;
   groomingCategory: string;
   answers: GroomingCheckAnswerType[];
-}
-
-interface GroomingCheckAnswerType {
-  groomingTestAnswerId: number;
-  answer: string;
 }
 
 type GroomingCheckResponse = ApiResponse<{
@@ -24,7 +23,7 @@ interface GroomingCheckSelectedAnswerType {
 }
 
 type GroomingCheckRequest = {
-  answers: GroomingCheckAnswerType[];
+  answers: GroomingCheckSelectedAnswerType[];
 };
 
 interface GradeType {
