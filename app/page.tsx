@@ -1,11 +1,5 @@
-import Header from "@components/Header";
-
-const HomePage = () => {
-  return (
-    <>
-      <Header />
-    </>
-  );
+const Page = () => {
+  return <></>;
 };
 
-export default HomePage;
+export default Page;
