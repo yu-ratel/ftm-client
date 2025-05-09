@@ -1,12 +1,14 @@
 import Header from "@/components/Header";
 import "./globals.css";
-import QueryProvider from "./Provider";
+import { ReactNode } from "react";
 import ModalContainer from "@/components/modals/ModalContainer";
+import SessionGuard from "@/components/guards/SessionGuard";
+import QueryProvider from "./Provider";
 
 export default function RootLayout({
   children,
 }: Readonly<{
-  children: React.ReactNode;
+  children: ReactNode;
 }>) {
   return (
     <html lang="ko">
@@ -15,6 +17,7 @@ export default function RootLayout({
           <Header />
           {children}
           <ModalContainer />
+          <SessionGuard />
         </QueryProvider>
       </body>
     </html>

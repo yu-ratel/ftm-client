@@ -45,7 +45,7 @@ const VerificationStep = ({
       if (response.data.isVerified) {
         onVerificationSuccess();
       } else {
-        setMessage("인증번호가 일치하지 않습니다.");
+        setMessage("인증 번호를 다시 확인해주세요.");
       }
     },
     onError: (error: AxiosError<{ message?: string }>) => {
@@ -95,35 +95,39 @@ const VerificationStep = ({
 
         <div className="flex items-center justify-between">
           <div className="flex-1">
-            {message && (
+            <p className="text-secondary text-[12px]">
+              인증 번호를 받지 못하셨나요?
+            </p>
+            {/* {message && (
               <p
-                className={`ml-4 text-xs ${
+                className={`text-xs ${
                   message.includes("성공") ? "text-green-500" : "text-red-error"
                 }`}
               >
                 {message}
               </p>
-            )}
+            )} */}
           </div>
           <button
             onClick={() => resendAuthenticationMutation.mutate()}
             disabled={resendAuthenticationMutation.isPending}
             className="mt-[4px] h-[18px] rounded-[4px] bg-blue-100 px-[10px] py-[4px] text-[10px] font-normal leading-[10px] text-blue-500 disabled:opacity-50"
           >
-            {resendAuthenticationMutation.isPending
-              ? "전송 중..."
-              : "인증 번호 재요청"}
+            인증 번호 재요청
           </button>
         </div>
       </div>
 
-      <div className="mt-8 w-full max-w-[392px] space-y-4">
+      <div className="mt-20 w-full max-w-[392px] space-y-4">
+        {message && (
+          <p className="text-red-error text-center text-[12px]">{message}</p>
+        )}
         <button
           onClick={handleVerifyCode}
           disabled={verifyCodeMutation.isPending}
           className={getVerifyButtonClassName()}
         >
-          {verifyCodeMutation.isPending ? "확인 중..." : "인증하기"}
+          인증하기
         </button>
         <button
           onClick={onPrevStep}

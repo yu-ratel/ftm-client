@@ -1,4 +1,4 @@
-import api from "@/lib/axios";
+import api, { authApi } from "@/lib/axios";
 import { ApiResponse } from "@/types/api";
 import {
   Age,
@@ -110,4 +110,17 @@ export const socialSignup = async (data: {
   const config = { withCredentials: true };
   const response = await api.post("/api/users/social", data, config);
   return response.data;
+};
+
+/**
+ * 회원탈퇴 API
+ */
+export const deleteUser = async (): Promise<ApiResponse> => {
+  try {
+    const response = await authApi.delete<ApiResponse>(`${BASE_PATH}`);
+    return response.data;
+  } catch (error) {
+    console.error("회원가입 실패:", error);
+    throw error;
+  }
 };

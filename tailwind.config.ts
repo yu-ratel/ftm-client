@@ -19,7 +19,9 @@ const config: Config = {
       },
       colors: {
         primary: "#374254",
+        secondary: "#9AABC5",
         black: "#000000",
+        error: "#FF787A",
         gray: {
           100: "#F1F1F1",
           200: "#EAEAEC",
@@ -38,9 +40,6 @@ const config: Config = {
         button: {
           primary: "#EAEAEC",
           secondary: "#E7F2FE",
-        },
-        red: {
-          error: "#FF787A",
         },
       },
     },

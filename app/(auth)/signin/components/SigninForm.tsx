@@ -20,7 +20,7 @@ const SigninForm = () => {
     mutationFn: () => signin({ email, password }),
     onSuccess: (response) => {
       setUser(response.data);
-      router.push(ROUTES.HOME);
+      router.push(ROUTES.USER_PICK);
     },
     onError: (error: AxiosError<{ message?: string }>) => {
       const errorMessage =

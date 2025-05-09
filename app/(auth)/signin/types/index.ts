@@ -11,3 +11,7 @@ export interface SigninResponse {
   spicyLevelName: string | null;
   loginTime: string;
 }
+
+export interface SessionValidityResponse {
+  isValid: boolean;
+}

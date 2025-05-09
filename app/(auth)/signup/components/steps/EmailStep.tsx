@@ -79,7 +79,7 @@ const EmailStep = ({ email, onEmailSubmit }: EmailStepProps) => {
   // 이메일 인증 요청 핸들러
   const handleSendAuthentication = () => {
     if (!isEmailValid) {
-      setMessage("먼저 이메일 중복 확인을 해주세요.");
+      setMessage("이메일 중복확인을 위한 버튼을 눌러주세요.");
       return;
     }
     sendAuthenticationMutation.mutate(inputEmail);
@@ -98,9 +98,39 @@ const EmailStep = ({ email, onEmailSubmit }: EmailStepProps) => {
   // 버튼 스타일 동적 생성
   const getAuthButtonClassName = () => {
     const baseStyle = "h-[38px] w-full rounded-[10px] text-center font-medium";
+    if (sendAuthenticationMutation.isPending) {
+      return `${baseStyle} bg-gray-300 text-gray-500 cursor-not-allowed`;
+    }
     return isEmailValid
       ? `${baseStyle} bg-blue-500 text-white`
       : `${baseStyle} bg-button-primary text-black`;
+  };
+  const LoadingSpinner = () => {
+    return (
+      <div className="flex items-center justify-center space-x-2">
+        <svg
+          className="h-5 w-5 animate-spin text-white"
+          xmlns="http://www.w3.org/2000/svg"
+          fill="none"
+          viewBox="0 0 24 24"
+        >
+          <circle
+            className="opacity-25"
+            cx="12"
+            cy="12"
+            r="10"
+            stroke="currentColor"
+            strokeWidth="4"
+          ></circle>
+          <path
+            className="opacity-75"
+            fill="currentColor"
+            d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+          ></path>
+        </svg>
+        <span>인증 메일 전송중...</span>
+      </div>
+    );
   };
 
   return (
@@ -126,7 +156,7 @@ const EmailStep = ({ email, onEmailSubmit }: EmailStepProps) => {
           <div className="flex-1">
             {message && (
               <p
-                className={`ml-4 text-xs ${
+                className={`text-xs ${
                   message.includes("사용 가능")
                     ? "text-green-500"
                     : "text-red-error"
@@ -147,12 +177,15 @@ const EmailStep = ({ email, onEmailSubmit }: EmailStepProps) => {
       </div>
 
       {/* 인증 버튼들 */}
-      <div className="mt-8 w-full max-w-[392px] space-y-4">
+      <div className="mt-24 w-full max-w-[392px] space-y-4">
         <button
           onClick={handleSendAuthentication}
+          disabled={sendAuthenticationMutation.isPending}
           className={getAuthButtonClassName()}
         >
-          메일 인증하기
+          {sendAuthenticationMutation.isPending
+            ? LoadingSpinner()
+            : "메일 인증하기"}
         </button>
         <button
           className="w-full text-center text-sm font-medium text-black hover:underline"

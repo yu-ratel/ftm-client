@@ -34,7 +34,7 @@ function KakaoCallbackContent() {
 
         if (response.status === 200) {
           setUser(response.data.data);
-          router.push(ROUTES.HOME);
+          router.push(ROUTES.USER_PICK);
           return;
         }
 

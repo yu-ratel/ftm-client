@@ -21,9 +21,9 @@
       "@/*": ["./*"],
       "@components/*": ["./components/*"],
       "@assets/*": ["./assets/*"],
-      "@userPick/*": ["./app/user-pick/*"],
-      "@editorPick/*": ["./app/editor-pick/*"],
-      "@grooming/*": ["./app/grooming/*"]
+      "@userPick/*": ["./app/(main)/user-pick/*"],
+      "@editorPick/*": ["./app/(main)/editor-pick/*"],
+      "@groomingTest/*": ["./app/grooming-test/*"]
     }
   },
   "include": [
