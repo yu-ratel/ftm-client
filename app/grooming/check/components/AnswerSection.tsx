@@ -1,8 +1,12 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
+import {
+  GroomingCheckAnswerType,
+  GroomingCheckSelectedAnswerType,
+} from "../types";
+
 interface Props {
-  answers: any[];
+  answers: GroomingCheckAnswerType[];
   onClickHandleAnswer: (groomingTestAnswerId: number) => void;
-  selectedAnswers: any[];
+  selectedAnswers: GroomingCheckSelectedAnswerType[];
   currentIndex: number;
 }
 
@@ -12,8 +16,15 @@ const AnswerSection = ({
   selectedAnswers,
   currentIndex,
 }: Props) => {
+  const overflowHeightIds = [15];
   return (
-    <section className="flex max-h-[586px] flex-col gap-6 overflow-y-scroll text-2xl *:w-[586px] *:content-center max-md:*:w-full max-sm:text-lg">
+    <section
+      className={`${
+        overflowHeightIds.includes(currentIndex + 1)
+          ? "max-h-[526px]"
+          : "max-h-[586px]"
+      } flex flex-col gap-6 overflow-y-scroll text-2xl *:w-[586px] *:content-center max-md:*:w-full max-sm:text-lg`}
+    >
       {answers.map((item) => (
         <button
           onClick={() => onClickHandleAnswer(item.groomingTestAnswerId)}

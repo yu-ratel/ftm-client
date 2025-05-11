@@ -32,6 +32,7 @@ const GroomingCheck = ({
   const router = useRouter();
   const isDisabledNextCheck =
     selectedAnswers[currentIndex]?.answerIds.length === 0;
+  const multiSelectIds = [1, 3, 8, 9, 14, 15, 17];
 
   useEffect(() => {
     if (totalCount > 0) {
@@ -55,6 +56,20 @@ const GroomingCheck = ({
 
   // 답변 선택 처리 함수
   const onClickHandleAnswer = (groomingTestAnswerId: number) => {
+    // 중복답변 허용 질문이 아닌 경우
+    if (!multiSelectIds.includes(currentQuestion.groomingTestQuestionId)) {
+      setSelectedAnswers((prev) => {
+        const newSelectedAnswers = [...prev];
+        newSelectedAnswers[currentIndex] = {
+          ...prev[currentIndex],
+          answerIds: [groomingTestAnswerId],
+        };
+        return newSelectedAnswers;
+      });
+      return;
+    }
+
+    // 중복 답변인 경우
     if (
       selectedAnswers[currentIndex]?.answerIds.includes(groomingTestAnswerId)
     ) {
@@ -71,6 +86,7 @@ const GroomingCheck = ({
       return;
     }
 
+    // 선택 답변 추가하는 경우
     setSelectedAnswers((prev) => {
       const newSelectedAnswers = [...prev];
       newSelectedAnswers[currentIndex] = {

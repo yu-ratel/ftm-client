@@ -49,6 +49,7 @@ type GroomingCheckResultResponse = ApiResponse<{
 }>;
 
 export type {
+  GroomingCheckAnswerType,
   GroomingCheckResponse,
   GroomingCheckRequest,
   GroomingCheckSelectedAnswerType,
