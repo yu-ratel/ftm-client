@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useMutation } from "@tanstack/react-query";
 import { signin } from "../api";
 import { useRouter } from "next/navigation";
@@ -8,13 +8,21 @@ import { ROUTES } from "@/constants/routes";
 import { showModal } from "@/stores/ModalStore";
 import AlertModal from "@/components/modals/common/AlertModal";
 import { openAlert } from "@/utils/modal/OpenAlert";
-import { setUser } from "@/stores/AuthStore";
+import { clearUser, getUser, setUser } from "@/stores/AuthStore";
 import { AxiosError } from "axios";
 
 const SigninForm = () => {
   const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+
+  // 미들웨어에서 세션만료로 넘어 온 경우
+  useEffect(() => {
+    if (getUser()) {
+      clearUser();
+      openAlert("로그인이 만료되었습니다. 다시 로그인해주세요.");
+    }
+  }, []);
 
   const signinMutation = useMutation({
     mutationFn: () => signin({ email, password }),

@@ -13,17 +13,6 @@ import { AxiosError } from "axios";
 export default function LeftSidebar() {
   const [activeMenu, setActiveMenu] = useState("유형별 추천");
 
-  const deleteMutation = useMutation({
-    mutationFn: deleteUser,
-    onSuccess: () => {
-      openAlert("회원탈퇴가 완료되었습니다.");
-      clearUser();
-    },
-    onError: (error: AxiosError<{ message?: string }>) => {
-      openAlert(error.response?.data?.message || "회원탈퇴에 실패했습니다.");
-    },
-  });
-
   const menuItems = [
     { id: "유형별 추천", icon: <FiUser />, label: "유형별 추천" },
     { id: "해시태그 추천", icon: <FiBookmark />, label: "해시태그 추천" },
@@ -51,9 +40,6 @@ export default function LeftSidebar() {
           ))}
         </ul>
       </nav>
-      <button onClick={() => deleteMutation.mutate()}>
-        회원탈퇴 API 테스트용
-      </button>
     </div>
   );
 }
