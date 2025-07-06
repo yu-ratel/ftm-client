@@ -8,6 +8,7 @@ interface ModalState {
     container?: React.ElementType;
     isDimClick?: boolean;
     containerType?: "default" | "bottom" | "center";
+    maxWidth?: string;
   }) => void;
   hideModal: () => void;
   clearModal: () => void;
@@ -20,6 +21,7 @@ export const useModalStore = create<ModalState>((set) => ({
     container,
     isDimClick = true,
     containerType = "default",
+    maxWidth,
   }) =>
     set((state) => ({
       modalList: [
@@ -29,6 +31,7 @@ export const useModalStore = create<ModalState>((set) => ({
           container,
           isDimClick,
           containerType,
+          maxWidth,
         },
       ],
     })),

@@ -23,8 +23,9 @@ export default function LeftSidebar() {
     { id: "해시태그 추천", icon: <FiBookmark />, label: "해시태그 추천" },
   ];
 
-  const menuItems =
-    pathname === ROUTES.USER_PICK ? userPickMenuItems : allMenuItems;
+  const menuItems = pathname.includes(ROUTES.USER_PICK)
+    ? userPickMenuItems
+    : allMenuItems;
 
   return (
     <div className="ml-[18px] flex h-auto min-h-[558px] w-[324px] flex-col gap-[110px] p-4">

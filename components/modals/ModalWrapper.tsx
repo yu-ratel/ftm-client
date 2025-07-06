@@ -7,6 +7,7 @@ interface ModalWrapperProps {
   ContainerElement?: React.ElementType;
   isDimClick?: boolean;
   containerType?: "default" | "bottom" | "center";
+  maxWidth?: string;
 }
 
 const ModalWrapper: React.FC<ModalWrapperProps> = ({
@@ -14,6 +15,7 @@ const ModalWrapper: React.FC<ModalWrapperProps> = ({
   ContainerElement = "div",
   isDimClick = true,
   containerType = "default",
+  maxWidth,
 }) => {
   const hideModal = useModalStore((state) => state.hideModal);
   const wrapperRef = useRef<HTMLDivElement>(null);
@@ -27,13 +29,17 @@ const ModalWrapper: React.FC<ModalWrapperProps> = ({
 
   // 컨테이너 타입에 따른 클래스 설정
   const getContainerClass = () => {
+    const baseClass =
+      "bg-white rounded-xl shadow-lg w-full mx-4 transform transition-all duration-300 ease-in-out";
+    const maxWidthClass = maxWidth ? `max-w-[${maxWidth}]` : "max-w-md";
+
     switch (containerType) {
       case "bottom":
         return "fixed bottom-0 left-0 right-0 bg-white rounded-t-2xl shadow-lg transform transition-transform duration-300 ease-in-out";
       case "center":
-        return "bg-white rounded-xl shadow-lg max-w-md w-full mx-4 transform transition-all duration-300 ease-in-out";
+        return `${baseClass} ${maxWidthClass}`;
       default:
-        return "bg-white rounded-xl shadow-lg max-w-md w-full mx-4 transform transition-all duration-300 ease-in-out";
+        return `${baseClass} ${maxWidthClass}`;
     }
   };
 

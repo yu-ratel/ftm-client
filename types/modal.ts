@@ -5,4 +5,5 @@ export interface ModalType {
   container?: React.ElementType;
   isDimClick?: boolean;
   containerType?: "default" | "bottom" | "center";
+  maxWidth?: string;
 }

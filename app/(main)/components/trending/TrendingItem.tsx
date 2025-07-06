@@ -1,4 +1,6 @@
+import Image from "next/image";
 import React from "react";
+import { formatImageUrl } from "../../user-pick/[postId]/utils";
 
 interface TrendingItemProps {
   number: number;
@@ -13,10 +15,11 @@ interface TrendingItemProps {
 
 export default function TrendingItem({
   number,
-  // title,
-  // profileImage,
+  title,
+  profileImage,
   stats,
 }: TrendingItemProps) {
+  console.log("profileImage", profileImage);
   return (
     <li className="flex items-center justify-between">
       <div className="flex items-center">
@@ -26,10 +29,22 @@ export default function TrendingItem({
           </span>
         </div>
         <span className="ml-[22px] w-[148px] text-sm font-medium leading-none text-[#374254]">
-          트렌딩 핏더맨
+          {title}
         </span>
       </div>
-      <div className="h-6 w-6 rounded-[20px] bg-[#e1e1e7]"></div>
+      <div className="h-6 w-6 overflow-hidden rounded-[20px] bg-[#e1e1e7]">
+        {profileImage ? (
+          <Image
+            src={formatImageUrl(profileImage)}
+            alt="프로필 이미지"
+            className="h-full w-full object-cover"
+            width={24}
+            height={24}
+          />
+        ) : (
+          <div className="h-full w-full bg-[#e1e1e7]"></div>
+        )}
+      </div>
 
       {stats && (
         <div className="mt-1 flex items-center justify-start px-7 text-sm text-secondary">
