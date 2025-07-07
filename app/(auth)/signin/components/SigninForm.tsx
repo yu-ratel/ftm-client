@@ -28,6 +28,12 @@ const SigninForm = () => {
     mutationFn: () => signin({ email, password }),
     onSuccess: (response) => {
       setUser(response.data);
+
+      // 쿠키 상태 확인
+      console.log("로그인 성공 후 쿠키 확인:");
+      console.log("document.cookie:", document.cookie);
+      console.log("SESSION 쿠키 존재:", document.cookie.includes("SESSION"));
+
       router.push(ROUTES.USER_PICK);
     },
     onError: (error: AxiosError<{ message?: string }>) => {
