@@ -1,8 +1,40 @@
 import api, { authApi } from "@/lib/axios";
 import { ApiResponse } from "@/types/api";
-import { TrendingPost, PostDetail, TrendingUser } from "../../types/PostType";
+import {
+  TrendingPost,
+  PostDetail,
+  TrendingUser,
+  HashtagsResponse,
+} from "../../types/PostType";
 
 const BASE_PATH = "/api/posts";
+
+export const getProductHashtags = async (): Promise<HashtagsResponse> => {
+  try {
+    const response = await api.get<ApiResponse<HashtagsResponse>>(
+      `${BASE_PATH}/products/hashtags`
+    );
+    return response.data.data;
+  } catch (error) {
+    console.error("Failed to fetch product hashtags:", error);
+    throw error;
+  }
+};
+
+/**
+ * 해시태그 및 카테고리 조회 API
+ */
+export const getHashtags = async (): Promise<HashtagsResponse> => {
+  try {
+    const response = await api.get<ApiResponse<HashtagsResponse>>(
+      `${BASE_PATH}/hashtags`
+    );
+    return response.data.data;
+  } catch (error) {
+    console.error("해시태그 데이터 조회 실패:", error);
+    throw error;
+  }
+};
 
 /**
  * 트렌딩 게시물 조회 API
@@ -63,7 +95,7 @@ export interface CreatePostProduct {
 
 export interface CreatePostData {
   title: string; // 게시글 제목
-  groomingCategory: string; // 게시글 그루밍 분야
+  // groomingCategory: string; // 게시글 그루밍 분야
   hashtags?: string[]; // 게시글 해시태그 목록
   content: string; // 게시글 내용
   products?: CreatePostProduct[]; // 게시글에 포함된 상품 목록
@@ -86,7 +118,7 @@ export const createPost = async (
     // JSON 데이터를 'data' part에 문자열로 추가
     const jsonData = {
       title: postData.title,
-      groomingCategory: postData.groomingCategory,
+      // groomingCategory: postData.groomingCategory,
       hashtags: postData.hashtags,
       content: postData.content,
       products: postData.products,

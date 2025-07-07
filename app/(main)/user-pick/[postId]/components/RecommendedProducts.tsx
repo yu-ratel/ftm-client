@@ -21,16 +21,20 @@ const RecommendedProducts = ({ postData }: RecommendedProductsProps) => {
       img: formatImageUrl(postProduct.postProductImage.imageUrl),
       brand: postProduct.brand,
       title: postProduct.name,
-      tags: postProduct.hashTags,
+      tags: postProduct.hashtags,
     };
   };
 
   // 상품 클릭 핸들러
   const handleProductClick = (postProduct: PostProduct) => {
     const product = convertPostProductToProduct(postProduct);
-    openProductModal(() => {
-      // 추천 상품 보기에서는 실제 저장 동작이 필요 없으므로 빈 함수
-    }, product);
+    openProductModal(
+      () => {
+        // 추천 상품 보기에서는 실제 저장 동작이 필요 없으므로 빈 함수
+      },
+      product,
+      false
+    );
   };
 
   return (
@@ -64,7 +68,7 @@ const RecommendedProducts = ({ postData }: RecommendedProductsProps) => {
                       </span>
                       <div className="truncate text-sm">{product.name}</div>
                       <div className="mt-2 flex gap-1">
-                        {product.hashTags.map((tag: string) => (
+                        {product.hashtags.map((tag: string) => (
                           <div
                             key={tag}
                             className="relative flex flex-row items-center justify-center gap-3 rounded-md border border-solid border-[transparent] bg-[#e1e1e7] pb-1.5 pl-2 pr-2 pt-1.5"

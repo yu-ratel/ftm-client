@@ -1,7 +1,7 @@
 import React from "react";
 
 interface TagManagerProps {
-  hashtags: string[];
+  hashtags: { id: string; label: string }[];
   onOpenTagPopup: () => void;
   onRemoveTag: (tag: string) => void;
 }
@@ -37,14 +37,14 @@ const TagManager = ({
         </button>
 
         {/* Existing Tags */}
-        {hashtags.map((tag: string, index: number) => (
+        {hashtags.map((tag: { id: string; label: string }, index: number) => (
           <div
             key={index}
             className="flex items-center gap-1.5 rounded-full bg-gray-200 px-4 py-2 text-sm text-gray-700"
           >
-            <span className="font-medium">#{tag}</span>
+            <span className="font-medium">#{tag.label}</span>
             <button
-              onClick={() => onRemoveTag(tag)}
+              onClick={() => onRemoveTag(tag.label)}
               className="ml-1 flex h-4 w-4 items-center justify-center rounded-full text-gray-500 hover:bg-gray-300 hover:text-gray-700"
             >
               <svg

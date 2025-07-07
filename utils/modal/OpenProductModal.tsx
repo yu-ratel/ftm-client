@@ -4,13 +4,15 @@ import { Product } from "@/app/(main)/write/types";
 
 export const openProductModal = (
   onProductSave: (product: Product) => void,
-  initialProduct?: Product
+  initialProduct?: Product,
+  isEditMode: boolean = true
 ) => {
   showModal({
     component: (
       <ProductModalContainer
         onProductSave={onProductSave}
         initialProduct={initialProduct}
+        isEditMode={isEditMode}
       />
     ),
     containerType: "center",

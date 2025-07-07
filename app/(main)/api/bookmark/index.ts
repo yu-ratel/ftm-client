@@ -30,9 +30,9 @@ export const createBookmark = async (postId: number): Promise<void> => {
  */
 export const deleteBookmark = async (postId: number): Promise<void> => {
   try {
-    const response = await authApi.delete<ApiResponse<null>>(
-      `${BASE_PATH}/${postId}`
-    );
+    const response = await authApi.delete<ApiResponse<null>>(BASE_PATH, {
+      data: { postId },
+    });
     // data가 null로 오는 것이 정상이므로 status와 code만 확인
     if (response.data.status === 200) {
       console.log("북마크 삭제 성공:", response.data.message);

@@ -16,6 +16,37 @@ export interface TrendingUser {
 }
 
 /**
+ * 카테고리 인터페이스
+ */
+export interface Category {
+  name: string;
+  label: string;
+}
+
+/**
+ * 해시태그 인터페이스
+ */
+export interface Hashtag {
+  name: string;
+  tag: string;
+}
+
+/**
+ * 카테고리별 해시태그 데이터 인터페이스
+ */
+export interface CategoryData {
+  category: Category;
+  hashtags: Hashtag[];
+}
+
+/**
+ * 해시태그 API 응답 인터페이스
+ */
+export interface HashtagsResponse {
+  results: CategoryData[];
+}
+
+/**
  * 게시글 이미지 인터페이스
  */
 export interface PostImage {
@@ -47,7 +78,7 @@ export interface PostProduct {
   postProductId: number;
   name: string;
   brand: string;
-  hashTags: string[];
+  hashtags: string[];
   postProductImage: PostProductImage;
 }
 
@@ -59,7 +90,7 @@ export interface PostDetail {
   title: string;
   content: string;
   groomingCategory: string;
-  hashTags: string[];
+  hashtags: string[];
   viewCount: number;
   likeCount: number;
   createdAt: string;

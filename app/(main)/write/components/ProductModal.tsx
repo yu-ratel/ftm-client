@@ -1,7 +1,7 @@
 import React, { RefObject } from "react";
 import Image from "next/image";
 import { Product } from "../types";
-import { productCategories } from "../constants";
+import { CategoryData, Hashtag } from "../../types/PostType";
 
 interface ProductModalProps {
   isOpen: boolean;
@@ -9,6 +9,8 @@ interface ProductModalProps {
   productImagePreview: string;
   selectedMainCategory: string;
   selectedSubCategories: string[];
+  hashtagData: CategoryData[];
+  isLoading: boolean;
   onClose: () => void;
   onSaveProduct: () => void;
   onProductChange: (updates: Partial<Product>) => void;
@@ -28,6 +30,8 @@ const ProductModal = ({
   productImagePreview,
   selectedMainCategory,
   selectedSubCategories,
+  hashtagData,
+  isLoading,
   onClose,
   onSaveProduct,
   onProductChange,
@@ -70,10 +74,14 @@ const ProductModal = ({
               상품 이미지
             </label>
             <div
-              onClick={onImageUpload}
-              onDrop={onImageDrop}
-              onDragOver={onImageDragOver}
-              className="relative flex h-[180px] w-full cursor-pointer flex-col items-center justify-center rounded-[10px] border border-dashed border-[#e1e1e7] bg-[#f5f5f7] transition-colors hover:bg-gray-100 md:h-[228px]"
+              onClick={!isViewOnly ? onImageUpload : undefined}
+              onDrop={!isViewOnly ? onImageDrop : undefined}
+              onDragOver={!isViewOnly ? onImageDragOver : undefined}
+              className={`relative flex h-[180px] w-full flex-col items-center justify-center rounded-[10px] border border-dashed border-[#e1e1e7] bg-[#f5f5f7] transition-colors md:h-[228px] ${
+                !isViewOnly
+                  ? "cursor-pointer hover:bg-gray-100"
+                  : "cursor-default"
+              }`}
             >
               {productImagePreview ? (
                 <div className="relative h-full w-full overflow-hidden rounded-[10px]">
@@ -116,20 +124,37 @@ const ProductModal = ({
                 {/* Main Categories */}
                 <div className="tag-scroll flex w-1/2 flex-col overflow-y-auto">
                   <div className="flex flex-col gap-1 p-3.5">
-                    {Object.entries(productCategories).map(
-                      ([key, category]) => (
+                    {isLoading ? (
+                      <div className="flex items-center justify-center py-4">
+                        <div className="text-xs text-gray-500">로딩 중...</div>
+                      </div>
+                    ) : (
+                      hashtagData.map((categoryData) => (
                         <button
-                          key={key}
-                          onClick={() => onMainCategorySelect(key)}
+                          key={categoryData.category.name}
+                          onClick={
+                            !isViewOnly
+                              ? () =>
+                                  onMainCategorySelect(
+                                    categoryData.category.name
+                                  )
+                              : undefined
+                          }
+                          disabled={isViewOnly}
                           className={`flex-shrink-0 rounded-md px-3.5 py-2.5 text-xs font-medium transition-colors ${
-                            selectedMainCategory === key
+                            selectedMainCategory === categoryData.category.name
                               ? "bg-[#1481fd] text-white"
-                              : "bg-white text-[#374254] hover:bg-gray-100"
-                          }`}
+                              : "bg-white text-[#374254]"
+                          } ${
+                            selectedMainCategory !==
+                              categoryData.category.name && !isViewOnly
+                              ? "hover:bg-gray-100"
+                              : ""
+                          } ${isViewOnly ? "cursor-default" : ""}`}
                         >
-                          {category.label}
+                          {categoryData.category.label}
                         </button>
-                      )
+                      ))
                     )}
                   </div>
                 </div>
@@ -140,22 +165,40 @@ const ProductModal = ({
                 {/* Sub Categories */}
                 <div className="tag-scroll flex w-1/2 flex-col overflow-y-auto">
                   <div className="flex flex-col gap-1 p-3.5">
-                    {selectedMainCategory &&
-                      productCategories[
-                        selectedMainCategory as keyof typeof productCategories
-                      ]?.subcategories.map((subCategory: string) => (
-                        <button
-                          key={subCategory}
-                          onClick={() => onSubCategoryToggle(subCategory)}
-                          className={`flex-shrink-0 rounded-md px-3.5 py-2.5 text-xs font-medium transition-colors ${
-                            selectedSubCategories.includes(subCategory)
-                              ? "bg-[#1481fd] text-white"
-                              : "bg-white text-[#374254] hover:bg-gray-100"
-                          }`}
-                        >
-                          {subCategory}
-                        </button>
-                      ))}
+                    {isLoading ? (
+                      <div className="flex items-center justify-center py-4">
+                        <div className="text-xs text-gray-500">로딩 중...</div>
+                      </div>
+                    ) : (
+                      selectedMainCategory &&
+                      hashtagData
+                        .find(
+                          (data) => data.category.name === selectedMainCategory
+                        )
+                        ?.hashtags.map((hashtag: Hashtag) => (
+                          <button
+                            key={hashtag.name}
+                            onClick={
+                              !isViewOnly
+                                ? () => onSubCategoryToggle(hashtag.tag)
+                                : undefined
+                            }
+                            disabled={isViewOnly}
+                            className={`flex-shrink-0 rounded-md px-3.5 py-2.5 text-xs font-medium transition-colors ${
+                              selectedSubCategories.includes(hashtag.tag)
+                                ? "bg-[#1481fd] text-white"
+                                : "bg-white text-[#374254]"
+                            } ${
+                              !selectedSubCategories.includes(hashtag.tag) &&
+                              !isViewOnly
+                                ? "hover:bg-gray-100"
+                                : ""
+                            } ${isViewOnly ? "cursor-default" : ""}`}
+                          >
+                            {hashtag.tag}
+                          </button>
+                        ))
+                    )}
                   </div>
                 </div>
               </div>
@@ -173,9 +216,18 @@ const ProductModal = ({
             <input
               type="text"
               value={currentProduct.brand || ""}
-              onChange={(e) => onProductChange({ brand: e.target.value })}
+              onChange={
+                !isViewOnly
+                  ? (e) => onProductChange({ brand: e.target.value })
+                  : undefined
+              }
               placeholder="브랜드명을 입력해주세요"
-              className="h-[38px] w-full rounded-[10px] border border-solid border-[#eaeaec] bg-[#f5f5f7] px-3 text-sm outline-none focus:border-[#1481fd] focus:bg-white"
+              readOnly={isViewOnly}
+              className={`h-[38px] w-full rounded-[10px] border border-solid border-[#eaeaec] bg-[#f5f5f7] px-3 text-sm outline-none ${
+                !isViewOnly
+                  ? "focus:border-[#1481fd] focus:bg-white"
+                  : "cursor-default opacity-75"
+              }`}
             />
           </div>
 
@@ -187,9 +239,18 @@ const ProductModal = ({
             <input
               type="text"
               value={currentProduct.title || ""}
-              onChange={(e) => onProductChange({ title: e.target.value })}
+              onChange={
+                !isViewOnly
+                  ? (e) => onProductChange({ title: e.target.value })
+                  : undefined
+              }
               placeholder="상품명을 입력해주세요"
-              className="h-[38px] w-full rounded-[10px] border border-solid border-[#eaeaec] bg-[#f5f5f7] px-3 text-sm outline-none focus:border-[#1481fd] focus:bg-white"
+              readOnly={isViewOnly}
+              className={`h-[38px] w-full rounded-[10px] border border-solid border-[#eaeaec] bg-[#f5f5f7] px-3 text-sm outline-none ${
+                !isViewOnly
+                  ? "focus:border-[#1481fd] focus:bg-white"
+                  : "cursor-default opacity-75"
+              }`}
             />
           </div>
         </div>

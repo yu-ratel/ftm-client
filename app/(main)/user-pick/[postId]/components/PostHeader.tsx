@@ -10,7 +10,7 @@ interface PostHeaderProps {
 
 const PostHeader = ({ postData }: PostHeaderProps) => {
   const { isBookmarked, handleBookmark, isLoading } = useBookmark();
-
+  console.log("postData", postData);
   return (
     <>
       {/* 제목 */}
@@ -20,7 +20,7 @@ const PostHeader = ({ postData }: PostHeaderProps) => {
 
       {/* 태그 섹션 */}
       <div className="mb-6 flex flex-wrap gap-1">
-        {postData.hashTags.map((tag: string, index: number) => (
+        {postData.hashtags.map((tag: string, index: number) => (
           <div
             key={index}
             className="relative flex flex-row items-center justify-center gap-3 rounded-md border border-solid border-[transparent] bg-[#e1e1e7] pb-1.5 pl-2 pr-2 pt-1.5"
