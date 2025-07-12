@@ -44,7 +44,7 @@ export async function middleware(request: NextRequest) {
 function redirectToLogin(request: NextRequest) {
   const loginUrl = new URL(ROUTES.SIGNIN, request.url);
   const response = NextResponse.redirect(loginUrl);
-  response.cookies.delete("SESSION");
+  // response.cookies.delete("SESSION");
   return response;
 }
 
