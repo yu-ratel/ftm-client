@@ -11,7 +11,7 @@ import { ApiResponse } from "@/types/api";
 
 // 비인증용 (쿠키 없음)
 const api: AxiosInstance = axios.create({
-  baseURL: isServer ? process.env.NEXT_PUBLIC_API_URL : "/api",
+  baseURL: isServer ? process.env.NEXT_PUBLIC_API_URL : "",
   headers: {
     "Content-Type": "application/json",
   },
@@ -20,7 +20,7 @@ const api: AxiosInstance = axios.create({
 
 // 인증용 (쿠키 포함)
 export const authApi: AxiosInstance = axios.create({
-  baseURL: isServer ? process.env.NEXT_PUBLIC_API_URL : "/api",
+  baseURL: isServer ? process.env.NEXT_PUBLIC_API_URL : "",
   headers: {
     "Content-Type": "application/json",
   },

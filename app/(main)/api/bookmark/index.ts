@@ -1,7 +1,7 @@
 import { authApi } from "@/lib/axios";
 import { ApiResponse } from "@/types/api";
 
-const BASE_PATH = "/users/bookmarks";
+const BASE_PATH = "/api/users/bookmarks";
 
 export interface BookmarkRequest {
   postId: number;

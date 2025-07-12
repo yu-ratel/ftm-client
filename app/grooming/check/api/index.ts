@@ -1,6 +1,6 @@
 import api from "@/lib/axios";
 import { GroomingCheckResponse, GroomingCheckRequest } from "../types";
-const BASE_PATH = "/grooming/tests";
+const BASE_PATH = "/api/grooming/tests";
 
 const getGroomingCheckList = async () => {
   const response = await api.get<GroomingCheckResponse>(BASE_PATH);
