@@ -7,7 +7,7 @@ import {
   HashtagsResponse,
 } from "../../types/PostType";
 
-const BASE_PATH = "/api/posts";
+const BASE_PATH = "/posts";
 
 export const getProductHashtags = async (): Promise<HashtagsResponse> => {
   try {

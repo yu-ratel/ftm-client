@@ -7,7 +7,7 @@ import {
 } from "../types";
 import { clearUser } from "@/stores/AuthStore";
 
-const BASE_PATH = "/api/auth";
+const BASE_PATH = "/auth";
 
 /**
  * 일반 로그인 API

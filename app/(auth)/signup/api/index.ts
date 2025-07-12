@@ -9,7 +9,7 @@ import {
   SocialSignupResponse,
 } from "../types";
 
-const BASE_PATH = "/api/users";
+const BASE_PATH = "/users";
 
 /**
  * 회원가입 API
@@ -108,7 +108,7 @@ export const socialSignup = async (data: {
   hashtags: string[];
 }): Promise<ApiResponse<SocialSignupResponse>> => {
   const config = { withCredentials: true };
-  const response = await api.post("/api/users/social", data, config);
+  const response = await api.post(`${BASE_PATH}/social`, data, config);
   return response.data;
 };
 
