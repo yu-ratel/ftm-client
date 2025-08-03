@@ -44,7 +44,7 @@ const Toolbar = ({ editor, onImageUpload, fileInputRef }: ToolbarProps) => {
   };
 
   return (
-    <div className="px-6">
+    <div>
       <div className="custom-toolbar">
         <button
           className="toolbar-button font-bold"

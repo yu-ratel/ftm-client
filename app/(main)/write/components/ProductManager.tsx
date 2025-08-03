@@ -29,7 +29,7 @@ const ProductManager = ({
     return name; // 매칭되지 않으면 원래 값 반환
   };
   return (
-    <section className="mx-6 mt-8">
+    <section className="mt-8">
       <div className="mb-2 flex items-center justify-between">
         <h2 className="text-lg">게시글에서 추천한 상품</h2>
       </div>

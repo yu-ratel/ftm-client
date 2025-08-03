@@ -4,6 +4,8 @@ import React, { useState } from "react";
 import { useMutation } from "@tanstack/react-query";
 import { verifyEmailCode, sendEmailAuthentication } from "../../api";
 import { AxiosError } from "axios";
+import { showModal } from "@/stores/ModalStore";
+import UserRecoveryPopup from "./UserRecoveryPopup";
 
 interface VerificationStepProps {
   email: string;
@@ -42,11 +44,23 @@ const VerificationStep = ({
   const verifyCodeMutation = useMutation({
     mutationFn: () => verifyEmailCode(email, code),
     onSuccess: (response) => {
+      if (response.data.isRecoverable) {
+        //복구팝업노출
+        showModal({
+          component: (
+            <UserRecoveryPopup email={email} nextStep={onVerificationSuccess} />
+          ),
+          container: "center",
+        });
+        return;
+      }
+
       if (response.data.isVerified) {
         onVerificationSuccess();
-      } else {
-        setMessage("인증 번호를 다시 확인해주세요.");
+        return;
       }
+
+      setMessage("인증 번호를 다시 확인해주세요.");
     },
     onError: (error: AxiosError<{ message?: string }>) => {
       const errorMessage =
@@ -95,7 +109,7 @@ const VerificationStep = ({
 
         <div className="flex items-center justify-between">
           <div className="flex-1">
-            <p className="text-secondary text-[12px]">
+            <p className="text-[12px] text-secondary">
               인증 번호를 받지 못하셨나요?
             </p>
             {/* {message && (

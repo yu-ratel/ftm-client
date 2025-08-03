@@ -4,6 +4,7 @@ import {
   Age,
   EmailAuthResponse,
   EmailDuplicationResponse,
+  RecoverUserResponse,
   SignupOptions,
   SignupRequest,
   SocialSignupResponse,
@@ -108,7 +109,7 @@ export const socialSignup = async (data: {
   hashtags: string[];
 }): Promise<ApiResponse<SocialSignupResponse>> => {
   const config = { withCredentials: true };
-  const response = await api.post("/api/users/social", data, config);
+  const response = await api.post(`${BASE_PATH}/social`, data, config);
   return response.data;
 };
 
@@ -123,4 +124,17 @@ export const deleteUser = async (): Promise<ApiResponse> => {
     console.error("회원가입 실패:", error);
     throw error;
   }
+};
+
+/**
+ * 회원 계정 복구 API
+ */
+export const recoverUser = async (
+  email: string
+): Promise<ApiResponse<RecoverUserResponse>> => {
+  const params = {
+    email,
+  };
+  const response = await api.post(`${BASE_PATH}/me/recover`, params);
+  return response.data;
 };

@@ -114,11 +114,11 @@ const WritePage = () => {
     }
   };
 
-  const handleCancel = () => {
-    openConfirm("작성 중인 내용이 저장되지 않습니다. 취소하시겠습니까?", () => {
-      router.back();
-    });
-  };
+  // const handleCancel = () => {
+  //   openConfirm("작성 중인 내용이 저장되지 않습니다. 취소하시겠습니까?", () => {
+  //     router.back();
+  //   });
+  // };
 
   // ===== TAG HANDLERS =====
   const handleOpenTagPopup = () => {
@@ -206,7 +206,7 @@ const WritePage = () => {
 
           <ActionButtons
             isSubmitting={isSubmitting}
-            onCancel={handleCancel}
+            // onCancel={handleCancel}
             onSave={handleSave}
           />
         </div>

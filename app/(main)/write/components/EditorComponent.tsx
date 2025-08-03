@@ -10,11 +10,18 @@ interface EditorComponentProps {
   onImagesChange: (images: File[]) => void;
 }
 
+// 이미지 URL과 File 객체를 매핑하는 인터페이스
+interface ImageMapping {
+  url: string;
+  file: File;
+}
+
 const EditorComponent = ({
   onContentChange,
   onImagesChange,
 }: EditorComponentProps) => {
   const [postImages, setPostImages] = useState<File[]>([]);
+  const [imageMappings, setImageMappings] = useState<ImageMapping[]>([]);
   const [isDragging, setIsDragging] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -44,15 +51,45 @@ const EditorComponent = ({
     },
   });
 
-  // 에디터 내용 변경 시 부모에게 알림
+  // 에디터 내용 변경 시 부모에게 알림 및 이미지 삭제 감지
   useEffect(() => {
     const handleContentChange = () => {
       onContentChange(editor.document);
+
+      // 현재 에디터에 있는 이미지 URL들 추출
+      const currentImageUrls = new Set<string>();
+      editor.document.forEach((block) => {
+        if (block.type === "image" && block.props.url) {
+          currentImageUrls.add(block.props.url);
+        }
+      });
+
+      // 삭제된 이미지 감지 및 postImages에서 제거
+      const deletedImages = imageMappings.filter(
+        (mapping) => !currentImageUrls.has(mapping.url)
+      );
+
+      if (deletedImages.length > 0) {
+        // 삭제된 이미지들의 File 객체를 postImages에서 제거
+        setPostImages((prev) =>
+          prev.filter(
+            (file) => !deletedImages.some((deleted) => deleted.file === file)
+          )
+        );
+
+        // 삭제된 이미지들을 imageMappings에서도 제거
+        setImageMappings((prev) =>
+          prev.filter(
+            (mapping) =>
+              !deletedImages.some((deleted) => deleted.url === mapping.url)
+          )
+        );
+      }
     };
 
-    const interval = setInterval(handleContentChange, 1000);
-    return () => clearInterval(interval);
-  }, [editor, onContentChange]);
+    // onChange 이벤트 리스너 등록
+    editor.onChange(handleContentChange);
+  }, [editor, onContentChange, imageMappings]);
 
   // 이미지 변경 시 부모에게 알림
   useEffect(() => {
@@ -72,6 +109,10 @@ const EditorComponent = ({
 
       // 에디터에 이미지 표시
       const imageUrl = URL.createObjectURL(file);
+
+      // 이미지 매핑 추가
+      setImageMappings((prev) => [...prev, { url: imageUrl, file }]);
+
       const selection = editor.getSelection?.();
       const referenceBlock = selection?.blocks?.[0] ?? editor.document?.[0];
       if (referenceBlock) {
@@ -131,6 +172,10 @@ const EditorComponent = ({
       setPostImages((prev) => [...prev, file]);
 
       const imageUrl = URL.createObjectURL(file);
+
+      // 이미지 매핑 추가
+      setImageMappings((prev) => [...prev, { url: imageUrl, file }]);
+
       const selection = editor.getSelection?.();
       const referenceBlock = selection?.blocks?.[0] ?? editor.document?.[0];
 

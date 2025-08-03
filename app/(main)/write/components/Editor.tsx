@@ -26,7 +26,7 @@ const Editor = ({
   fileInputRef,
 }: EditorProps) => {
   return (
-    <div className="px-6 pb-6">
+    <div className="pb-6">
       <div
         className={`editor-container ${isDragging ? "drag-active" : ""}`}
         onDragEnter={onDragEnter}

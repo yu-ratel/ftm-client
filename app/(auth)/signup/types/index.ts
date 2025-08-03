@@ -58,7 +58,7 @@ export interface EmailDuplicationResponse {
  */
 export interface EmailAuthResponse {
   isVerified: boolean;
-  // 기타 필요한 필드
+  isRecoverable: boolean;
 }
 
 /**
@@ -72,4 +72,8 @@ export interface SocialSignupResponse {
   mildLevelName: string | null;
   spicyLevelName: string | null;
   loginTime: string;
+}
+
+export interface RecoverUserResponse {
+  userId: number;
 }

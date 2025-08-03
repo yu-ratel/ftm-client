@@ -74,7 +74,6 @@ const PostContent = ({ postData }: PostContentProps) => {
   // content가 변경될 때마다 에디터 document 업데이트
   useEffect(() => {
     if (contentBlocks && contentBlocks.length > 0) {
-      console.log("Updating editor content with:", contentBlocks);
       editor.replaceBlocks(
         editor.document,
         contentBlocks as unknown as Parameters<typeof editor.replaceBlocks>[1]
@@ -83,16 +82,18 @@ const PostContent = ({ postData }: PostContentProps) => {
   }, [contentBlocks, editor]);
 
   return (
-    <div className="prose max-w-none">
-      <div className="min-h-96 rounded-lg border border-gray-200 p-4">
+    <div className="w-full">
+      <div className="min-h-96 w-full rounded-lg">
         {contentBlocks && contentBlocks.length > 0 ? (
-          <BlockNoteView
-            editor={editor}
-            editable={false}
-            formattingToolbar={false}
-            slashMenu={false}
-            sideMenu={false}
-          />
+          <div className="w-full [&_.bn-container]:!mx-0 [&_.bn-container]:!w-full [&_.bn-container]:!max-w-none [&_.bn-container]:!px-0 [&_.bn-editor]:!mx-0 [&_.bn-editor]:!w-full [&_.bn-editor]:!max-w-none [&_.bn-editor]:!px-0">
+            <BlockNoteView
+              editor={editor}
+              editable={false}
+              formattingToolbar={false}
+              slashMenu={false}
+              sideMenu={false}
+            />
+          </div>
         ) : (
           <div className="flex items-center justify-center text-gray-500">
             <p>콘텐츠가 없습니다.</p>
