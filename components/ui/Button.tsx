@@ -3,7 +3,7 @@ import { twMerge } from "tailwind-merge";
 
 interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   children: ReactNode;
-  variant?: "primary" | "secondary" | "outline" | "icon";
+  variant?: "primary" | "secondary" | "outline" | "icon" | "input";
   size?: "sm" | "md" | "lg";
 }
 
@@ -21,6 +21,7 @@ export default function Button({
     secondary: "bg-gray-100 text-primary hover:bg-gray-200",
     outline: "border border-gray-200 text-primary hover:bg-gray-50",
     icon: "rounded-full p-2 hover:bg-gray-100",
+    input: "w-full rounded-md border border-gray-200 bg-gray-100/50 p-2",
   };
 
   const sizeStyles = {

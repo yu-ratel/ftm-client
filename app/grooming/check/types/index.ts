@@ -48,6 +48,16 @@ type GroomingCheckResultResponse = ApiResponse<{
   scores: Record<string, number>;
 }>;
 
+interface GroomingCheckResultSaveRequest {
+  userId: number;
+  groomingLevelId: number;
+  totalScore: number;
+  results: {
+    questionId: number;
+    answerIds: number[];
+  }[];
+}
+
 export type {
   GroomingCheckAnswerType,
   GroomingCheckResponse,
@@ -56,4 +66,5 @@ export type {
   GroomingCheckResultGradesType,
   LevelType,
   GroomingCheckResultResponse,
+  GroomingCheckResultSaveRequest,
 };

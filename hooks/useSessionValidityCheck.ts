@@ -1,10 +1,8 @@
 import { useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { useRouter } from "next/navigation";
 import { useAuthStore } from "@/stores/AuthStore";
 import { checkSessionValidity } from "@/app/(auth)/signin/api";
 import { openAlert } from "@/utils/modal/OpenAlert";
-import { ROUTES } from "@/constants/routes";
 import { useSignOut } from "@/app/(auth)/signin/hooks/useSignOut";
 
 export const useSessionValidityCheck = () => {

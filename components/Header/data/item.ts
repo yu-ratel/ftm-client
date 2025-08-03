@@ -1,18 +1,20 @@
+import { ROUTES } from "@/constants/routes";
+
 export const headerLinks = [
   {
     label: "홈",
-    href: "/",
+    href: ROUTES.ROOT,
   },
   {
     label: "유저Pick",
-    href: "/user-pick",
+    href: ROUTES.USER_PICK,
   },
   {
     label: "에디터Pick",
-    href: "/editor-pick",
+    href: ROUTES.EDITOR_PICK,
   },
   {
     label: "그루밍 지수 검사",
-    href: "/grooming",
+    href: ROUTES.GROOMING,
   },
 ];

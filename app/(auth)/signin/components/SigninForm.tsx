@@ -20,6 +20,7 @@ const SigninForm = () => {
   useEffect(() => {
     if (getUser()) {
       clearUser();
+      console.log("SigninForm");
       openAlert("로그인이 만료되었습니다. 다시 로그인해주세요.");
     }
   }, []);

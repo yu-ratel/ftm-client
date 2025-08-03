@@ -1,7 +1,9 @@
 "use client";
+import Link from "next/link";
 import Button from "@/components/ui/Button";
 import { useAuthStore } from "@/stores/AuthStore";
 import { openSigninSelectModal } from "@/utils/modal/OpenSigninSelectModal";
+import { ROUTES } from "@/constants/routes";
 import React from "react";
 
 const ProfileCard: React.FC = () => {
@@ -25,20 +27,23 @@ const ProfileCard: React.FC = () => {
   }
 
   return (
-    <div className="relative h-[154px] w-72 rounded-xl bg-[#f5f5f7]">
-      <div className="absolute left-[25px] top-6 h-12 w-12 rounded-full bg-[#d9d9d9]" />
-      <div className="absolute left-[85px] top-[29px] text-base font-bold leading-none text-black">
-        {user?.nickname}
-      </div>
-      <div className="absolute left-[85px] top-[53px] text-sm leading-none text-black">
-        {user?.mildLevelName}, @asvb1234
-      </div>
-      <div className="absolute left-6 top-[92px] flex h-[38px] w-[116px] items-center justify-center rounded-lg bg-[#1481fd]">
-        <span className="text-sm font-semibold text-white">프로필</span>
-      </div>
-      <div className="absolute left-[148px] top-[92px] flex h-[38px] w-[116px] items-center justify-center rounded-lg bg-[#8cb0e7]">
-        <span className="text-sm font-semibold text-white">기록</span>
-      </div>
+    <div className="flex h-[154px] w-72 flex-col justify-center gap-6 rounded-xl bg-[#f5f5f7] p-6">
+      <section className="flex items-center gap-3">
+        <div className="h-12 w-12 rounded-full bg-[#d9d9d9]" />
+        <div>
+          <h3 className="text-base font-bold leading-none text-black">
+            {user?.nickname}
+          </h3>
+          <p className="text-sm leading-none text-black">
+            {user?.mildLevelName}, @asvb1234
+          </p>
+        </div>
+      </section>
+      <Link href={ROUTES.MY_PAGE}>
+        <Button variant="primary" size="sm" className="h-9 w-full rounded-lg">
+          마이 페이지
+        </Button>
+      </Link>
     </div>
   );
 };

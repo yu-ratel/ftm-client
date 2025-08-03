@@ -19,7 +19,7 @@ function KakaoCallbackContent() {
     const code = searchParams.get("code");
 
     if (!code) {
-      router.push(ROUTES.HOME);
+      router.push(ROUTES.ROOT);
       return;
     }
 

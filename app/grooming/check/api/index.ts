@@ -1,5 +1,9 @@
 import api from "@/lib/axios";
-import { GroomingCheckResponse, GroomingCheckRequest } from "../types";
+import {
+  GroomingCheckResponse,
+  GroomingCheckRequest,
+  GroomingCheckResultSaveRequest,
+} from "../types";
 const BASE_PATH = "/api/grooming/tests";
 
 const getGroomingCheckList = async () => {
@@ -7,15 +11,17 @@ const getGroomingCheckList = async () => {
   return response.data;
 };
 
-// const saveGroomingCheckResult = async (data: GroomingCheckResult) => {
-//   const response = await api.post(`${BASE_PATH}/save`, data);
-//   return response.data;
-// };
-
 const createGroomingCheckResult = async (data: GroomingCheckRequest) => {
   const response = await api.post(`${BASE_PATH}/submission`, {
     submissions: data.answers,
   });
+  return response.data;
+};
+
+const saveGroomingCheckResult = async (
+  data: GroomingCheckResultSaveRequest
+) => {
+  const response = await api.post(`${BASE_PATH}`, data);
   return response.data;
 };
 
@@ -34,4 +40,8 @@ const createGroomingCheckResult = async (data: GroomingCheckRequest) => {
 //   return response.data;
 // };
 
-export { getGroomingCheckList, createGroomingCheckResult };
+export {
+  getGroomingCheckList,
+  createGroomingCheckResult,
+  saveGroomingCheckResult,
+};

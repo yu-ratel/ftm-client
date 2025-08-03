@@ -15,7 +15,7 @@ const LandingView = () => {
 
   return (
     <main className="flex max-xl:justify-center">
-      <section className="flex w-1/2 flex-col justify-between py-32 pl-36 font-normal text-blue-500 max-xl:w-[704px] max-xl:pl-0 max-md:px-8 max-sm:items-center max-sm:justify-start max-sm:gap-10">
+      <section className="flex w-1/2 flex-col justify-between gap-16 py-32 pl-36 font-normal text-blue-500 max-xl:w-[704px] max-xl:pl-0 max-md:px-8 max-sm:items-center max-sm:justify-start max-sm:gap-10">
         <h1 className="whitespace-pre-line text-[64px] leading-tight max-md:text-[52px] max-sm:text-[32px]">
           <span className="max-md:hidden">{LANDING_TITLE}</span>
           <span className="hidden max-md:block">{MOBILE_LANDING_TITLE}</span>

@@ -49,6 +49,7 @@ const errorHandler = async (error: AxiosError<ApiResponse>) => {
         return Promise.reject(error);
       }
       clearUser();
+      console.log("errorHandler");
       await openAlert("로그인이 만료되었습니다. 다시 로그인해주세요.", () => {
         window.location.href = ROUTES.SIGNIN;
       });

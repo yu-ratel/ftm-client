@@ -11,6 +11,7 @@ import {
   GroomingCheckResponse,
   GroomingCheckSelectedAnswerType,
 } from "../types";
+import { ROUTES } from "@/constants/routes";
 
 //TODO: 서버 api 캐싱 관련 논의 (react query 사용)
 const GroomingCheck = ({
@@ -24,7 +25,7 @@ const GroomingCheck = ({
     initialData: serverData,
   });
 
-  const { groomingTests = [], totalCount = 0 } = data.data || {};
+  const { groomingTests = [] } = data.data || {};
   const [currentIndex, setCurrentIndex] = useState(0);
   const [selectedAnswers, setSelectedAnswers] = useState<
     GroomingCheckSelectedAnswerType[]
@@ -34,17 +35,30 @@ const GroomingCheck = ({
     selectedAnswers[currentIndex]?.answerIds.length === 0;
   const multiSelectIds = [1, 3, 8, 9, 14, 15, 17];
 
+  // 선택된 답변 저장
   useEffect(() => {
-    if (totalCount > 0) {
-      setSelectedAnswers(
-        groomingTests.map((test) => ({
-          questionId: test.groomingTestQuestionId,
-          groomingCategory: test.groomingCategory,
-          answerIds: [],
-        }))
+    if (selectedAnswers.length > 0) {
+      localStorage.setItem(
+        "grooming-selected-answers",
+        JSON.stringify(selectedAnswers)
       );
     }
-  }, [data, totalCount, groomingTests]);
+  }, [selectedAnswers]);
+
+  // 선택된 답변이 있다면 불러오기 없다면 answerIds 초기화
+  useEffect(() => {
+    const savedAnswers = localStorage.getItem("grooming-selected-answers");
+
+    if (savedAnswers) return setSelectedAnswers(JSON.parse(savedAnswers));
+
+    setSelectedAnswers(
+      groomingTests.map((test) => ({
+        questionId: test.groomingTestQuestionId,
+        groomingCategory: test.groomingCategory,
+        answerIds: [],
+      }))
+    );
+  }, [groomingTests]);
 
   if (isLoading || !groomingTests.length) return <div>Loading...</div>;
 
@@ -113,8 +127,13 @@ const GroomingCheck = ({
 
   const onClickResult = () => {
     router.push(
-      `/grooming/result/${encodeURIComponent(JSON.stringify(selectedAnswers))}`
+      `${ROUTES.GROOMING_RESULT}?answers=${encodeURIComponent(
+        JSON.stringify(selectedAnswers)
+      )}`
     );
+
+    // 결과 제출시 선택된 답변 삭제
+    localStorage.removeItem("grooming-selected-answers");
   };
 
   return (
