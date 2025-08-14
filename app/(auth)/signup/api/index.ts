@@ -121,7 +121,7 @@ export const deleteUser = async (): Promise<ApiResponse> => {
     const response = await authApi.delete<ApiResponse>(`${BASE_PATH}`);
     return response.data;
   } catch (error) {
-    console.error("회원가입 실패:", error);
+    console.error("회원탈퇴 실패:", error);
     throw error;
   }
 };
