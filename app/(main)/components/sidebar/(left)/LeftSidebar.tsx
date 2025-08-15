@@ -1,15 +1,29 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { FiUser, FiBookmark, FiList } from "react-icons/fi";
 import SectionTitle from "../SectionTitle";
 import SideCategoryItem from "./SideCategoryItem";
 import ProfileCard from "./ProfileCard";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { ROUTES } from "@/constants/routes";
 
 export default function LeftSidebar() {
-  const [activeMenu, setActiveMenu] = useState("유형별 추천");
+  // 현재 경로에 따라 activeMenu 결정
   const pathname = usePathname();
+  const router = useRouter();
+
+  const getActiveMenuFromPath = useCallback(() => {
+    if (pathname.includes("/user-pick/hash-tag")) return "해시태그 추천";
+    if (pathname.includes("/user-pick")) return "유형별 추천";
+    return "유형별 추천";
+  }, [pathname]);
+
+  const [activeMenu, setActiveMenu] = useState(getActiveMenuFromPath());
+
+  // 경로 변경 시 activeMenu 업데이트
+  useEffect(() => {
+    setActiveMenu(getActiveMenuFromPath());
+  }, [getActiveMenuFromPath]);
 
   const allMenuItems = [
     { id: "유형별 추천", icon: <FiUser />, label: "유형별 추천" },
@@ -27,6 +41,19 @@ export default function LeftSidebar() {
     ? userPickMenuItems
     : allMenuItems;
 
+  const handleMenuClick = (menuId: string) => {
+    setActiveMenu(menuId);
+
+    // 해시태그 추천 클릭 시 user-pick 내 해시태그 페이지로 이동
+    if (menuId === "해시태그 추천") {
+      router.push(ROUTES.USER_PICK_HASH_TAG);
+    }
+    // 유형별 추천 클릭 시 user-pick 메인 페이지로 이동
+    else if (menuId === "유형별 추천") {
+      router.push(ROUTES.USER_PICK);
+    }
+  };
+
   return (
     <div className="ml-[18px] flex h-auto min-h-[558px] w-[324px] flex-col gap-[110px] p-4">
       <div className="min-h-[200px] w-[288px]">
@@ -42,7 +69,7 @@ export default function LeftSidebar() {
               icon={item.icon}
               label={item.label}
               isActive={activeMenu === item.id}
-              onClick={() => setActiveMenu(item.id)}
+              onClick={() => handleMenuClick(item.id)}
             />
           ))}
         </ul>
