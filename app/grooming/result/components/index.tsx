@@ -81,7 +81,7 @@ const ResultView = ({ saveData, answers }: Props) => {
 
       saveGroomingCheckResult(saveRequestData).catch(console.error);
     }
-  }, [data, answers]);
+  }, [answers]);
 
   // 추후 로딩 스피너 공통 컴포넌트 필요
   if (isLoading)
@@ -128,7 +128,9 @@ const ResultView = ({ saveData, answers }: Props) => {
 
       <section className="flex-1 max-md:w-full">
         <div className="grid size-full grid-cols-2 gap-4">
-          {Object.entries(detailData.grades || {}).map(([key, grade]) => (
+          {Object.entries(
+            answers ? data?.data.grades || {} : detailData.grades || {}
+          ).map(([key, grade]) => (
             <GradeCard
               key={key}
               category={key}
