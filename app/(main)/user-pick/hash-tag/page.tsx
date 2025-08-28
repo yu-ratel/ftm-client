@@ -10,8 +10,6 @@ const HashTagPage = () => {
     "로션",
     "클렌저",
   ]);
-  const [sortBy, setSortBy] = useState("인기순");
-  const [hasSelectedProduct, setHasSelectedProduct] = useState(false);
 
   const categories = [
     "패션",
@@ -335,7 +333,6 @@ const HashTagPage = () => {
               <div
                 key={product.id}
                 onClick={() => {
-                  setHasSelectedProduct(true);
                   // 클릭된 상품을 선택된 상태로 변경 (다른 상품들은 선택 해제)
                   const updatedProducts = products.map((p, i) => ({
                     ...p,
@@ -398,16 +395,10 @@ const HashTagPage = () => {
             /* 상품이 선택된 경우: 게시물 피드 */
             <>
               <div className="mb-4 flex items-center justify-end gap-4 lg:mb-[24px] lg:gap-[18px]">
-                <button
-                  onClick={() => setSortBy("최신순")}
-                  className="text-sm font-medium text-[#374254] sm:text-base"
-                >
+                <button className="text-sm font-medium text-[#374254] sm:text-base">
                   최신순
                 </button>
-                <button
-                  onClick={() => setSortBy("인기순")}
-                  className="text-sm font-medium text-[#374254] sm:text-base"
-                >
+                <button className="text-sm font-medium text-[#374254] sm:text-base">
                   인기순
                 </button>
               </div>

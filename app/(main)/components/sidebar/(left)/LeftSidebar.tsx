@@ -14,8 +14,8 @@ export default function LeftSidebar() {
 
   const getActiveMenuFromPath = useCallback(() => {
     if (pathname.includes("/user-pick/hash-tag")) return "해시태그 추천";
-    if (pathname.includes("/user-pick")) return "유형별 추천";
-    return "유형별 추천";
+    if (pathname.includes("/user-pick")) return "그루밍 라운지";
+    return "그루밍 라운지";
   }, [pathname]);
 
   const [activeMenu, setActiveMenu] = useState(getActiveMenuFromPath());
@@ -26,14 +26,14 @@ export default function LeftSidebar() {
   }, [getActiveMenuFromPath]);
 
   const allMenuItems = [
-    { id: "유형별 추천", icon: <FiUser />, label: "유형별 추천" },
+    { id: "그루밍 라운지", icon: <FiUser />, label: "그루밍 라운지" },
     { id: "해시태그 추천", icon: <FiBookmark />, label: "해시태그 추천" },
     { id: "step-by-step", icon: <FiUser />, label: "Step by Step" },
     { id: "핏더맨 큐레이션", icon: <FiList />, label: "핏더맨 큐레이션" },
   ];
 
   const userPickMenuItems = [
-    { id: "유형별 추천", icon: <FiUser />, label: "유형별 추천" },
+    { id: "그루밍 라운지", icon: <FiUser />, label: "그루밍 라운지" },
     { id: "해시태그 추천", icon: <FiBookmark />, label: "해시태그 추천" },
   ];
 
@@ -48,8 +48,8 @@ export default function LeftSidebar() {
     if (menuId === "해시태그 추천") {
       router.push(ROUTES.USER_PICK_HASH_TAG);
     }
-    // 유형별 추천 클릭 시 user-pick 메인 페이지로 이동
-    else if (menuId === "유형별 추천") {
+    // 그루밍 라운지 클릭 시 user-pick 메인 페이지로 이동
+    else if (menuId === "그루밍 라운지") {
       router.push(ROUTES.USER_PICK);
     }
   };
