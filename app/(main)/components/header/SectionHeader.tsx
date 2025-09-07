@@ -1,6 +1,4 @@
-import { showModal, hideModal } from "@/stores/ModalStore";
 import React from "react";
-import FilterPopup from "../modal/FilterPopup";
 
 interface SectionHeaderProps {
   title: string;
@@ -8,33 +6,19 @@ interface SectionHeaderProps {
 }
 
 export default function SectionHeader({ title }: SectionHeaderProps) {
-  const handleFilterClick = () => {
-    showModal({
-      component: (
-        <FilterPopup
-          onClose={hideModal}
-          onApply={(categories, tags) => {
-            console.log({ categories, tags });
-            hideModal();
-          }}
-        />
-      ),
-    });
-  };
-
   return (
-    <div className="flex items-center justify-between border-b border-[#E1E1E7] pb-4">
+    <div className="flex items-center justify-between border-[#E1E1E7]">
       <h2 className="text-2xl font-bold text-[#374254]">{title}</h2>
       <div className="flex items-center gap-4">
-        <div className="flex items-center gap-4">
+        {/* <div className="flex items-center gap-4">
           <button className="flex h-10 items-center justify-center text-base font-medium leading-none text-[#6F7C90]">
             인기순
           </button>
           <button className="flex h-10 items-center justify-center text-base font-medium leading-none text-[#6F7C90]">
             최신순
           </button>
-        </div>
-        <div>
+        </div> */}
+        {/* <div>
           <button
             onClick={handleFilterClick}
             className="flex h-10 w-10 items-center justify-center rounded-full bg-[#F7F7FA]"
@@ -84,7 +68,7 @@ export default function SectionHeader({ title }: SectionHeaderProps) {
               />
             </svg>
           </button>
-        </div>
+        </div> */}
       </div>
     </div>
   );
