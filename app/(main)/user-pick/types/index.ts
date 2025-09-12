@@ -12,6 +12,7 @@ export interface UserPickPost {
   scrapCount: number;
   imageUrl: string;
   hashtags: string[];
+  isBookmarked?: boolean;
 }
 
 /**
@@ -26,4 +27,5 @@ export interface PostData {
   bookmarks: number;
   tags?: string[];
   ranking?: number;
+  isBookmarked?: boolean;
 }

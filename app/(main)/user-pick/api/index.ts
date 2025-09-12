@@ -30,3 +30,15 @@ export const getUserPickBiblePosts =
     );
     return response.data;
   };
+
+/**
+ * 유저픽 북마크 많은 게시물 조회 API 함수
+ * GET /api/posts/userpick/top-bookmarks
+ */
+export const getUserPickTopBookmarks =
+  async (): Promise<UserPickPostsResponse> => {
+    const response = await axios.get<UserPickPostsResponse>(
+      "/api/posts/userpick/top-bookmarks"
+    );
+    return response.data;
+  };

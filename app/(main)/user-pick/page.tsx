@@ -10,65 +10,12 @@ import CategorySection, {
   SortOption,
 } from "./components/CategorySection";
 import { useRouter } from "next/navigation";
-import { getUserPickPopularPosts, getUserPickBiblePosts } from "./api";
+import {
+  getUserPickPopularPosts,
+  getUserPickBiblePosts,
+  getUserPickTopBookmarks,
+} from "./api";
 import { UserPickPost, PostData } from "./types";
-
-const bookmarkPicks = [
-  {
-    id: 1,
-    title: "남자 기초 화장품의 모든것",
-    image: "/user-pick-test/images/user_pick_sample.png",
-    author: "핏더맨",
-    likes: 0,
-    bookmarks: 0,
-    tags: ["프레그런스", "향수", "헤어 스타일링"],
-  },
-  {
-    id: 2,
-    title: "남자 기초 화장품의 모든것",
-    image: "/user-pick-test/images/user_pick_sample.png",
-    author: "핏더맨",
-    likes: 0,
-    bookmarks: 0,
-    tags: ["프레그런스", "향수", "헤어 스타일링"],
-  },
-  {
-    id: 3,
-    title: "남자 기초 화장품의 모든것",
-    image: "/user-pick-test/images/user_pick_sample.png",
-    author: "핏더맨",
-    likes: 0,
-    bookmarks: 0,
-    tags: ["프레그런스", "향수", "헤어 스타일링"],
-  },
-  {
-    id: 4,
-    title: "남자 기초 화장품의 모든것",
-    image: "/user-pick-test/images/user_pick_sample.png",
-    author: "핏더맨",
-    likes: 0,
-    bookmarks: 0,
-    tags: ["프레그런스", "향수", "헤어 스타일링"],
-  },
-  {
-    id: 5,
-    title: "남자 기초 화장품의 모든것",
-    image: "/user-pick-test/images/user_pick_sample.png",
-    author: "핏더맨",
-    likes: 0,
-    bookmarks: 0,
-    tags: ["프레그런스", "향수", "헤어 스타일링"],
-  },
-  {
-    id: 6,
-    title: "남자 기초 화장품의 모든것",
-    image: "/user-pick-test/images/user_pick_sample.png",
-    author: "핏더맨",
-    likes: 0,
-    bookmarks: 0,
-    tags: ["프레그런스", "향수", "헤어 스타일링"],
-  },
-];
 
 // 그루밍 이야기 데이터
 const generateStoryPosts = (sortOption: SortOption) => {
@@ -104,6 +51,7 @@ const transformApiDataToPostData = (apiData: UserPickPost[]): PostData[] => {
     bookmarks: post.scrapCount,
     tags: post.hashtags,
     ranking: post.ranking,
+    isBookmarked: post.isBookmarked || false,
   }));
 };
 
@@ -138,6 +86,18 @@ export default function UserPick() {
     gcTime: 10 * 60 * 1000, // 10분
   });
 
+  const {
+    data: topBookmarksResponse,
+    isLoading: isLoadingTopBookmarks,
+    error: errorTopBookmarks,
+  } = useQuery({
+    queryKey: ["userPickTopBookmarks"],
+    queryFn: getUserPickTopBookmarks,
+    enabled: activeCategory === "grooming-award",
+    staleTime: 5 * 60 * 1000, // 5분
+    gcTime: 10 * 60 * 1000, // 10분
+  });
+
   // API 데이터를 PostSection 형태로 변환
   const popularPosts: PostData[] = popularPostsResponse?.data
     ? transformApiDataToPostData(popularPostsResponse.data)
@@ -145,6 +105,10 @@ export default function UserPick() {
 
   const biblePosts: PostData[] = biblePostsResponse?.data
     ? transformApiDataToPostData(biblePostsResponse.data)
+    : [];
+
+  const topBookmarksPosts: PostData[] = topBookmarksResponse?.data
+    ? transformApiDataToPostData(topBookmarksResponse.data)
     : [];
 
   return (
@@ -176,13 +140,21 @@ export default function UserPick() {
             posts={popularPosts}
             layout="2x2-grid"
             showRanking={true}
+            sectionType="popular"
           />
 
-          {/* 다시 찾아보고 싶은 그루밍 섹션 */}
+          {/* 다시 찾아보고 싶은 그루밍 섹션 - API 데이터 연동 */}
           <HorizontalScrollSection
             title="다시 찾아보고 싶은 그루밍"
-            subtitle="북마크 많은 게시물"
-            posts={bookmarkPicks}
+            subtitle={
+              isLoadingTopBookmarks
+                ? "데이터를 불러오는 중..."
+                : errorTopBookmarks
+                  ? "데이터 로딩 실패 - 기본 데이터 표시 중"
+                  : "북마크가 가장 많은 게시물"
+            }
+            posts={topBookmarksPosts}
+            sectionType="topBookmarks"
           />
 
           {/* 그루밍 바이블 섹션 - API 데이터 연동 */}
@@ -198,6 +170,7 @@ export default function UserPick() {
             posts={biblePosts}
             layout="2x2-grid"
             showRanking={false}
+            sectionType="bible"
           />
         </>
       )}

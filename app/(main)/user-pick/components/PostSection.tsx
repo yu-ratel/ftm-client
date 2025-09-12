@@ -1,15 +1,6 @@
 "use client";
 import PostCard from "./PostCard";
-
-interface PostData {
-  id: number;
-  title: string;
-  image: string;
-  author: string;
-  likes: number;
-  bookmarks: number;
-  tags?: string[];
-}
+import { PostData } from "../types";
 
 interface PostSectionProps {
   title: string;
@@ -17,6 +8,7 @@ interface PostSectionProps {
   posts: PostData[];
   layout: "3-column" | "2x2-grid";
   showRanking?: boolean;
+  sectionType?: "popular" | "bible" | "topBookmarks";
 }
 
 export default function PostSection({
@@ -25,6 +17,7 @@ export default function PostSection({
   posts,
   layout,
   showRanking = false,
+  sectionType,
 }: PostSectionProps) {
   const gridClasses = {
     "3-column": "grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3",
@@ -51,6 +44,8 @@ export default function PostSection({
             tags={post.tags}
             size={cardSize}
             showRanking={showRanking}
+            isBookmarked={post.isBookmarked || false}
+            sectionType={sectionType}
           />
         ))}
       </div>

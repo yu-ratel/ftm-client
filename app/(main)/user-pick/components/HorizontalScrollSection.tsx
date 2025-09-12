@@ -2,27 +2,20 @@
 import { useState, useEffect } from "react";
 import ScrollContainer from "react-indiana-drag-scroll";
 import PostCard from "./PostCard";
-
-interface PostData {
-  id: number;
-  title: string;
-  image: string;
-  author: string;
-  likes: number;
-  bookmarks: number;
-  tags?: string[];
-}
+import { PostData } from "../types";
 
 interface HorizontalScrollSectionProps {
   title: string;
   subtitle: string;
   posts: PostData[];
+  sectionType?: "popular" | "bible" | "topBookmarks";
 }
 
 export default function HorizontalScrollSection({
   title,
   subtitle,
   posts,
+  sectionType,
 }: HorizontalScrollSectionProps) {
   const [isMobile, setIsMobile] = useState(false);
 
@@ -71,6 +64,8 @@ export default function HorizontalScrollSection({
                 bookmarks={post.bookmarks}
                 tags={post.tags}
                 size="small"
+                isBookmarked={post.isBookmarked || false}
+                sectionType={sectionType}
               />
             </div>
           ))}
@@ -88,4 +83,3 @@ export default function HorizontalScrollSection({
     </div>
   );
 }
-
