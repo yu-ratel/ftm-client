@@ -4,6 +4,8 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useBookmark } from "@/hooks/useBookmark";
 import { useQueryClient } from "@tanstack/react-query";
+import { openSigninSelectModal } from "@/utils/modal/OpenSigninSelectModal";
+import { useAuthStore } from "@/stores/AuthStore";
 
 interface PostCardProps {
   id: number;
@@ -34,6 +36,7 @@ export default function PostCard({
 }: PostCardProps) {
   const router = useRouter();
   const queryClient = useQueryClient();
+  const { user } = useAuthStore();
 
   const { handleBookmark, isLoading } = useBookmark({
     initialBookmarked: isBookmarked,
@@ -89,7 +92,11 @@ export default function PostCard({
             onClick={(e) => {
               e.stopPropagation();
               if (!isLoading) {
-                handleBookmark(id);
+                if (!user) {
+                  openSigninSelectModal();
+                } else {
+                  handleBookmark(id);
+                }
               }
             }}
           >

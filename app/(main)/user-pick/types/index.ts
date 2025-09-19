@@ -2,7 +2,7 @@
  * 유저픽 게시물 API 응답 데이터 (공통)
  */
 export interface UserPickPost {
-  ranking: number;
+  ranking?: number;
   postId: number;
   title: string;
   authorId: number;
@@ -13,6 +13,7 @@ export interface UserPickPost {
   imageUrl: string;
   hashtags: string[];
   isBookmarked?: boolean;
+  userBookmarkYn?: boolean;
 }
 
 /**

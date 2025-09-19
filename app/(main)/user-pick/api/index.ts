@@ -42,3 +42,35 @@ export const getUserPickTopBookmarks =
     );
     return response.data;
   };
+
+/**
+ * 그루밍 이야기 게시물 조회 API 함수 (무한 스크롤)
+ * GET /api/posts/userpick/all/latest
+ */
+export interface GroomingStoryParams {
+  limit: number;
+  lastCursor?: string;
+}
+
+export interface GroomingStoryResponse {
+  data: UserPickPost[];
+  nextCursorDateTime: string | null;
+  hasNext: boolean;
+}
+
+export interface GroomingStoryApiResponse {
+  status: number;
+  code: string;
+  message: string;
+  data: GroomingStoryResponse;
+}
+
+export const getGroomingStoryPosts = async (
+  params: GroomingStoryParams
+): Promise<GroomingStoryApiResponse> => {
+  const response = await axios.get<GroomingStoryApiResponse>(
+    "/api/posts/userpick/all/latest",
+    { params }
+  );
+  return response.data;
+};

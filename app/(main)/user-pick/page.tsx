@@ -15,28 +15,8 @@ import {
   getUserPickBiblePosts,
   getUserPickTopBookmarks,
 } from "./api";
+import { useInfiniteGroomingStory } from "@/hooks/useInfiniteGroomingStory";
 import { UserPickPost, PostData } from "./types";
-
-// 그루밍 이야기 데이터
-const generateStoryPosts = (sortOption: SortOption) => {
-  const basePosts = Array.from({ length: 9 }, (_, index) => ({
-    id: index + 1,
-    title: "남자 기초 화장품의 모든것",
-    image: "/user-pick-test/images/user_pick_sample.png",
-    author: "핏더맨",
-    likes: Math.floor(Math.random() * 3000),
-    bookmarks: Math.floor(Math.random() * 100),
-    tags: ["프레그런스", "향수", "헤어 스타일링"],
-  }));
-
-  // 정렬 로직
-  return [...basePosts].sort((a, b) => {
-    if (sortOption === "popular") {
-      return b.likes - a.likes;
-    }
-    return b.id - a.id; // 최신순 (ID 역순)
-  });
-};
 
 // API 데이터를 PostSection에서 사용하는 형태로 변환하는 함수
 const transformApiDataToPostData = (apiData: UserPickPost[]): PostData[] => {
@@ -51,7 +31,7 @@ const transformApiDataToPostData = (apiData: UserPickPost[]): PostData[] => {
     bookmarks: post.scrapCount,
     tags: post.hashtags,
     ranking: post.ranking,
-    isBookmarked: post.isBookmarked || false,
+    isBookmarked: post.isBookmarked || post.userBookmarkYn || false,
   }));
 };
 
@@ -109,6 +89,26 @@ export default function UserPick() {
 
   const topBookmarksPosts: PostData[] = topBookmarksResponse?.data
     ? transformApiDataToPostData(topBookmarksResponse.data)
+    : [];
+
+  // 그루밍 이야기 무한 스크롤
+  const {
+    data: groomingStoryData,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+    isLoading: isLoadingGroomingStory,
+    error: errorGroomingStory,
+  } = useInfiniteGroomingStory({
+    limit: 5,
+    enabled: activeCategory === "grooming-story",
+  });
+
+  // 그루밍 이야기 데이터 변환
+  const groomingStoryPosts: PostData[] = groomingStoryData?.pages
+    ? groomingStoryData.pages.flatMap((page) =>
+        transformApiDataToPostData(page.data.data)
+      )
     : [];
 
   return (
@@ -179,10 +179,19 @@ export default function UserPick() {
       {activeCategory === "grooming-story" && (
         <PostSection
           title="요즘 인기있는 글"
-          subtitle={`${sortOption === "latest" ? "최신순" : "인기순"}으로 정렬된 게시물`}
-          posts={generateStoryPosts(sortOption)}
+          subtitle={
+            isLoadingGroomingStory
+              ? "데이터를 불러오는 중..."
+              : errorGroomingStory
+                ? "데이터 로딩 실패"
+                : "최신순으로 정렬된 게시물"
+          }
+          posts={groomingStoryPosts}
           layout="3-column"
           showRanking={false}
+          hasNextPage={hasNextPage}
+          isFetchingNextPage={isFetchingNextPage}
+          onLoadMore={() => fetchNextPage()}
         />
       )}
 
