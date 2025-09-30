@@ -46,7 +46,7 @@ export default function UserPick() {
     isLoading: isLoadingPopular,
     error: errorPopular,
   } = useQuery({
-    queryKey: ["userPickPopularPosts"],
+    queryKey: ["userPickPopularPosts", user?.id],
     queryFn: getUserPickPopularPosts,
     enabled: activeCategory === "grooming-award",
     staleTime: 5 * 60 * 1000, // 5분
@@ -58,7 +58,7 @@ export default function UserPick() {
     isLoading: isLoadingBible,
     error: errorBible,
   } = useQuery({
-    queryKey: ["userPickBiblePosts"],
+    queryKey: ["userPickBiblePosts", user?.id],
     queryFn: getUserPickBiblePosts,
     enabled: activeCategory === "grooming-award",
     staleTime: 5 * 60 * 1000, // 5분
@@ -70,7 +70,7 @@ export default function UserPick() {
     isLoading: isLoadingTopBookmarks,
     error: errorTopBookmarks,
   } = useQuery({
-    queryKey: ["userPickTopBookmarks"],
+    queryKey: ["userPickTopBookmarks", user?.id],
     queryFn: getUserPickTopBookmarks,
     enabled: activeCategory === "grooming-award",
     staleTime: 5 * 60 * 1000, // 5분
