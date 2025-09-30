@@ -64,7 +64,7 @@ export default function HorizontalScrollSection({
                 bookmarks={post.bookmarks}
                 tags={post.tags}
                 size="small"
-                isBookmarked={post.isBookmarked || false}
+                isBookmarked={post.userBookmarkYn || false}
                 sectionType={sectionType}
               />
             </div>

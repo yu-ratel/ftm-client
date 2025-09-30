@@ -5,10 +5,7 @@ import { FiEdit } from "react-icons/fi";
 import SectionHeader from "../components/header/SectionHeader";
 import PostSection from "./components/PostSection";
 import HorizontalScrollSection from "./components/HorizontalScrollSection";
-import CategorySection, {
-  CategoryTab,
-  SortOption,
-} from "./components/CategorySection";
+import CategorySection, { CategoryTab } from "./components/CategorySection";
 import { useRouter } from "next/navigation";
 import {
   getUserPickPopularPosts,
@@ -17,6 +14,8 @@ import {
 } from "./api";
 import { useInfiniteGroomingStory } from "@/hooks/useInfiniteGroomingStory";
 import { UserPickPost, PostData } from "./types";
+import { openSigninSelectModal } from "@/utils/modal/OpenSigninSelectModal";
+import { useAuthStore } from "@/stores/AuthStore";
 
 // API 데이터를 PostSection에서 사용하는 형태로 변환하는 함수
 const transformApiDataToPostData = (apiData: UserPickPost[]): PostData[] => {
@@ -31,15 +30,15 @@ const transformApiDataToPostData = (apiData: UserPickPost[]): PostData[] => {
     bookmarks: post.scrapCount,
     tags: post.hashtags,
     ranking: post.ranking,
-    isBookmarked: post.isBookmarked || post.userBookmarkYn || false,
+    userBookmarkYn: post.userBookmarkYn || false,
   }));
 };
 
 export default function UserPick() {
   const router = useRouter();
+  const { user } = useAuthStore();
   const [activeCategory, setActiveCategory] =
     useState<CategoryTab>("grooming-award");
-  const [sortOption, setSortOption] = useState<SortOption>("latest");
 
   // useQuery로 API 호출 - 그루밍 어워드일 때만 활성화
   const {
@@ -118,11 +117,7 @@ export default function UserPick() {
       </div>
 
       {/* 카테고리 섹션 */}
-      <CategorySection
-        className="mt-8"
-        onCategoryChange={setActiveCategory}
-        onSortChange={setSortOption}
-      />
+      <CategorySection className="mt-8" onCategoryChange={setActiveCategory} />
 
       {/* 그루밍 어워드일 때만 기존 섹션들 표시 */}
       {activeCategory === "grooming-award" && (
@@ -189,6 +184,7 @@ export default function UserPick() {
           posts={groomingStoryPosts}
           layout="3-column"
           showRanking={false}
+          sectionType="groomingStory"
           hasNextPage={hasNextPage}
           isFetchingNextPage={isFetchingNextPage}
           onLoadMore={() => fetchNextPage()}
@@ -198,7 +194,13 @@ export default function UserPick() {
       {/* 글쓰기 버튼 */}
       <div className="sticky bottom-10 z-50 ml-auto mr-0 mt-10 w-fit">
         <button
-          onClick={() => router.push("/write")}
+          onClick={() => {
+            if (!user) {
+              openSigninSelectModal();
+            } else {
+              router.push("/write");
+            }
+          }}
           className="relative h-[60px] w-[60px] cursor-pointer"
         >
           <div

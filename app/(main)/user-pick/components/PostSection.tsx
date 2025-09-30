@@ -9,7 +9,7 @@ interface PostSectionProps {
   posts: PostData[];
   layout: "3-column" | "2x2-grid";
   showRanking?: boolean;
-  sectionType?: "popular" | "bible" | "topBookmarks";
+  sectionType?: "popular" | "bible" | "topBookmarks" | "groomingStory";
   // 무한 스크롤 관련 props
   hasNextPage?: boolean;
   isFetchingNextPage?: boolean;
@@ -74,7 +74,8 @@ export default function PostSection({
             tags={post.tags}
             size={cardSize}
             showRanking={showRanking}
-            isBookmarked={post.isBookmarked || false}
+            ranking={post.ranking}
+            isBookmarked={post.userBookmarkYn || false}
             sectionType={sectionType}
           />
         ))}
