@@ -102,7 +102,7 @@ const WritePage = () => {
         productImageFiles, // 상품 이미지 파일들 배열
       };
 
-      console.log("postData", postData);
+      console.log("postData11", postData);
 
       await createPost(postData);
       router.push("/user-pick");

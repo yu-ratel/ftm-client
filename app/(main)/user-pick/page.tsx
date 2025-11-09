@@ -5,12 +5,16 @@ import { FiEdit } from "react-icons/fi";
 import SectionHeader from "../components/header/SectionHeader";
 import PostSection from "./components/PostSection";
 import HorizontalScrollSection from "./components/HorizontalScrollSection";
-import CategorySection, { CategoryTab } from "./components/CategorySection";
+import CategorySection, {
+  CategoryTab,
+  SortOption,
+} from "./components/CategorySection";
 import { useRouter } from "next/navigation";
 import {
   getUserPickPopularPosts,
   getUserPickBiblePosts,
   getUserPickTopBookmarks,
+  getGroomingStoryPopularPosts,
 } from "./api";
 import { useInfiniteGroomingStory } from "@/hooks/useInfiniteGroomingStory";
 import { UserPickPost, PostData } from "./types";
@@ -39,6 +43,7 @@ export default function UserPick() {
   const { user } = useAuthStore();
   const [activeCategory, setActiveCategory] =
     useState<CategoryTab>("grooming-award");
+  const [sortOption, setSortOption] = useState<SortOption>("latest");
 
   // useQuery로 API 호출 - 그루밍 어워드일 때만 활성화
   const {
@@ -90,7 +95,7 @@ export default function UserPick() {
     ? transformApiDataToPostData(topBookmarksResponse.data)
     : [];
 
-  // 그루밍 이야기 무한 스크롤
+  // 그루밍 이야기 무한 스크롤 (최신순)
   const {
     data: groomingStoryData,
     fetchNextPage,
@@ -100,15 +105,36 @@ export default function UserPick() {
     error: errorGroomingStory,
   } = useInfiniteGroomingStory({
     limit: 5,
-    enabled: activeCategory === "grooming-story",
+    enabled: activeCategory === "grooming-story" && sortOption === "latest",
   });
 
-  // 그루밍 이야기 데이터 변환
-  const groomingStoryPosts: PostData[] = groomingStoryData?.pages
-    ? groomingStoryData.pages.flatMap((page) =>
-        transformApiDataToPostData(page.data.data)
-      )
-    : [];
+  // 그루밍 이야기 인기순 API 호출
+  const {
+    data: groomingStoryPopularData,
+    fetchNextPage: fetchNextPagePopular,
+    hasNextPage: hasNextPagePopular,
+    isFetchingNextPage: isFetchingNextPagePopular,
+    isLoading: isLoadingGroomingStoryPopular,
+    error: errorGroomingStoryPopular,
+  } = useInfiniteGroomingStory({
+    limit: 5,
+    enabled: activeCategory === "grooming-story" && sortOption === "popular",
+    apiFunction: getGroomingStoryPopularPosts,
+  });
+
+  // 그루밍 이야기 데이터 변환 (정렬 옵션에 따라 다른 데이터 사용)
+  const groomingStoryPosts: PostData[] =
+    sortOption === "latest"
+      ? groomingStoryData?.pages
+        ? groomingStoryData.pages.flatMap((page) =>
+            transformApiDataToPostData(page.data.data)
+          )
+        : []
+      : groomingStoryPopularData?.pages
+        ? groomingStoryPopularData.pages.flatMap((page) =>
+            transformApiDataToPostData(page.data.data)
+          )
+        : [];
 
   return (
     <>
@@ -117,7 +143,11 @@ export default function UserPick() {
       </div>
 
       {/* 카테고리 섹션 */}
-      <CategorySection className="mt-8" onCategoryChange={setActiveCategory} />
+      <CategorySection
+        className="mt-8"
+        onCategoryChange={setActiveCategory}
+        onSortChange={setSortOption}
+      />
 
       {/* 그루밍 어워드일 때만 기존 섹션들 표시 */}
       {activeCategory === "grooming-award" && (
@@ -175,19 +205,33 @@ export default function UserPick() {
         <PostSection
           title="요즘 인기있는 글"
           subtitle={
-            isLoadingGroomingStory
-              ? "데이터를 불러오는 중..."
-              : errorGroomingStory
-                ? "데이터 로딩 실패"
-                : "최신순으로 정렬된 게시물"
+            sortOption === "latest"
+              ? isLoadingGroomingStory
+                ? "데이터를 불러오는 중..."
+                : errorGroomingStory
+                  ? "데이터 로딩 실패"
+                  : "최신순으로 정렬된 게시물"
+              : isLoadingGroomingStoryPopular
+                ? "데이터를 불러오는 중..."
+                : errorGroomingStoryPopular
+                  ? "데이터 로딩 실패"
+                  : "인기순으로 정렬된 게시물"
           }
           posts={groomingStoryPosts}
           layout="3-column"
           showRanking={false}
           sectionType="groomingStory"
-          hasNextPage={hasNextPage}
-          isFetchingNextPage={isFetchingNextPage}
-          onLoadMore={() => fetchNextPage()}
+          hasNextPage={
+            sortOption === "latest" ? hasNextPage : hasNextPagePopular
+          }
+          isFetchingNextPage={
+            sortOption === "latest"
+              ? isFetchingNextPage
+              : isFetchingNextPagePopular
+          }
+          onLoadMore={() =>
+            sortOption === "latest" ? fetchNextPage() : fetchNextPagePopular()
+          }
         />
       )}
 

@@ -126,7 +126,7 @@ export const createPost = async (
     const jsonBlob = new Blob([JSON.stringify(jsonData)], {
       type: "application/json",
     });
-    formData.append("data", jsonBlob);
+    formData.append("da22t3a", jsonBlob);
     // 게시글 이미지 파일들 추가
     if (postData.postImageFiles) {
       postData.postImageFiles.forEach((image) => {
@@ -153,6 +153,89 @@ export const createPost = async (
     return response.data;
   } catch (error) {
     console.error("게시글 작성 실패:", error);
+    throw error;
+  }
+};
+
+/**
+ * 게시글 수정 API
+ */
+export interface UpdatePostData {
+  title: string; // 게시글 제목
+  hashtags?: string[]; // 게시글 해시태그 목록
+  content: string; // 게시글 내용
+  products?: CreatePostProduct[]; // 게시글에 포함된 상품 목록
+  postImageFiles?: File[]; // 게시글 이미지 파일 리스트
+  productImageFiles?: File[]; // 상품 이미지 파일 리스트
+}
+
+export interface UpdatePostResponse {
+  postId: number;
+  updatedAt: string;
+}
+
+export const updatePost = async (
+  postId: string | number,
+  postData: UpdatePostData
+): Promise<ApiResponse<UpdatePostResponse>> => {
+  try {
+    const formData = new FormData();
+
+    // JSON 데이터를 'data' part에 문자열로 추가
+    const jsonData = {
+      title: postData.title,
+      hashtags: postData.hashtags,
+      content: postData.content,
+      products: postData.products,
+    };
+    const jsonBlob = new Blob([JSON.stringify(jsonData)], {
+      type: "application/json",
+    });
+    formData.append("data", jsonBlob);
+
+    // 게시글 이미지 파일들 추가
+    if (postData.postImageFiles) {
+      postData.postImageFiles.forEach((image) => {
+        formData.append("postImageFiles", image);
+      });
+    }
+
+    // 상품 이미지 파일들 추가
+    if (postData.productImageFiles) {
+      postData.productImageFiles.forEach((image) => {
+        formData.append("productImageFiles", image);
+      });
+    }
+
+    const response = await authApi.put<ApiResponse<UpdatePostResponse>>(
+      `${BASE_PATH}/${postId}`,
+      formData,
+      {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      }
+    );
+    return response.data;
+  } catch (error) {
+    console.error("게시글 수정 실패:", error);
+    throw error;
+  }
+};
+
+/**
+ * 게시글 삭제 API
+ */
+export const deletePost = async (
+  postId: string | number
+): Promise<ApiResponse<{ message: string }>> => {
+  try {
+    const response = await authApi.delete<ApiResponse<{ message: string }>>(
+      `${BASE_PATH}/${postId}`
+    );
+    return response.data;
+  } catch (error) {
+    console.error("게시글 삭제 실패:", error);
     throw error;
   }
 };

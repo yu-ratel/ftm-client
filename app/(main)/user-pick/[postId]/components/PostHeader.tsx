@@ -1,8 +1,10 @@
 import React from "react";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 import { PostDetail } from "../../../types/PostType";
 import { formatDate, formatImageUrl } from "../utils";
 import { useBookmark } from "@/hooks/useBookmark";
+import { useAuthStore } from "@/stores/AuthStore";
 
 interface PostHeaderProps {
   postData: PostDetail;
@@ -10,13 +12,71 @@ interface PostHeaderProps {
 
 const PostHeader = ({ postData }: PostHeaderProps) => {
   const { isBookmarked, handleBookmark, isLoading } = useBookmark();
+  const { user } = useAuthStore();
+  const router = useRouter();
   console.log("postData", postData);
+
+  // 현재 사용자가 작성자인지 확인
+  const isWriter = user && postData.writer.userId === user.id;
+
+  // 수정 페이지로 이동
+  const handleEdit = () => {
+    router.push(`/user-pick/${postData.postId}/edit`);
+  };
   return (
     <>
-      {/* 제목 */}
-      <h1 className="mb-4 font-pretendard text-xl font-bold leading-tight tracking-normal text-primary sm:text-2xl">
-        {postData.title}
-      </h1>
+      {/* 제목과 수정/삭제 버튼 */}
+      <div className="mb-4 flex items-center justify-between">
+        <h1 className="font-pretendard text-xl font-bold leading-tight tracking-normal text-primary sm:text-2xl">
+          {postData.title}
+        </h1>
+
+        {/* 수정/삭제 버튼 - 작성자만 표시 */}
+        {isWriter && (
+          <div className="flex items-center gap-4">
+            {/* 수정 버튼 */}
+            <button
+              onClick={handleEdit}
+              className="flex items-center gap-2 text-sm font-medium text-gray-600 transition-colors hover:text-gray-800"
+            >
+              <svg
+                width="16"
+                height="16"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
+                <path d="m18.5 2.5 3 3L12 15l-4 1 1-4 9.5-9.5z" />
+              </svg>
+              수정
+            </button>
+
+            {/* 삭제 버튼 */}
+            <button className="flex items-center gap-2 text-sm font-medium text-gray-600 transition-colors hover:text-red-600">
+              <svg
+                width="16"
+                height="16"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <polyline points="3,6 5,6 21,6" />
+                <path d="m19,6v14a2,2 0 0,1 -2,2H7a2,2 0 0,1 -2,-2V6m3,0V4a2,2 0 0,1 2,-2h4a2,2 0 0,1 2,2v2" />
+                <line x1="10" y1="11" x2="10" y2="17" />
+                <line x1="14" y1="11" x2="14" y2="17" />
+              </svg>
+              삭제
+            </button>
+          </div>
+        )}
+      </div>
 
       {/* 태그 섹션 */}
       <div className="mb-6 flex flex-wrap gap-1">

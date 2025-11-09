@@ -74,3 +74,17 @@ export const getGroomingStoryPosts = async (
   );
   return response.data;
 };
+
+/**
+ * 그루밍 이야기 인기순 게시물 조회 API 함수
+ * GET /api/posts/userpick/all/popular
+ */
+export const getGroomingStoryPopularPosts = async (
+  params: GroomingStoryParams
+): Promise<GroomingStoryApiResponse> => {
+  const response = await axios.get<GroomingStoryApiResponse>(
+    "/api/posts/userpick/all/popular",
+    { params }
+  );
+  return response.data;
+};

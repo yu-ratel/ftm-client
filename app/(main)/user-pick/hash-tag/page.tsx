@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
+import Image from "next/image";
 
 const HashTagPage = () => {
   const [selectedCategory, setSelectedCategory] = useState("스킨케어");
@@ -37,24 +38,28 @@ const HashTagPage = () => {
       id: 1,
       name: "추천 제품명",
       description: "제품 정보, 제품 상세, 제품",
+      image: "/user-pick-test/images/user_pick_sample.png",
       selected: false,
     },
     {
       id: 2,
       name: "추천 제품명",
       description: "제품 정보, 제품 상세, 제품",
+      image: "/user-pick-test/images/user_pick_sample.png",
       selected: false,
     },
     {
       id: 3,
       name: "추천 제품명",
       description: "제품 정보, 제품 상세, 제품",
+      image: "/user-pick-test/images/user_pick_sample.png",
       selected: false,
     },
     {
       id: 4,
       name: "추천 제품명",
       description: "제품 정보, 제품 상세, 제품",
+      image: "/user-pick-test/images/user_pick_sample.png",
       selected: false,
     },
   ]);
@@ -311,7 +316,7 @@ const HashTagPage = () => {
               className="h-9 w-full min-w-[108px] rounded-xl bg-[#1481fd] px-4 text-sm font-medium text-white transition-colors hover:bg-[#0f72e8] sm:w-[108px] sm:text-base"
               onClick={() => {
                 // 태그 적용 로직
-                console.log("태그 적용:", selectedTags);
+                console.log("태그 1적용:", selectedTags);
               }}
             >
               태그 적용
@@ -348,23 +353,16 @@ const HashTagPage = () => {
               >
                 {/* 상품 이미지 영역 */}
                 <div
-                  className={`mx-auto mb-3 flex h-[120px] w-[120px] items-center justify-center rounded-lg transition-all duration-300 sm:h-[140px] sm:w-[140px] lg:mb-[12px] lg:h-[160px] lg:w-[160px] ${
+                  className={`relative mx-auto mb-3 h-[120px] w-[120px] overflow-hidden rounded-lg transition-all duration-300 sm:h-[140px] sm:w-[140px] lg:mb-[12px] lg:h-[160px] lg:w-[160px] ${
                     product.selected ? "bg-white shadow-inner" : "bg-white"
                   }`}
                 >
-                  <div
-                    className={`flex h-[90px] w-[90px] items-center justify-center rounded-lg transition-all duration-300 sm:h-[110px] sm:w-[110px] lg:h-[125px] lg:w-[125px] ${
-                      product.selected ? "bg-gray-100" : "bg-gray-200"
-                    }`}
-                  >
-                    <span
-                      className={`text-xs transition-colors duration-300 sm:text-sm ${
-                        product.selected ? "text-gray-500" : "text-gray-400"
-                      }`}
-                    >
-                      추천 제품 이미지
-                    </span>
-                  </div>
+                  <Image
+                    src={product.image}
+                    alt={product.name}
+                    fill
+                    className="object-cover"
+                  />
                 </div>
 
                 {/* 상품명 */}
