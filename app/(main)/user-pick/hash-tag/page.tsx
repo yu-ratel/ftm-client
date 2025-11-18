@@ -1,37 +1,65 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Image from "next/image";
+import { getProductHashtags } from "@/app/(main)/api/post";
+import { HashtagsResponse, CategoryData } from "@/app/(main)/types/PostType";
 
 const HashTagPage = () => {
-  const [selectedCategory, setSelectedCategory] = useState("스킨케어");
-  const [searchQuery, setSearchQuery] = useState("");
-  const [selectedTags, setSelectedTags] = useState([
-    "스킨/토너",
-    "로션",
-    "클렌저",
-  ]);
+  const [hashtagsData, setHashtagsData] = useState<HashtagsResponse | null>(
+    null
+  );
+  const [selectedCategory, setSelectedCategory] = useState<string>("");
+  const [selectedTags, setSelectedTags] = useState<string[]>([]);
 
-  const categories = [
-    "패션",
-    "스킨케어",
-    "헤어스타일링",
-    "바디케어",
-    "메이크업",
-    "면도",
-    "프레그런스",
-    "건강",
-  ];
+  // API에서 해시태그 데이터 가져오기
+  useEffect(() => {
+    const fetchHashtags = async () => {
+      try {
+        const data = await getProductHashtags();
+        setHashtagsData(data);
+        // 최초 진입 시 카테고리 미선택 상태 유지
+      } catch (error) {
+        console.error("해시태그 데이터 로딩 실패:", error);
+      }
+    };
 
-  const tags = [
-    "스킨/토너",
-    "로션",
-    "크림",
-    "마스크팩",
-    "클렌저",
-    "필링/스크럽",
-    "선케어",
-  ];
+    fetchHashtags();
+  }, []);
+
+  // 카테고리 목록 추출 (name과 label을 함께 저장)
+  const categories =
+    hashtagsData?.results.map((item: CategoryData) => ({
+      name: item.category.name,
+      label: item.category.label,
+    })) || [];
+
+  // 선택된 카테고리의 태그 목록 추출
+  const tags =
+    hashtagsData?.results
+      .find((item: CategoryData) => item.category.name === selectedCategory)
+      ?.hashtags.map((hashtag) => hashtag.tag) || [];
+
+  // 카테고리 변경 핸들러
+  const handleCategoryChange = (categoryName: string) => {
+    setSelectedCategory(categoryName);
+    // 카테고리 변경 시 선택된 태그 초기화
+    setSelectedTags([]);
+  };
+
+  const handleToggleTag = (tag: string) => {
+    setSelectedTags((prevSelected) =>
+      prevSelected.includes(tag)
+        ? prevSelected.filter((selectedTag) => selectedTag !== tag)
+        : [...prevSelected, tag]
+    );
+  };
+
+  const handleRemoveTag = (tag: string) => {
+    setSelectedTags((prevSelected) =>
+      prevSelected.filter((selectedTag) => selectedTag !== tag)
+    );
+  };
 
   const [products, setProducts] = useState([
     {
@@ -96,132 +124,93 @@ const HashTagPage = () => {
       <div className="mb-[72px]">
         <div className="mb-[24px] flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <h1 className="text-xl font-bold leading-6 text-[#374254] sm:text-2xl">
-            새싹형 해시태그 추천
+            해시태그 추천
           </h1>
-          <div className="flex items-center gap-2">
-            <svg
-              className="h-5 w-5 text-[#9aabc5] sm:h-6 sm:w-6"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-              />
-            </svg>
-            <input
-              type="text"
-              placeholder="검색"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full max-w-[250px] border-0 border-b border-[#9aabc5] bg-transparent px-0 py-2 text-sm font-medium text-[#374254] placeholder-[#9aabc5] focus:border-[#374254] focus:outline-none sm:text-base"
-            />
-            <svg
-              className="ml-2 h-5 w-5 text-[#9aabc5] sm:h-6 sm:w-6"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M4 6h16M4 12h16M4 18h16"
-              />
-            </svg>
-          </div>
         </div>
 
-        {/* 카테고리 네비게이션 - 위아래 선 포함 */}
-        <div className="mb-[48px]">
-          {/* 위쪽 선 */}
-          <div className="mb-6 h-[1px] w-full bg-[#e1e1e7]" />
-
-          <div className="relative">
-            <div className="overflow-x-auto pb-6">
-              <div className="flex gap-4 sm:gap-[58px]">
-                {categories.map((category, index) => (
+        {/* 카테고리 & 태그 필터 - Figma 스타일 적용 */}
+        <div className="mb-[54px] overflow-hidden rounded-2xl bg-[#f5f5f7] shadow-[0_10px_24px_rgba(55,66,84,0.08)]">
+          {/* 1. 카테고리 네비게이션 */}
+          <div className="">
+            <div className="flex w-full flex-nowrap items-center gap-1 px-[6px] py-[5px] sm:gap-1 sm:px-[6px]">
+              {categories.map((category) => {
+                const isSelected = selectedCategory === category.name;
+                return (
                   <button
-                    key={category}
-                    onClick={() => setSelectedCategory(category)}
-                    className={`relative flex-shrink-0 whitespace-nowrap text-center text-sm font-medium transition-colors sm:text-base ${
-                      selectedCategory === category
-                        ? "font-bold text-[#374254]"
-                        : "text-[#9aabc5] hover:text-[#374254]"
+                    key={category.name}
+                    onClick={() => handleCategoryChange(category.name)}
+                    className={`flex h-[42px] flex-shrink-0 items-center justify-center whitespace-nowrap rounded-lg bg-white px-4 text-sm leading-[14px] transition-colors ${
+                      isSelected
+                        ? "border border-[#bcdbff] font-semibold text-[#1481fd]"
+                        : "border-0 font-medium text-[#374254] hover:text-[#1481fd]"
                     }`}
-                    style={{
-                      minWidth:
-                        index === 2 ? "83px" : index === 6 ? "70px" : "56px",
-                    }}
                   >
-                    {category}
-                    {selectedCategory === category && (
-                      <div className="absolute -bottom-6 left-0 right-0 z-10 h-[2px] bg-[#374254]" />
-                    )}
+                    {category.label}
                   </button>
-                ))}
+                );
+              })}
+
+              <button
+                type="button"
+                className="ml-auto flex h-[42px] w-[42px] flex-shrink-0 items-center justify-center rounded-lg bg-white text-[#9aabc5] transition-colors hover:text-[#1481fd]"
+                aria-label="카테고리 검색"
+              >
+                <svg
+                  className="h-[18px] w-[18px]"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+                  />
+                </svg>
+              </button>
+            </div>
+          </div>
+
+          {/* 2. 태그 리스트 - 카테고리가 선택되었을 때만 표시 */}
+          {selectedCategory && (
+            <div className="">
+              <div className="flex w-full flex-nowrap items-center gap-1 px-[6px] py-[5px] sm:gap-1 sm:px-[6px]">
+                {tags.map((tag) => {
+                  const isSelected = selectedTags.includes(tag);
+                  return (
+                    <button
+                      key={tag}
+                      onClick={() => handleToggleTag(tag)}
+                      className={`flex h-[42px] flex-shrink-0 items-center justify-center whitespace-nowrap rounded-lg bg-white px-4 text-sm leading-[14px] transition-colors ${
+                        isSelected
+                          ? "border border-[#bcdbff] font-semibold text-[#1481fd]"
+                          : "border-0 font-medium text-[#374254] hover:text-[#1481fd]"
+                      }`}
+                    >
+                      {tag}
+                    </button>
+                  );
+                })}
               </div>
             </div>
+          )}
 
-            {/* 아래쪽 경계선 - 카테고리 하단선과 겹침 - PC/모바일 모두 노출 */}
-            <div className="absolute bottom-0 left-0 right-0 h-[1px] w-full bg-[#e1e1e7]" />
-          </div>
-        </div>
-      </div>
-
-      {/* 태그 필터 섹션 - 새로운 그룹화 구조 */}
-      <div className="mb-[54px]">
-        {/* 태그 컨테이너 그룹 */}
-        <div className="mb-[28px]">
-          {/* 태그 리스트 영역 - 모든 태그 기본 위치에서 색깔만 변경 */}
-          <div className="flex flex-wrap gap-[12px]">
-            {tags.map((tag) => (
-              <div
-                key={tag}
-                className={`flex cursor-pointer items-center gap-2 rounded-xl px-4 py-2 text-base font-medium transition-colors ${
-                  selectedTags.includes(tag)
-                    ? "bg-[#586780] text-white hover:bg-[#4a5a70]"
-                    : "bg-[#ededf3] text-[#374254] hover:bg-[#e0e0e6]"
-                }`}
-                onClick={() => {
-                  if (selectedTags.includes(tag)) {
-                    // 선택 해제
-                    setSelectedTags(
-                      selectedTags.filter((selectedTag) => selectedTag !== tag)
-                    );
-                  } else {
-                    // 선택 추가
-                    setSelectedTags([...selectedTags, tag]);
-                  }
-                }}
-              >
-                {tag}
+          {/* 3. 액션 영역 - 선택된 태그가 있을 때만 표시 */}
+          {selectedTags.length > 0 && (
+            <div className="flex flex-col gap-1 px-[6px] py-[5px] sm:flex-row sm:items-center sm:justify-between sm:px-[6px]">
+              <div className="flex flex-wrap items-center gap-[12px]">
                 <button
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    if (selectedTags.includes(tag)) {
-                      // 선택 해제
-                      setSelectedTags(
-                        selectedTags.filter(
-                          (selectedTag) => selectedTag !== tag
-                        )
-                      );
-                    } else {
-                      // 선택 추가
-                      setSelectedTags([...selectedTags, tag]);
-                    }
+                  type="button"
+                  onClick={() => {
+                    setSelectedTags([]);
+                    console.log("태그 재생성 - 모든 태그 초기화");
                   }}
-                  className={`flex h-4 w-4 items-center justify-center rounded-full transition-colors ${
-                    selectedTags.includes(tag)
-                      ? "hover:bg-[#3a4a60]"
-                      : "hover:bg-[#d0d0d6]"
-                  }`}
+                  className="flex h-[42px] w-[42px] items-center justify-center rounded-lg bg-white text-[#58677f] shadow-[0_8px_20px_rgba(55,66,84,0.08)] transition-colors hover:text-[#1481fd]"
+                  aria-label="태그 재생성"
                 >
                   <svg
-                    className="h-3 w-3"
+                    className="h-5 w-5"
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
@@ -230,98 +219,47 @@ const HashTagPage = () => {
                       strokeLinecap="round"
                       strokeLinejoin="round"
                       strokeWidth={2}
-                      d="M6 18L18 6M6 6l12 12"
+                      d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
                     />
                   </svg>
                 </button>
-              </div>
-            ))}
-          </div>
-        </div>
 
-        {/* 액션 버튼 그룹 */}
-        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-          {/* 왼쪽 액션 그룹: 재생성 버튼 + 선택된 태그들 */}
-          <div className="flex flex-wrap items-center gap-3">
-            <button
-              className="flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-full bg-[#ededf3] transition-colors hover:bg-[#e0e0e6]"
-              onClick={() => {
-                // 태그 재생성 로직 - 모든 태그를 미선택 상태로 초기화하고 새로운 추천 태그 생성
-                setSelectedTags([]);
-                // 실제로는 API 호출을 통해 새로운 태그들을 받아올 수 있음
-                console.log("태그 재생성 - 모든 태그 초기화");
-              }}
-            >
-              <svg
-                className="h-4 w-4 text-[#58677f]"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
-                />
-              </svg>
-            </button>
-
-            {/* 선택된 태그들 표시 영역 - 밝은 색으로 표시 */}
-            <div className="flex flex-wrap gap-2">
-              {selectedTags.map((tag) => (
-                <div
-                  key={`selected-in-action-${tag}`}
-                  className="flex cursor-pointer items-center gap-2 rounded-xl bg-[#ededf3] px-3 py-1.5 text-sm font-medium text-[#374254] transition-colors hover:bg-[#e0e0e6] sm:px-4 sm:py-2 sm:text-base"
-                  onClick={() => {
-                    setSelectedTags(
-                      selectedTags.filter((selectedTag) => selectedTag !== tag)
-                    );
-                  }}
-                >
-                  {tag}
-                  <button
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      setSelectedTags(
-                        selectedTags.filter(
-                          (selectedTag) => selectedTag !== tag
-                        )
-                      );
-                    }}
-                    className="flex h-4 w-4 items-center justify-center rounded-full transition-colors hover:bg-[#d0d0d6]"
+                {selectedTags.map((tag) => (
+                  <div
+                    key={`selected-${tag}`}
+                    className="flex h-[42px] items-center gap-2 rounded-lg bg-white px-4 text-sm font-medium leading-[14px] text-[#374254] shadow-[0_8px_20px_rgba(55,66,84,0.08)]"
                   >
-                    <svg
-                      className="h-3 w-3"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
+                    {tag}
+                    <button
+                      type="button"
+                      onClick={() => handleRemoveTag(tag)}
+                      className="text-xs font-semibold text-[#9aabc5] transition-colors hover:text-[#58677f]"
+                      aria-label={`${tag} 제거`}
                     >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M6 18L18 6M6 6l12 12"
-                      />
-                    </svg>
-                  </button>
-                </div>
-              ))}
-            </div>
-          </div>
+                      ✕
+                    </button>
+                  </div>
+                ))}
+              </div>
 
-          {/* 오른쪽 액션 그룹: 태그 적용 버튼 */}
-          <div className="flex items-center gap-4">
-            <button
-              className="h-9 w-full min-w-[108px] rounded-xl bg-[#1481fd] px-4 text-sm font-medium text-white transition-colors hover:bg-[#0f72e8] sm:w-[108px] sm:text-base"
-              onClick={() => {
-                // 태그 적용 로직
-                console.log("태그 1적용:", selectedTags);
-              }}
-            >
-              태그 적용
-            </button>
-          </div>
+              <button
+                type="button"
+                disabled={selectedTags.length === 0}
+                className={`h-[42px] w-[120px] rounded-lg text-sm font-medium text-white transition-colors ${
+                  selectedTags.length === 0
+                    ? "cursor-not-allowed bg-[#e1e1e7]"
+                    : "bg-[#1481fd] shadow-[0_10px_24px_rgba(20,129,253,0.18)] hover:bg-[#0f72e8]"
+                }`}
+                onClick={() => {
+                  if (selectedTags.length > 0) {
+                    console.log("태그 적용:", selectedTags);
+                  }
+                }}
+              >
+                태그 적용
+              </button>
+            </div>
+          )}
         </div>
       </div>
 
@@ -345,18 +283,14 @@ const HashTagPage = () => {
                   }));
                   setProducts(updatedProducts);
                 }}
-                className={`relative h-[200px] w-full cursor-pointer rounded-xl p-3 transition-all duration-300 hover:shadow-lg sm:h-[220px] lg:h-[242px] lg:w-[184px] ${
+                className={`relative w-full cursor-pointer rounded-xl border p-3 transition-all duration-300 hover:shadow-lg lg:w-[184px] ${
                   product.selected
-                    ? "bg-[#374254] shadow-md ring-2 ring-[#374254] ring-opacity-30"
-                    : "bg-[#f5f5f7] hover:bg-[#f0f0f2]"
+                    ? "border-[#bcdbff] bg-[#f5f5f7]"
+                    : "border-transparent bg-[#f5f5f7] hover:bg-[#f0f0f2]"
                 }`}
               >
                 {/* 상품 이미지 영역 */}
-                <div
-                  className={`relative mx-auto mb-3 h-[120px] w-[120px] overflow-hidden rounded-lg transition-all duration-300 sm:h-[140px] sm:w-[140px] lg:mb-[12px] lg:h-[160px] lg:w-[160px] ${
-                    product.selected ? "bg-white shadow-inner" : "bg-white"
-                  }`}
-                >
+                <div className="relative mx-auto mb-3 h-[120px] w-[120px] overflow-hidden rounded-lg bg-white transition-all duration-300 sm:h-[140px] sm:w-[140px] lg:mb-[12px] lg:h-[160px] lg:w-[160px]">
                   <Image
                     src={product.image}
                     alt={product.name}
@@ -367,8 +301,8 @@ const HashTagPage = () => {
 
                 {/* 상품명 */}
                 <h3
-                  className={`mb-2 px-[6px] text-sm font-bold leading-4 transition-colors duration-300 sm:text-base lg:mb-[10px] ${
-                    product.selected ? "text-white" : "text-[#96a1b1]"
+                  className={`mb-1 px-[6px] text-sm font-semibold leading-[14px] transition-colors duration-300 sm:text-base lg:mb-[2px] ${
+                    product.selected ? "text-[#1481fd]" : "text-[#96a1b1]"
                   }`}
                 >
                   {product.name}
@@ -376,12 +310,50 @@ const HashTagPage = () => {
 
                 {/* 상품 설명 */}
                 <p
-                  className={`px-[6px] text-xs leading-3 transition-colors duration-300 ${
-                    product.selected ? "text-gray-300" : "text-[#96a1b1]"
+                  className={`mb-2 px-[6px] text-xs leading-[12px] transition-colors duration-300 ${
+                    product.selected ? "text-[#1481fd]" : "text-[#96a1b1]"
                   }`}
                 >
                   {product.description}
                 </p>
+
+                {/* 하단 버튼 영역 - 항상 표시 */}
+                <div className="mt-2 flex items-center justify-between gap-1 px-[6px]">
+                  {/* 상품 정보 버튼 */}
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      // 상품 정보 클릭 핸들러
+                    }}
+                    className="flex h-8 items-center justify-center rounded-[4px] border border-[#eaeaec] bg-white px-3 text-xs font-medium leading-[12px] text-[#374254] transition-colors hover:bg-[#f5f5f7]"
+                  >
+                    상품 정보
+                  </button>
+
+                  {/* 좋아요 버튼 */}
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      // 좋아요 클릭 핸들러
+                    }}
+                    className="flex h-8 items-center justify-center gap-1.5 rounded-[4px] border border-[#eaeaec] bg-white px-2 text-xs font-light leading-[12px] text-[#374254] transition-colors hover:bg-[#f5f5f7]"
+                  >
+                    <svg
+                      className="h-4 w-[16px]"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"
+                      />
+                    </svg>
+                    <span>6.8K</span>
+                  </button>
+                </div>
               </div>
             ))}
           </div>
