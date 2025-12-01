@@ -2,8 +2,11 @@
 
 import React, { useState, useEffect } from "react";
 import Image from "next/image";
-import { getProductHashtags } from "@/app/(main)/api/post";
+import { AxiosError } from "axios";
+import { useMutation } from "@tanstack/react-query";
+import { getProductHashtags, createProductLike } from "@/app/(main)/api/post";
 import { HashtagsResponse, CategoryData } from "@/app/(main)/types/PostType";
+import { ApiResponse } from "@/types/api";
 
 const HashTagPage = () => {
   const [hashtagsData, setHashtagsData] = useState<HashtagsResponse | null>(
@@ -68,6 +71,8 @@ const HashTagPage = () => {
       description: "제품 정보, 제품 상세, 제품",
       image: "/user-pick-test/images/user_pick_sample.png",
       selected: false,
+      liked: false,
+      likeCount: 6800,
     },
     {
       id: 2,
@@ -75,6 +80,8 @@ const HashTagPage = () => {
       description: "제품 정보, 제품 상세, 제품",
       image: "/user-pick-test/images/user_pick_sample.png",
       selected: false,
+      liked: false,
+      likeCount: 6800,
     },
     {
       id: 3,
@@ -82,6 +89,8 @@ const HashTagPage = () => {
       description: "제품 정보, 제품 상세, 제품",
       image: "/user-pick-test/images/user_pick_sample.png",
       selected: false,
+      liked: false,
+      likeCount: 6800,
     },
     {
       id: 4,
@@ -89,8 +98,51 @@ const HashTagPage = () => {
       description: "제품 정보, 제품 상세, 제품",
       image: "/user-pick-test/images/user_pick_sample.png",
       selected: false,
+      liked: false,
+      likeCount: 6800,
     },
   ]);
+
+  // 상품 좋아요 mutation
+  const productLikeMutation = useMutation({
+    mutationFn: createProductLike,
+    onSuccess: (response, productId) => {
+      if (response.status === 200) {
+        // isCreated: true면 좋아요 생성, false면 좋아요 취소
+        setProducts((prevProducts) =>
+          prevProducts.map((product) =>
+            product.id === productId
+              ? {
+                  ...product,
+                  liked: response.data.isCreated,
+                  likeCount: response.data.isCreated
+                    ? product.likeCount + 1
+                    : Math.max(0, product.likeCount - 1),
+                }
+              : product
+          )
+        );
+      }
+    },
+    onError: (error: AxiosError<ApiResponse>) => {
+      console.error("상품 좋아요 실패:", error);
+      // 404 에러 처리
+      if (error.response?.status === 404) {
+        alert("요청한 상품을 찾을 수 없습니다.");
+      } else {
+        alert("좋아요 처리 중 오류가 발생했습니다.");
+      }
+    },
+  });
+
+  // 상품 좋아요 핸들러
+  const handleProductLike = (
+    e: React.MouseEvent<HTMLButtonElement>,
+    productId: number
+  ) => {
+    e.stopPropagation();
+    productLikeMutation.mutate(productId);
+  };
 
   // 실제로 선택된 상품이 있는지 확인
   const actuallyHasSelectedProduct = products.some(
@@ -264,12 +316,15 @@ const HashTagPage = () => {
       </div>
 
       {/* 메인 콘텐츠 - 상품과 게시물을 가로로 배치 */}
-      <div className="flex flex-col gap-6 lg:flex-row lg:gap-[24px]">
+      <div className="flex flex-col gap-6 lg:flex-row lg:items-start lg:gap-[24px]">
         {/* 왼쪽: 상품 목록 */}
         <div className="w-full lg:w-[392px]">
-          <h2 className="mb-6 text-lg font-bold leading-[18px] text-[#374254] lg:mb-[42px]">
-            상품 목록
+          <h2 className="mb-2 text-lg font-bold leading-[18px] text-[#374254]">
+            추천받은 상품
           </h2>
+          <span className="mb-6 block text-sm font-normal text-[#6F7C90] lg:mb-[42px]">
+            처음 시작하는 유저들을 위한 바이블
+          </span>
 
           <div className="grid grid-cols-2 gap-4 sm:gap-6 lg:gap-[24px]">
             {products.map((product, index) => (
@@ -332,16 +387,18 @@ const HashTagPage = () => {
 
                   {/* 좋아요 버튼 */}
                   <button
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      // 좋아요 클릭 핸들러
-                    }}
-                    className="flex h-8 items-center justify-center gap-1.5 rounded-[4px] border border-[#eaeaec] bg-white px-2 text-xs font-light leading-[12px] text-[#374254] transition-colors hover:bg-[#f5f5f7]"
+                    onClick={(e) => handleProductLike(e, product.id)}
+                    disabled={productLikeMutation.isPending}
+                    className={`flex h-8 items-center justify-center gap-1.5 rounded-[4px] border border-[#eaeaec] bg-white px-2 text-xs font-light leading-[12px] transition-colors ${
+                      product.liked
+                        ? "text-[#1481FD] hover:bg-[#f5f5f7]"
+                        : "text-[#374254] hover:bg-[#f5f5f7]"
+                    } `}
                   >
                     <svg
                       className="h-4 w-[16px]"
-                      fill="none"
-                      stroke="currentColor"
+                      fill={product.liked ? "#1481FD" : "none"}
+                      stroke={product.liked ? "#1481FD" : "currentColor"}
                       viewBox="0 0 24 24"
                     >
                       <path
@@ -351,7 +408,11 @@ const HashTagPage = () => {
                         d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"
                       />
                     </svg>
-                    <span>6.8K</span>
+                    <span className={product.liked ? "text-[#1481FD]" : ""}>
+                      {product.likeCount >= 1000
+                        ? `${(product.likeCount / 1000).toFixed(1)}K`
+                        : product.likeCount}
+                    </span>
                   </button>
                 </div>
               </div>
@@ -364,15 +425,11 @@ const HashTagPage = () => {
           {actuallyHasSelectedProduct ? (
             /* 상품이 선택된 경우: 게시물 피드 */
             <>
-              <div className="mb-4 flex items-center justify-end gap-4 lg:mb-[24px] lg:gap-[18px]">
-                <button className="text-sm font-medium text-[#374254] sm:text-base">
-                  최신순
-                </button>
-                <button className="text-sm font-medium text-[#374254] sm:text-base">
-                  인기순
-                </button>
+              <div className="mb-6 lg:mb-[42px]">
+                {/* 왼쪽 제목과 span 높이 맞추기 위한 공간 */}
+                <div className="h-[18px]"></div>
+                <div className="mt-2 h-5"></div>
               </div>
-
               <div className="space-y-4 sm:space-y-6 lg:space-y-[24px]">
                 {posts.map((post) => (
                   <div

@@ -239,3 +239,24 @@ export const deletePost = async (
     throw error;
   }
 };
+
+/**
+ * 해시태그 상품 추천 좋아요 API
+ */
+export interface ProductLikeResponse {
+  isCreated: boolean;
+}
+
+export const createProductLike = async (
+  productId: string | number
+): Promise<ApiResponse<ProductLikeResponse>> => {
+  try {
+    const response = await authApi.post<ApiResponse<ProductLikeResponse>>(
+      `/api/products/${productId}/like`
+    );
+    return response.data;
+  } catch (error) {
+    console.error("상품 좋아요 실패:", error);
+    throw error;
+  }
+};
