@@ -316,7 +316,7 @@ const HashTagPage = () => {
       </div>
 
       {/* 메인 콘텐츠 - 상품과 게시물을 가로로 배치 */}
-      <div className="flex flex-col gap-6 lg:flex-row lg:items-start lg:gap-[24px]">
+      <div className="flex flex-col gap-6 lg:flex-row lg:items-stretch lg:gap-[24px]">
         {/* 왼쪽: 상품 목록 */}
         <div className="w-full lg:w-[392px]">
           <h2 className="mb-2 text-lg font-bold leading-[18px] text-[#374254]">
@@ -544,7 +544,7 @@ const HashTagPage = () => {
             </>
           ) : (
             /* 상품이 선택되지 않은 경우: 선택 안내 */
-            <div className="flex h-full items-center justify-center">
+            <div className="flex min-h-full flex-1 items-center justify-center">
               <div className="flex flex-col items-center">
                 <div className="relative mb-[22px] flex h-[104px] w-[104px] items-center justify-center rounded-[17px] bg-[#f5f5f7]">
                   {/* 첫 번째 폴리곤 (뒤쪽) */}
