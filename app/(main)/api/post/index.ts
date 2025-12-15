@@ -260,3 +260,41 @@ export const createProductLike = async (
     throw error;
   }
 };
+
+/**
+ * 해시태그로 상품 목록 조회 API
+ */
+export interface ProductByHashtag {
+  productId: number;
+  productName: string;
+  brand: string;
+  recommendedCount: number;
+  postId: number;
+  productImage: string;
+  likeYn: boolean;
+}
+
+export interface ProductsByHashtagResponse {
+  data: ProductByHashtag[];
+  hasNext: boolean;
+  lastScore: number;
+}
+
+export interface ProductsByHashtagRequest {
+  hashTagList: string[];
+}
+
+export const getProductsByHashtags = async (
+  request: ProductsByHashtagRequest
+): Promise<ApiResponse<ProductsByHashtagResponse>> => {
+  try {
+    const response = await api.post<ApiResponse<ProductsByHashtagResponse>>(
+      `${BASE_PATH}/products?size=10`,
+      request
+    );
+    return response.data;
+  } catch (error) {
+    console.error("해시태그 상품 조회 실패:", error);
+    throw error;
+  }
+};

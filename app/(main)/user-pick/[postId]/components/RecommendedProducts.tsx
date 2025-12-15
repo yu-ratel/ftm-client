@@ -1,9 +1,9 @@
 import React from "react";
-import Image from "next/image";
 import { PostDetail, PostProduct } from "../../../types/PostType";
 import { formatImageUrl } from "../utils";
 import { openProductModal } from "@/utils/modal/OpenProductModal";
 import { Product } from "@/app/(main)/write/types";
+import OptimizedImage from "../../components/OptimizedImage";
 
 interface RecommendedProductsProps {
   postData: PostDetail;
@@ -55,13 +55,15 @@ const RecommendedProducts = ({ postData }: RecommendedProductsProps) => {
                     className={`flex flex-1 items-center gap-4 ${i !== 0 ? "mt-3 border-t pt-3 md:mt-0 md:border-l md:border-t-0 md:pl-6 md:pt-0" : ""} cursor-pointer rounded-md border-gray-200 px-2 transition-colors hover:bg-gray-50`}
                     onClick={() => handleProductClick(product)}
                   >
-                    <Image
-                      src={formatImageUrl(product.postProductImage.imageUrl)}
-                      alt={product.name}
-                      width={56}
-                      height={56}
-                      className="h-14 w-14 rounded-md object-cover"
-                    />
+                    <div className="h-14 w-14 overflow-hidden rounded-md">
+                      <OptimizedImage
+                        src={formatImageUrl(product.postProductImage.imageUrl)}
+                        alt={product.name}
+                        width={56}
+                        height={56}
+                        objectFit="cover"
+                      />
+                    </div>
                     <div className="flex min-w-0 flex-1 flex-col justify-center">
                       <span className="text-xs font-bold text-[#374254]">
                         {product.brand}

@@ -1,10 +1,10 @@
 import React from "react";
-import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { PostDetail } from "../../../types/PostType";
 import { formatDate, formatImageUrl } from "../utils";
 import { useBookmark } from "@/hooks/useBookmark";
 import { useAuthStore } from "@/stores/AuthStore";
+import OptimizedImage from "../../components/OptimizedImage";
 
 interface PostHeaderProps {
   postData: PostDetail;
@@ -99,11 +99,11 @@ const PostHeader = ({ postData }: PostHeaderProps) => {
           {/* 프로필 이미지 */}
           <div className="relative h-9 w-9 overflow-hidden rounded-full bg-[#d9d9d9]">
             {postData.writer.imageUrl && (
-              <Image
+              <OptimizedImage
                 src={formatImageUrl(postData.writer.imageUrl)}
                 alt={postData.writer.nickname}
                 fill
-                className="object-cover"
+                objectFit="cover"
               />
             )}
           </div>

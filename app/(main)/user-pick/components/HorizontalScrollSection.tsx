@@ -47,7 +47,7 @@ export default function HorizontalScrollSection({
             msOverflowStyle: "none",
           }}
         >
-          {posts.map((post) => (
+          {posts.map((post, index) => (
             <div
               key={post.id}
               className="flex-shrink-0"
@@ -66,6 +66,7 @@ export default function HorizontalScrollSection({
                 size="small"
                 isBookmarked={post.userBookmarkYn || false}
                 sectionType={sectionType}
+                priority={index < 3}
               />
             </div>
           ))}

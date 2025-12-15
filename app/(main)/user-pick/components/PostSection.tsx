@@ -62,7 +62,7 @@ export default function PostSection({
       <p className="mt-1 text-base text-[#6f7c90]">{subtitle}</p>
 
       <div className={`mt-6 ${gridClasses[layout]}`}>
-        {posts.map((post) => (
+        {posts.map((post, index) => (
           <PostCard
             key={post.id}
             id={post.id}
@@ -77,6 +77,7 @@ export default function PostSection({
             ranking={post.ranking}
             isBookmarked={post.userBookmarkYn || false}
             sectionType={sectionType}
+            priority={index < 4}
           />
         ))}
       </div>
