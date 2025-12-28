@@ -26,7 +26,7 @@ const Header = () => {
           <div className="h-9 w-9 rounded-full bg-black/10" />
           <Link
             href={ROUTES.ROOT}
-            className="text-base font-medium leading-4 text-blue-500"
+            className="text-base font-medium leading-4 text-[#374254]"
             style={{ fontFamily: "Roboto, sans-serif" }}
           >
             FITTHEMAN
@@ -39,7 +39,7 @@ const Header = () => {
             <Link
               key={link.href}
               href={link.href}
-              className="text-base font-bold leading-4 text-blue-500"
+              className="text-base font-bold leading-4 text-[#374254]"
             >
               {link.label}
             </Link>
@@ -56,9 +56,9 @@ const Header = () => {
             aria-label={isMobileMenuOpen ? "메뉴 닫기" : "메뉴 열기"}
           >
             {isMobileMenuOpen ? (
-              <FiX className="h-6 w-6 text-blue-500" />
+              <FiX className="h-6 w-6 text-[#374254]" />
             ) : (
-              <FiMenu className="h-6 w-6 text-blue-500" />
+              <FiMenu className="h-6 w-6 text-[#374254]" />
             )}
           </button>
         </div>

@@ -37,9 +37,16 @@ export default function LeftSidebar() {
     { id: "해시태그 추천", icon: <FiBookmark />, label: "해시태그 추천" },
   ];
 
-  const menuItems = pathname.includes(ROUTES.USER_PICK)
-    ? userPickMenuItems
-    : allMenuItems;
+  const editorPickMenuItems = [
+    { id: "핏더맨 큐레이션", icon: <FiList />, label: "핏더맨 큐레이션" },
+    { id: "step-by-step", icon: <FiUser />, label: "Step by Step" },
+  ];
+
+  const menuItems = pathname.includes(ROUTES.EDITOR_PICK)
+    ? editorPickMenuItems
+    : pathname.includes(ROUTES.USER_PICK)
+      ? userPickMenuItems
+      : allMenuItems;
 
   const handleMenuClick = (menuId: string) => {
     setActiveMenu(menuId);
