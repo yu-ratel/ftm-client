@@ -241,6 +241,27 @@ export const deletePost = async (
 };
 
 /**
+ * 게시글 좋아요 API
+ */
+export interface PostLikeResponse {
+  isCreated: boolean;
+}
+
+export const createPostLike = async (
+  postId: string | number
+): Promise<ApiResponse<PostLikeResponse>> => {
+  try {
+    const response = await authApi.post<ApiResponse<PostLikeResponse>>(
+      `${BASE_PATH}/${postId}/like`
+    );
+    return response.data;
+  } catch (error) {
+    console.error("게시글 좋아요 실패:", error);
+    throw error;
+  }
+};
+
+/**
  * 해시태그 상품 추천 좋아요 API
  */
 export interface ProductLikeResponse {
@@ -289,7 +310,7 @@ export const getProductsByHashtags = async (
 ): Promise<ApiResponse<ProductsByHashtagResponse>> => {
   try {
     const response = await api.post<ApiResponse<ProductsByHashtagResponse>>(
-      `${BASE_PATH}/products?size=10`,
+      `${BASE_PATH}/products?size=20`,
       request
     );
     return response.data;

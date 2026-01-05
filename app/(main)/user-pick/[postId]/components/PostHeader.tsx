@@ -3,6 +3,7 @@ import { useRouter } from "next/navigation";
 import { PostDetail } from "../../../types/PostType";
 import { formatDate, formatImageUrl } from "../utils";
 import { useBookmark } from "@/hooks/useBookmark";
+import { useLike } from "@/hooks/useLike";
 import { useAuthStore } from "@/stores/AuthStore";
 import OptimizedImage from "../../components/OptimizedImage";
 
@@ -11,7 +12,14 @@ interface PostHeaderProps {
 }
 
 const PostHeader = ({ postData }: PostHeaderProps) => {
-  const { isBookmarked, handleBookmark, isLoading } = useBookmark();
+  const {
+    isBookmarked,
+    handleBookmark,
+    isLoading: bookmarkLoading,
+  } = useBookmark();
+  const { handleLike, isLoading: likeLoading } = useLike({
+    postId: postData.postId,
+  });
   const { user } = useAuthStore();
   const router = useRouter();
   console.log("postData", postData);
@@ -127,19 +135,25 @@ const PostHeader = ({ postData }: PostHeaderProps) => {
         {/* 액션 버튼들 */}
         <div className="flex gap-2">
           {/* 좋아요 버튼 */}
-          <button className="flex flex-col items-center rounded p-2 hover:bg-gray-50">
+          <button
+            onClick={handleLike}
+            className="flex flex-col items-center rounded p-2 hover:bg-gray-50"
+            disabled={likeLoading}
+          >
             <svg
               width="24"
               height="24"
               viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              className="text-[#374254]"
+              className={`${postData.userLikeYn ? "text-blue-600" : "text-[#374254]"}`}
             >
-              <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
+              <path
+                d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3zM7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3"
+                fill={postData.userLikeYn ? "currentColor" : "none"}
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
             </svg>
             <span className="text-xs text-gray-500">{postData.likeCount}</span>
           </button>
@@ -148,7 +162,7 @@ const PostHeader = ({ postData }: PostHeaderProps) => {
           <button
             onClick={() => handleBookmark(postData.postId)}
             className="flex flex-col items-center rounded p-2 hover:bg-gray-50"
-            disabled={isLoading}
+            disabled={bookmarkLoading}
           >
             <svg
               width="24"

@@ -93,6 +93,7 @@ export interface PostDetail {
   hashtags: string[];
   viewCount: number;
   likeCount: number;
+  userLikeYn?: boolean; // 현재 사용자의 좋아요 여부
   createdAt: string;
   updatedAt: string;
   postImages: PostImage[];
