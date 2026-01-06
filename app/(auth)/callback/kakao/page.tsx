@@ -4,6 +4,7 @@ import { useEffect, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { kakaoLogin } from "@/app/(auth)/signin/api";
 import { ROUTES } from "@/constants/routes";
+import { getRedirectKey } from "@/constants/environment";
 import { setUser } from "@/stores/AuthStore";
 import { useMutation } from "@tanstack/react-query";
 
@@ -12,7 +13,8 @@ function KakaoCallbackContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const { mutateAsync } = useMutation({
-    mutationFn: kakaoLogin,
+    mutationFn: (params: { code: string; redirectKey: string }) =>
+      kakaoLogin(params.code, params.redirectKey),
   });
 
   useEffect(() => {
@@ -25,7 +27,8 @@ function KakaoCallbackContent() {
 
     const processKakaoLogin = async () => {
       try {
-        const response = await mutateAsync(code);
+        const redirectKey = getRedirectKey();
+        const response = await mutateAsync({ code, redirectKey });
 
         if (response.status === 202) {
           router.push(`${ROUTES.SIGNUP}?social=true`);

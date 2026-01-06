@@ -30,9 +30,10 @@ export const signin = async (
 /**
  * 카카오 로그인 API - 인증 필요
  */
-export const kakaoLogin = async (code: string) => {
+export const kakaoLogin = async (code: string, redirectKey: string) => {
   const response = await authApi.post(`${BASE_PATH}/login/kakao`, {
     authorizationCode: code,
+    redirectKey: redirectKey,
   });
   return response;
 };
