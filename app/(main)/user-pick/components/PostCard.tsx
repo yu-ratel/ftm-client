@@ -43,7 +43,6 @@ export default function PostCard({
   const { user } = useAuthStore();
 
   const { handleBookmark, isLoading } = useBookmark({
-    initialBookmarked: isBookmarked,
     onSuccess: () => {
       // 섹션별로 필요한 쿼리만 무효화
       if (sectionType) {
@@ -105,7 +104,7 @@ export default function PostCard({
                 if (!user) {
                   openSigninSelectModal();
                 } else {
-                  handleBookmark(id);
+                  handleBookmark(id, isBookmarked);
                 }
               }
             }}

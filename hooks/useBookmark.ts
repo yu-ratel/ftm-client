@@ -1,32 +1,26 @@
-import { useState } from "react";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { createBookmark, deleteBookmark } from "@/app/(main)/api/bookmark";
 
 interface UseBookmarkProps {
-  initialBookmarked?: boolean;
   onSuccess?: (isBookmarked: boolean) => void;
   onError?: (error: Error) => void;
 }
 
 interface UseBookmarkReturn {
-  isBookmarked: boolean;
-  setIsBookmarked: (value: boolean) => void;
-  handleBookmark: (postId: number) => void;
+  handleBookmark: (postId: number, currentBookmarked: boolean) => void;
   isLoading: boolean;
 }
 
 export const useBookmark = ({
-  initialBookmarked = false,
   onSuccess,
   onError,
 }: UseBookmarkProps = {}): UseBookmarkReturn => {
-  const [isBookmarked, setIsBookmarked] = useState(initialBookmarked);
-
+  const queryClient = useQueryClient();
   // 북마크 생성 mutation
   const createBookmarkMutation = useMutation({
     mutationFn: createBookmark,
     onSuccess: () => {
-      setIsBookmarked(true);
+      queryClient.invalidateQueries({ queryKey: ["post"] });
       onSuccess?.(true);
     },
     onError: (error: Error) => {
@@ -39,7 +33,7 @@ export const useBookmark = ({
   const deleteBookmarkMutation = useMutation({
     mutationFn: deleteBookmark,
     onSuccess: () => {
-      setIsBookmarked(false);
+      queryClient.invalidateQueries({ queryKey: ["post"] });
       onSuccess?.(false);
     },
     onError: (error: Error) => {
@@ -48,8 +42,8 @@ export const useBookmark = ({
     },
   });
 
-  const handleBookmark = (postId: number) => {
-    if (isBookmarked) {
+  const handleBookmark = (postId: number, currentBookmarked: boolean) => {
+    if (currentBookmarked) {
       deleteBookmarkMutation.mutate(postId);
     } else {
       createBookmarkMutation.mutate(postId);
@@ -60,8 +54,6 @@ export const useBookmark = ({
     createBookmarkMutation.isPending || deleteBookmarkMutation.isPending;
 
   return {
-    isBookmarked,
-    setIsBookmarked,
     handleBookmark,
     isLoading,
   };

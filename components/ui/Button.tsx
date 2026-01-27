@@ -4,7 +4,7 @@ import { twMerge } from "tailwind-merge";
 interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   children: ReactNode;
   variant?: "primary" | "secondary" | "outline" | "icon" | "input";
-  size?: "sm" | "md" | "lg";
+  size?: "sm" | "md" | "base" | "lg";
 }
 
 export default function Button({
@@ -27,6 +27,7 @@ export default function Button({
   const sizeStyles = {
     sm: "px-3 py-1 text-sm",
     md: "px-4 py-2",
+    base: "px-5 py-4 text-base",
     lg: "px-6 py-3 text-lg",
   };
 

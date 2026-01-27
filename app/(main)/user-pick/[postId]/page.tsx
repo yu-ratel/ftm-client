@@ -9,8 +9,8 @@ import {
   ErrorState,
   NotFoundState,
   PostHeader,
-  PostContent,
   RecommendedProducts,
+  TiptapPostContent,
 } from "./components";
 
 interface PostDetailPageProps {
@@ -51,7 +51,8 @@ const PostDetailPage = ({ params }: PostDetailPageProps) => {
   return (
     <div className="mx-auto max-w-4xl bg-white p-6">
       <PostHeader postData={postData} />
-      <PostContent postData={postData} />
+      <TiptapPostContent postData={postData} />
+      {/* <PostContent postData={postData} /> */}
       <RecommendedProducts postData={postData} />
     </div>
   );

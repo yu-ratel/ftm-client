@@ -80,6 +80,7 @@ export interface PostProduct {
   brand: string;
   hashtags: string[];
   postProductImage: PostProductImage;
+  recommendedCount: number;
 }
 
 /**
@@ -99,4 +100,5 @@ export interface PostDetail {
   postImages: PostImage[];
   writer: Writer;
   postProducts: PostProduct[];
+  userBookmarkYn?: boolean;
 }

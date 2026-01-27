@@ -54,8 +54,8 @@ export default function UserPick() {
     queryKey: ["userPickPopularPosts", user?.id],
     queryFn: getUserPickPopularPosts,
     enabled: activeCategory === "grooming-award",
-    staleTime: 5 * 60 * 1000, // 5분
-    gcTime: 10 * 60 * 1000, // 10분
+    // staleTime: 5 * 60 * 1000, // 5분
+    // gcTime: 10 * 60 * 1000, // 10분
   });
 
   const {
@@ -66,8 +66,8 @@ export default function UserPick() {
     queryKey: ["userPickBiblePosts", user?.id],
     queryFn: getUserPickBiblePosts,
     enabled: activeCategory === "grooming-award",
-    staleTime: 5 * 60 * 1000, // 5분
-    gcTime: 10 * 60 * 1000, // 10분
+    // staleTime: 5 * 60 * 1000, // 5분
+    // gcTime: 10 * 60 * 1000, // 10분
   });
 
   const {
@@ -78,8 +78,8 @@ export default function UserPick() {
     queryKey: ["userPickTopBookmarks", user?.id],
     queryFn: getUserPickTopBookmarks,
     enabled: activeCategory === "grooming-award",
-    staleTime: 5 * 60 * 1000, // 5분
-    gcTime: 10 * 60 * 1000, // 10분
+    // staleTime: 5 * 60 * 1000, // 5분
+    // gcTime: 10 * 60 * 1000, // 10분
   });
 
   // API 데이터를 PostSection 형태로 변환

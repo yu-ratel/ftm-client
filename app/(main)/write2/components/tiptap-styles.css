@@ -1,0 +1,194 @@
+/* Tiptap Editor Styles */
+.tiptap-editor {
+  min-height: 400px;
+  padding: 1rem;
+}
+
+.tiptap-editor:focus {
+  outline: none;
+}
+
+/* Placeholder */
+.tiptap-editor p.is-editor-empty:first-child::before {
+  color: #adb5bd;
+  content: attr(data-placeholder);
+  float: left;
+  height: 0;
+  pointer-events: none;
+}
+
+/* Headings */
+.tiptap-editor h1 {
+  font-size: 2rem;
+  font-weight: 700;
+  line-height: 1.2;
+  margin-bottom: 1rem;
+  margin-top: 1.5rem;
+}
+
+.tiptap-editor h2 {
+  font-size: 1.5rem;
+  font-weight: 600;
+  line-height: 1.3;
+  margin-bottom: 0.75rem;
+  margin-top: 1.25rem;
+}
+
+.tiptap-editor h3 {
+  font-size: 1.25rem;
+  font-weight: 600;
+  line-height: 1.4;
+  margin-bottom: 0.5rem;
+  margin-top: 1rem;
+}
+
+/* Paragraph */
+.tiptap-editor p {
+  margin-bottom: 0.75rem;
+  line-height: 1.6;
+}
+
+/* Bold */
+.tiptap-editor strong {
+  font-weight: 700;
+}
+
+/* Italic */
+.tiptap-editor em {
+  font-style: italic;
+}
+
+/* Underline */
+.tiptap-editor u {
+  text-decoration: underline;
+}
+
+/* Strikethrough */
+.tiptap-editor s {
+  text-decoration: line-through;
+}
+
+/* Code inline */
+.tiptap-editor code {
+  background-color: #f3f4f6;
+  border-radius: 0.25rem;
+  color: #1f2937;
+  font-family: "Courier New", monospace;
+  font-size: 0.875rem;
+  padding: 0.125rem 0.25rem;
+}
+
+/* Code block */
+.tiptap-editor pre {
+  background-color: #1f2937;
+  border-radius: 0.5rem;
+  color: #f9fafb;
+  font-family: "Courier New", monospace;
+  margin: 1rem 0;
+  padding: 1rem;
+  overflow-x: auto;
+}
+
+.tiptap-editor pre code {
+  background: none;
+  color: inherit;
+  font-size: 0.875rem;
+  padding: 0;
+}
+
+/* Lists */
+.tiptap-editor ul,
+.tiptap-editor ol {
+  margin: 0.75rem 0;
+  padding-left: 1.5rem;
+}
+
+.tiptap-editor ul {
+  list-style-type: disc;
+}
+
+.tiptap-editor ol {
+  list-style-type: decimal;
+}
+
+.tiptap-editor li {
+  margin-bottom: 0.25rem;
+  line-height: 1.6;
+}
+
+.tiptap-editor li p {
+  margin-bottom: 0.25rem;
+}
+
+/* Nested lists */
+.tiptap-editor ul ul,
+.tiptap-editor ol ul {
+  list-style-type: circle;
+}
+
+.tiptap-editor ul ul ul,
+.tiptap-editor ol ul ul,
+.tiptap-editor ol ol ul {
+  list-style-type: square;
+}
+
+.tiptap-editor ol ol {
+  list-style-type: lower-alpha;
+}
+
+.tiptap-editor ol ol ol {
+  list-style-type: lower-roman;
+}
+
+/* Blockquote */
+.tiptap-editor blockquote {
+  border-left: 4px solid #e5e7eb;
+  color: #6b7280;
+  font-style: italic;
+  margin: 1rem 0;
+  padding-left: 1rem;
+}
+
+/* Horizontal Rule */
+.tiptap-editor hr {
+  border: none;
+  border-top: 2px solid #e5e7eb;
+  margin: 2rem 0;
+}
+
+/* Images */
+.tiptap-editor img.tiptap-image {
+  display: block;
+  height: auto;
+  max-width: 100%;
+  margin: 1rem auto;
+  border-radius: 0.5rem;
+}
+
+.tiptap-editor img.ProseMirror-selectednode {
+  outline: 3px solid #3b82f6;
+}
+
+/* Text Alignment */
+.tiptap-editor [style*="text-align: left"] {
+  text-align: left;
+}
+
+.tiptap-editor [style*="text-align: center"] {
+  text-align: center;
+}
+
+.tiptap-editor [style*="text-align: right"] {
+  text-align: right;
+}
+
+/* Selection */
+.tiptap-editor ::selection {
+  background-color: #bfdbfe;
+}
+
+/* Focus state for better UX */
+.tiptap-editor:focus-within {
+  border-color: #3b82f6;
+}
+

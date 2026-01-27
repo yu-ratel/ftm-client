@@ -12,17 +12,18 @@ interface PostHeaderProps {
 }
 
 const PostHeader = ({ postData }: PostHeaderProps) => {
-  const {
-    isBookmarked,
-    handleBookmark,
-    isLoading: bookmarkLoading,
-  } = useBookmark();
+  const { handleBookmark, isLoading: bookmarkLoading } = useBookmark();
   const { handleLike, isLoading: likeLoading } = useLike({
     postId: postData.postId,
   });
   const { user } = useAuthStore();
   const router = useRouter();
   console.log("postData", postData);
+
+  // 북마크 핸들러 래핑
+  const onBookmarkClick = () => {
+    handleBookmark(postData.postId, postData.userBookmarkYn || false);
+  };
 
   // 현재 사용자가 작성자인지 확인
   const isWriter = user && postData.writer.userId === user.id;
@@ -160,7 +161,7 @@ const PostHeader = ({ postData }: PostHeaderProps) => {
 
           {/* 스크랩 버튼 */}
           <button
-            onClick={() => handleBookmark(postData.postId)}
+            onClick={onBookmarkClick}
             className="flex flex-col items-center rounded p-2 hover:bg-gray-50"
             disabled={bookmarkLoading}
           >
@@ -168,11 +169,11 @@ const PostHeader = ({ postData }: PostHeaderProps) => {
               width="24"
               height="24"
               viewBox="0 0 24 24"
-              className={`${isBookmarked ? "text-blue-600" : "text-[#374254]"}`}
+              className={`${postData.userBookmarkYn ? "text-blue-600" : "text-[#374254]"}`}
             >
               <path
                 d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"
-                fill={isBookmarked ? "currentColor" : "none"}
+                fill={postData.userBookmarkYn ? "currentColor" : "none"}
                 stroke="currentColor"
                 strokeWidth="2"
                 strokeLinecap="round"
