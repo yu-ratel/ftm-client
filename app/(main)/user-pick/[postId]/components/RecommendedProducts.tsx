@@ -65,6 +65,7 @@ const RecommendedProducts = ({ postData }: RecommendedProductsProps) => {
   if (!postData.postProducts || postData.postProducts.length === 0) {
     return null;
   }
+  console.log("postData.postProducts");
 
   return (
     <section className="mt-8">
