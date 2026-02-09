@@ -3,7 +3,7 @@ import type { NextRequest } from "next/server";
 import { ROUTES } from "@/constants/routes";
 
 export async function middleware(request: NextRequest) {
-  const apiUrl = "https://dev-api.fittheman.site";
+  const apiUrl = "https://dev-api.fittheman.store";
   const sessionCookie = request.cookies.get("SESSION")?.value;
   const { pathname, searchParams } = request.nextUrl;
   const isSocialSignup = searchParams.get("social") === "true";
