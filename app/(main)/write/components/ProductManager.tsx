@@ -31,7 +31,7 @@ const ProductManager = ({
   return (
     <section className="mt-8">
       <div className="mb-2 flex items-center justify-between">
-        <h2 className="text-lg">게시글에서 추천한 상품</h2>
+        <h2 className="text-lg">추천 상품</h2>
       </div>
       <hr className="mb-1 border-t border-gray-200" />
 
@@ -75,61 +75,50 @@ const ProductManager = ({
                     key={product.id}
                     className={`flex flex-1 items-center gap-4 ${colIndex !== 0 ? "mt-3 border-t pt-3 md:mt-0 md:border-l md:border-t-0 md:pl-6 md:pt-0" : ""} border-gray-200 px-2`}
                   >
-                    <div className="relative flex w-full items-center gap-4">
-                      <button
-                        onClick={() => onEditProduct(product)}
-                        className="flex flex-1 items-center gap-4 text-left transition-opacity hover:opacity-70"
-                      >
-                        <Image
-                          src={product.img}
-                          alt={product.title}
-                          width={56}
-                          height={56}
-                          className="h-14 w-14 rounded-md object-cover"
-                        />
-                        <div className="flex min-w-0 flex-1 flex-col justify-center">
-                          <span className="text-xs font-bold text-[#374254]">
-                            {product.brand}
-                          </span>
-                          <div className="truncate text-sm">
-                            {product.title}
-                          </div>
-                          <div className="mt-2 flex gap-1">
-                            {product.tags.map((tag: string) => (
-                              <div
-                                key={tag}
-                                className="relative flex flex-row items-center justify-center gap-3 rounded-md border border-solid border-[transparent] bg-[#e1e1e7] pb-1.5 pl-2 pr-2 pt-1.5"
-                              >
-                                <div className="relative text-left font-['Pretendard-Medium',_sans-serif] text-[10px] font-medium leading-none text-[#374254]">
-                                  {convertNameToTag(tag)}
-                                </div>
-                              </div>
-                            ))}
-                          </div>
+                    <div className="flex w-full items-center gap-4">
+                      <Image
+                        src={product.img}
+                        alt={product.title}
+                        width={60}
+                        height={60}
+                        className="h-[60px] w-[60px] shrink-0 rounded-lg object-cover"
+                      />
+                      <div className="flex min-w-0 flex-1 flex-col justify-center">
+                        <span className="text-xs font-bold text-[#374254]">
+                          {product.brand}
+                        </span>
+                        <div className="truncate text-xs text-[#374254]">
+                          {product.title}
                         </div>
-                      </button>
+                        <div className="mt-1.5 flex flex-wrap gap-1">
+                          {product.tags.map((tag: string) => (
+                            <div
+                              key={tag}
+                              className="flex items-center justify-center rounded-[6px] bg-[#e1e1e7] px-2 py-1.5"
+                            >
+                              <span className="text-[10px] font-medium leading-none text-[#374254]">
+                                {convertNameToTag(tag)}
+                              </span>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
 
-                      {/* 삭제 버튼 */}
-                      <button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          onDeleteProduct(product);
-                        }}
-                        className="absolute right-0 top-0 flex h-6 w-6 items-center justify-center rounded-full bg-[#1481fd] text-white opacity-100 transition-opacity hover:opacity-70"
-                        title="상품 삭제"
-                      >
-                        <svg
-                          width="12"
-                          height="12"
-                          viewBox="0 0 24 24"
-                          fill="none"
-                          stroke="currentColor"
-                          strokeWidth="2"
+                      {/* 수정 / 등록 취소 버튼 */}
+                      <div className="flex shrink-0 flex-col gap-1">
+                        <button
+                          onClick={() => onEditProduct(product)}
+                          className="flex h-7 w-[68px] items-center justify-center rounded border border-[#eaeaec] bg-white text-xs font-medium text-[#374254] transition-colors hover:bg-[#f5f5f7]"
                         >
-                          <line x1="18" y1="6" x2="6" y2="18"></line>
-                          <line x1="6" y1="6" x2="18" y2="18"></line>
-                        </svg>
-                      </button>
+                          수정
+                        </button>
+                        <button
+                          onClick={() => onDeleteProduct(product)}
+                          className="flex h-7 w-[68px] items-center justify-center rounded border border-[#eaeaec] bg-white text-xs font-medium text-[#374254] transition-colors hover:bg-[#f5f5f7]"
+                        >
+                          등록 취소
+                        </button>
+                      </div>
                     </div>
                   </div>
                 );

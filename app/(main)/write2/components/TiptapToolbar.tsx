@@ -59,25 +59,7 @@ const Divider = () => <div className="mx-0.5 h-5 w-px bg-[#e1e1e7]" />;
 
 export const TiptapToolbar = ({ editor, onImageUpload }: TiptapToolbarProps) => {
   return (
-    <div className="sticky top-0 z-10 flex flex-wrap items-center gap-0.5 bg-white px-3 py-2">
-      {/* Undo/Redo */}
-      <ToolbarButton
-        onClick={() => editor.chain().focus().undo().run()}
-        disabled={!editor.can().undo()}
-        title="실행 취소"
-      >
-        <RiArrowGoBackLine className="h-5 w-5" />
-      </ToolbarButton>
-      <ToolbarButton
-        onClick={() => editor.chain().focus().redo().run()}
-        disabled={!editor.can().redo()}
-        title="다시 실행"
-      >
-        <RiArrowGoForwardLine className="h-5 w-5" />
-      </ToolbarButton>
-
-      <Divider />
-
+    <div className="sticky top-0 z-10 flex items-center gap-0.5 bg-white px-3 py-2">
       {/* Text Formatting */}
       <ToolbarButton
         onClick={() => editor.chain().focus().toggleBold().run()}
@@ -206,6 +188,24 @@ export const TiptapToolbar = ({ editor, onImageUpload }: TiptapToolbarProps) => 
       <ToolbarButton onClick={onImageUpload} title="이미지 추가">
         <RiImageAddLine className="h-5 w-5" />
       </ToolbarButton>
+
+      {/* Undo/Redo - 오른쪽 끝 */}
+      <div className="ml-auto flex items-center gap-0.5">
+        <ToolbarButton
+          onClick={() => editor.chain().focus().undo().run()}
+          disabled={!editor.can().undo()}
+          title="실행 취소"
+        >
+          <RiArrowGoBackLine className="h-5 w-5" />
+        </ToolbarButton>
+        <ToolbarButton
+          onClick={() => editor.chain().focus().redo().run()}
+          disabled={!editor.can().redo()}
+          title="다시 실행"
+        >
+          <RiArrowGoForwardLine className="h-5 w-5" />
+        </ToolbarButton>
+      </div>
     </div>
   );
 };

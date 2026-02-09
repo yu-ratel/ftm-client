@@ -69,7 +69,7 @@ const RecommendedProducts = ({ postData }: RecommendedProductsProps) => {
 
   return (
     <section className="mt-8">
-      <h2 className="mb-2 text-lg font-semibold">게시글에서 추천한 상품</h2>
+      <h2 className="mb-2 text-lg font-semibold">추천 상품</h2>
       <hr className="mb-1 border-t border-gray-200" />
       <div className="flex flex-col divide-y">
         {Array.from(
