@@ -171,31 +171,29 @@ const Write2Page = () => {
   // ===== RENDER =====
   return (
     <div className="min-h-screen py-8">
-      <div className="mx-auto max-w-4xl px-4">
-        <div className="rounded-lg bg-white">
-          <TitleInput title={title} onTitleChange={setTitle} />
+      <div className="mx-auto flex max-w-4xl flex-col gap-3 px-4">
+        <TitleInput title={title} onTitleChange={setTitle} />
 
-          <TagManager
-            hashtags={hashtags}
-            onOpenTagPopup={handleOpenTagPopup}
-            onRemoveTag={removeTag}
-          />
+        <TagManager
+          hashtags={hashtags}
+          onOpenTagPopup={handleOpenTagPopup}
+          onRemoveTag={removeTag}
+        />
 
-          <TiptapEditor
-            onContentChange={handleContentChange}
-            onImagesChange={handleImagesChange}
-          />
+        <TiptapEditor
+          onContentChange={handleContentChange}
+          onImagesChange={handleImagesChange}
+        />
 
-          <ProductManager
-            products={products}
-            hashtagData={hashtagData}
-            onOpenProductModal={handleAddProduct}
-            onEditProduct={handleEditProduct}
-            onDeleteProduct={handleDeleteProduct}
-          />
+        <ProductManager
+          products={products}
+          hashtagData={hashtagData}
+          onOpenProductModal={handleAddProduct}
+          onEditProduct={handleEditProduct}
+          onDeleteProduct={handleDeleteProduct}
+        />
 
-          <ActionButtons isSubmitting={isSubmitting} onSave={handleSave} />
-        </div>
+        <ActionButtons isSubmitting={isSubmitting} onSave={handleSave} />
       </div>
     </div>
   );

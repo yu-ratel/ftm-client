@@ -84,7 +84,7 @@ const RecommendedProducts = ({ postData }: RecommendedProductsProps) => {
                   return (
                     <div
                       key={product.postProductId}
-                      className={`flex flex-1 items-center gap-4 ${i !== 0 ? "mt-3 border-t pt-3 md:mt-0 md:border-l md:border-t-0 md:pl-6 md:pt-0" : ""} rounded-md border-gray-200 px-2`}
+                      className={`flex items-center gap-4 md:w-1/2 ${i !== 0 ? "mt-3 border-t pt-3 md:mt-0 md:border-l md:border-t-0 md:pl-6 md:pt-0" : ""} rounded-md border-gray-200 px-2`}
                     >
                       <div className="h-[60px] w-[60px] shrink-0 overflow-hidden rounded-lg">
                         <OptimizedImage

@@ -7,13 +7,13 @@ interface TitleInputProps {
 
 const TitleInput = ({ title, onTitleChange }: TitleInputProps) => {
   return (
-    <div className="border-b border-gray-100 px-6 pb-4 pt-6">
+    <div className="flex h-12 items-center rounded-lg border border-[#e1e1e7] bg-white px-4">
       <input
         type="text"
         placeholder="제목을 입력해주세요."
         value={title}
         onChange={(e) => onTitleChange(e.target.value)}
-        className="w-full border-none bg-transparent text-2xl font-bold text-gray-900 placeholder-gray-400 outline-none"
+        className="w-full border-none bg-transparent text-base font-medium text-gray-900 placeholder-[#9aabc5] outline-none"
       />
     </div>
   );

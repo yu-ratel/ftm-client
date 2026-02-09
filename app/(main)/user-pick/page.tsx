@@ -242,7 +242,7 @@ export default function UserPick() {
             if (!user) {
               openSigninSelectModal();
             } else {
-              router.push("/write");
+              router.push("/write2");
             }
           }}
           className="relative h-[60px] w-[60px] cursor-pointer"

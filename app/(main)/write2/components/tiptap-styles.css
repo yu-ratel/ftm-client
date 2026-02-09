@@ -1,6 +1,6 @@
 /* Tiptap Editor Styles */
 .tiptap-editor {
-  min-height: 400px;
+  min-height: 600px;
   padding: 1rem;
 }
 
@@ -10,11 +10,13 @@
 
 /* Placeholder */
 .tiptap-editor p.is-editor-empty:first-child::before {
-  color: #adb5bd;
+  color: #9aabc5;
   content: attr(data-placeholder);
   float: left;
   height: 0;
   pointer-events: none;
+  font-weight: 500;
+  font-size: 16px;
 }
 
 /* Headings */
@@ -187,8 +189,4 @@
   background-color: #bfdbfe;
 }
 
-/* Focus state for better UX */
-.tiptap-editor:focus-within {
-  border-color: #3b82f6;
-}
-
+/* Focus state removed - border is on parent container */

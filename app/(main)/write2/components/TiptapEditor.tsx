@@ -171,13 +171,13 @@ const TiptapEditor = ({
   }
 
   return (
-    <div className="relative">
+    <div className="relative overflow-hidden rounded-lg border border-[#e1e1e7] bg-white">
       <TiptapToolbar editor={editor} onImageUpload={handleImageUpload} />
 
+      <div className="border-t border-[#e1e1e7]" />
+
       <div
-        className={`relative min-h-[400px] px-6 py-4 ${
-          isDragging ? "border-2 border-dashed border-blue-500 bg-blue-50" : ""
-        }`}
+        className={`relative min-h-[600px] ${isDragging ? "bg-blue-50" : ""}`}
         onDragEnter={handleDragEnter}
         onDragLeave={handleDragLeave}
         onDragOver={handleDragOver}
