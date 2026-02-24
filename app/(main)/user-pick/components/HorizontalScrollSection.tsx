@@ -17,17 +17,16 @@ export default function HorizontalScrollSection({
   posts,
   sectionType,
 }: HorizontalScrollSectionProps) {
-  const [isMobile, setIsMobile] = useState(false);
+  const [isBelowSm, setIsBelowSm] = useState(false);
 
-  // 모바일 체크
   useEffect(() => {
-    const checkMobile = () => {
-      setIsMobile(window.innerWidth < 768);
+    const checkSize = () => {
+      setIsBelowSm(window.innerWidth < 543);
     };
 
-    checkMobile();
-    window.addEventListener("resize", checkMobile);
-    return () => window.removeEventListener("resize", checkMobile);
+    checkSize();
+    window.addEventListener("resize", checkSize);
+    return () => window.removeEventListener("resize", checkSize);
   }, []);
 
   return (
@@ -36,26 +35,11 @@ export default function HorizontalScrollSection({
       <p className="mt-1 text-base text-[#6f7c90]">{subtitle}</p>
 
       <div className="relative mt-6">
-        <ScrollContainer
-          className="scroll-container flex cursor-grab overflow-x-auto"
-          vertical={false}
-          horizontal={true}
-          hideScrollbars={true}
-          activationDistance={10}
-          style={{
-            scrollbarWidth: "none",
-            msOverflowStyle: "none",
-          }}
-        >
-          {posts.map((post, index) => (
-            <div
-              key={post.id}
-              className="flex-shrink-0"
-              style={{
-                width: isMobile ? "260px" : "280px",
-              }}
-            >
+        {isBelowSm ? (
+          <div className="grid grid-cols-1 gap-6">
+            {posts.map((post, index) => (
               <PostCard
+                key={post.id}
                 id={post.id}
                 title={post.title}
                 image={post.image}
@@ -68,9 +52,42 @@ export default function HorizontalScrollSection({
                 sectionType={sectionType}
                 priority={index < 3}
               />
-            </div>
-          ))}
-        </ScrollContainer>
+            ))}
+          </div>
+        ) : (
+          <ScrollContainer
+            className="scroll-container flex cursor-grab overflow-x-auto"
+            vertical={false}
+            horizontal={true}
+            hideScrollbars={true}
+            activationDistance={10}
+            style={{
+              scrollbarWidth: "none",
+              msOverflowStyle: "none",
+            }}
+          >
+            {posts.map((post, index) => (
+              <div
+                key={post.id}
+                className="w-[280px] flex-shrink-0"
+              >
+                <PostCard
+                  id={post.id}
+                  title={post.title}
+                  image={post.image}
+                  author={post.author}
+                  likes={post.likes}
+                  bookmarks={post.bookmarks}
+                  tags={post.tags}
+                  size="small"
+                  isBookmarked={post.userBookmarkYn || false}
+                  sectionType={sectionType}
+                  priority={index < 3}
+                />
+              </div>
+            ))}
+          </ScrollContainer>
+        )}
       </div>
 
       <style jsx>{`

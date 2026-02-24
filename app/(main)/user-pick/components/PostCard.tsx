@@ -20,7 +20,9 @@ interface PostCardProps {
   isBookmarked?: boolean;
   sectionType?: "popular" | "bible" | "topBookmarks" | "groomingStory";
   ranking?: number;
-  priority?: boolean; // 우선 로딩 여부
+  priority?: boolean;
+  imageAspect?: string;
+  cardMaxWidth?: string;
 }
 
 export default function PostCard({
@@ -37,6 +39,8 @@ export default function PostCard({
   sectionType,
   ranking,
   priority = false,
+  imageAspect,
+  cardMaxWidth,
 }: PostCardProps) {
   const router = useRouter();
   const queryClient = useQueryClient();
@@ -76,8 +80,10 @@ export default function PostCard({
     },
   });
 
-  const cardHeight = size === "small" ? "h-[253px]" : "h-[264px]";
-  const cardWidth = size === "small" ? "max-w-[253px]" : "md:w-[392px]";
+  const cardHeight =
+    imageAspect ?? (size === "small" ? "aspect-[391.5/264] sm:aspect-square" : "aspect-[391.5/264]");
+  const cardWidth =
+    cardMaxWidth ?? (size === "small" ? "sm:max-w-[253px]" : "md:w-[392px]");
   const titleSize = size === "small" ? "text-xl" : "text-lg";
 
   return (
@@ -119,7 +125,7 @@ export default function PostCard({
           alt={title}
           fill
           objectFit="cover"
-          sizes={size === "small" ? "253px" : "(min-width: 768px) 392px, 100vw"}
+          sizes={size === "small" ? "(min-width: 543px) 253px, 100vw" : "(min-width: 768px) 392px, 100vw"}
           enableHoverEffect={true}
           priority={priority}
           lazy={!priority}

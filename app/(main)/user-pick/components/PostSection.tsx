@@ -78,6 +78,10 @@ export default function PostSection({
             isBookmarked={post.userBookmarkYn || false}
             sectionType={sectionType}
             priority={index < 4}
+            {...(layout === "3-column" && {
+              imageAspect: "aspect-[391.5/264] md:aspect-square",
+              cardMaxWidth: "md:max-w-[253px]",
+            })}
           />
         ))}
       </div>

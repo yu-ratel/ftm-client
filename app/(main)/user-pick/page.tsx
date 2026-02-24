@@ -236,25 +236,27 @@ export default function UserPick() {
       )}
 
       {/* 글쓰기 버튼 */}
-      <div className="sticky bottom-10 z-50 ml-auto mr-0 mt-10 w-fit">
-        <button
-          onClick={() => {
-            if (!user) {
-              openSigninSelectModal();
-            } else {
-              router.push("/write2");
-            }
-          }}
-          className="relative h-[60px] w-[60px] cursor-pointer"
-        >
-          <div
-            className="absolute bottom-0 left-0 h-[60px] w-[60px] rounded-full bg-[#1481fd]"
-            style={{
-              boxShadow: "0px 3px 6px 0px rgba(82, 180, 204, 0.6)",
+      <div className="sticky bottom-10 z-50 mt-10">
+        <div className="mx-auto flex w-full max-w-[808px] justify-end px-4">
+          <button
+            onClick={() => {
+              if (!user) {
+                openSigninSelectModal();
+              } else {
+                router.push("/write2");
+              }
             }}
-          />
-          <FiEdit className="absolute bottom-[17px] left-[17px] h-[26px] w-[26px] text-white" />
-        </button>
+            className="relative h-[60px] w-[60px] cursor-pointer min-[1020px]:translate-x-[calc(100%+40px)]"
+          >
+            <div
+              className="absolute bottom-0 left-0 h-[60px] w-[60px] rounded-full bg-[#1481fd]"
+              style={{
+                boxShadow: "0px 3px 6px 0px rgba(82, 180, 204, 0.6)",
+              }}
+            />
+            <FiEdit className="absolute bottom-[17px] left-[17px] h-[26px] w-[26px] text-white" />
+          </button>
+        </div>
       </div>
     </>
   );

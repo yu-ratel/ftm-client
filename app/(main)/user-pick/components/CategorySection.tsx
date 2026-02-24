@@ -1,8 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { HiAdjustmentsHorizontal } from "react-icons/hi2";
-import { showModal, hideModal } from "@/stores/ModalStore";
 import FilterPopup from "../../components/modal/FilterPopup";
 
 interface CategorySectionProps {
@@ -22,6 +21,8 @@ export default function CategorySection({
   const [activeCategory, setActiveCategory] =
     useState<CategoryTab>("grooming-award");
   const [sortOption, setSortOption] = useState<SortOption>("latest");
+  const [isFilterOpen, setIsFilterOpen] = useState(false);
+  const filterRef = useRef<HTMLDivElement>(null);
 
   const handleCategoryChange = (category: CategoryTab) => {
     setActiveCategory(category);
@@ -33,19 +34,18 @@ export default function CategorySection({
     onSortChange?.(sort);
   };
 
-  const handleFilterClick = () => {
-    showModal({
-      component: (
-        <FilterPopup
-          onClose={hideModal}
-          onApply={(categories, tags) => {
-            console.log({ categories, tags });
-            hideModal();
-          }}
-        />
-      ),
-    });
-  };
+  useEffect(() => {
+    if (!isFilterOpen) return;
+
+    const handleClickOutside = (e: MouseEvent) => {
+      if (filterRef.current && !filterRef.current.contains(e.target as Node)) {
+        setIsFilterOpen(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, [isFilterOpen]);
 
   return (
     <div className={`mx-auto w-full max-w-[808px] px-4 ${className}`}>
@@ -107,15 +107,29 @@ export default function CategorySection({
             </div>
           )}
 
-          {/* 필터 버튼 - 가장 오른쪽에 위치 */}
-          <button
-            className="flex h-[54px] w-[54px] items-center justify-center rounded-lg bg-[#f5f5f7] transition-colors hover:bg-[#e1e1e7]"
-            onClick={handleFilterClick}
-          >
-            <div className="flex h-[42px] w-[42px] items-center justify-center rounded-lg bg-white">
-              <HiAdjustmentsHorizontal className="h-[18px] w-[18px] text-[#374254]" />
-            </div>
-          </button>
+          {/* 필터 버튼 + 팝업 */}
+          <div ref={filterRef} className="relative">
+            <button
+              className="flex h-[54px] w-[54px] items-center justify-center rounded-lg bg-[#f5f5f7] transition-colors hover:bg-[#e1e1e7]"
+              onClick={() => setIsFilterOpen((prev) => !prev)}
+            >
+              <div className="flex h-[42px] w-[42px] items-center justify-center rounded-lg bg-white">
+                <HiAdjustmentsHorizontal className="h-[18px] w-[18px] text-[#374254]" />
+              </div>
+            </button>
+
+            {isFilterOpen && (
+              <div className="absolute right-0 top-[calc(100%+8px)] z-50 w-[448px] max-w-[calc(100vw-32px)]">
+                <FilterPopup
+                  onClose={() => setIsFilterOpen(false)}
+                  onApply={(categories, tags) => {
+                    console.log({ categories, tags });
+                    setIsFilterOpen(false);
+                  }}
+                />
+              </div>
+            )}
+          </div>
         </div>
       </div>
     </div>
