@@ -147,9 +147,11 @@ const MobileMenu = ({ isOpen, onClose }: MobileMenuProps) => {
                   핏더맨 큐레이션
                 </button>
                 <button
-                  onClick={() => handleNavigation(ROUTES.EDITOR_PICK)}
+                  onClick={() =>
+                    handleNavigation(ROUTES.EDITOR_PICK_STEP_BY_STEP)
+                  }
                   className={`text-left text-base font-medium leading-4 ${
-                    pathname === ROUTES.EDITOR_PICK
+                    pathname.includes(ROUTES.EDITOR_PICK_STEP_BY_STEP)
                       ? "text-[#1481fd]"
                       : "text-[#374254]"
                   }`}

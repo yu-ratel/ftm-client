@@ -1,13 +1,21 @@
 "use client";
 import { useState } from "react";
+import { usePathname } from "next/navigation";
 import SectionTitle from "../SectionTitle";
 import TrendingItem from "../../trending/TrendingItem";
 import Pagination from "../../../../../components/ui/Pagination";
 import TrendingPostItem from "@/app/(main)/components/trending/TrendingPostItem";
 import { useQuery } from "@tanstack/react-query";
 import { getTrendingPosts, getTrendingUsers } from "@/app/(main)/api/post";
+import CurationCategorySidebar from "./CurationCategorySidebar";
 
 export default function RightSidebar() {
+  const pathname = usePathname();
+
+  if (pathname.includes("/editor-pick")) {
+    return <CurationCategorySidebar />;
+  }
+
   const {
     data: trendingPostsData,
     isLoading,
