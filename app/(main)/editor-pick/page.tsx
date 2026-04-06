@@ -1,5 +1,7 @@
+import CurationPage from "./curation/page";
+
 function EditorPick() {
-  return <div>EditorPick</div>;
+  return <CurationPage />;
 }
 
 export default EditorPick;

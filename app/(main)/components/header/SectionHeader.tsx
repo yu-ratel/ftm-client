@@ -1,14 +1,19 @@
 import React from "react";
+import SubTitleIcon from "@/assets/home/svgs/sub_title.svg";
 
 interface SectionHeaderProps {
   title: string;
+  hasIcon?: boolean;
   description?: string;
 }
 
-export default function SectionHeader({ title }: SectionHeaderProps) {
+export default function SectionHeader({ title, hasIcon }: SectionHeaderProps) {
   return (
     <div className="flex items-center justify-between border-[#E1E1E7]">
-      <h2 className="text-2xl font-bold text-[#374254]">{title}</h2>
+      <div className="flex items-center gap-2">
+        {hasIcon && <SubTitleIcon />}
+        <h2 className="text-2xl font-bold text-[#374254]">{title}</h2>
+      </div>
       <div className="flex items-center gap-4">
         {/* <div className="flex items-center gap-4">
           <button className="flex h-10 items-center justify-center text-base font-medium leading-none text-[#6F7C90]">
