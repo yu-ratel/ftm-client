@@ -66,7 +66,7 @@ export default function LeftSidebar() {
   };
 
   return (
-    <div className="ml-[18px] flex h-auto min-h-[558px] w-[324px] flex-col gap-[110px] p-4">
+    <div className="sticky top-4 ml-[18px] flex h-auto min-h-[558px] w-[324px] flex-col gap-[110px] p-4">
       <div className="min-h-[200px] w-[288px]">
         <SectionTitle title="마이 프로필" />
         <ProfileCard />

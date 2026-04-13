@@ -48,7 +48,7 @@ export default function RightSidebar() {
   const totalPages = Math.ceil((trendingPostsData?.length || 0) / itemsPerPage);
 
   return (
-    <div className="mr-[18px] hidden h-auto min-h-[558px] w-[324px] flex-col gap-8 p-4 lg:flex">
+    <div className="sticky top-4 mr-[18px] hidden h-auto min-h-[558px] w-[324px] flex-col gap-8 p-4 lg:flex">
       {/* 트렌딩 픽더맨 섹션 */}
       <div className="w-[288px]">
         <SectionTitle title="트렌딩 핏더맨" />

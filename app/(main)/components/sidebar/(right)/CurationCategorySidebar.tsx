@@ -13,7 +13,7 @@ const CATEGORIES = [
 
 export default function CurationCategorySidebar() {
   return (
-    <div className="mr-[18px] flex h-full w-[324px] flex-col items-center justify-center gap-2 p-4">
+    <div className="sticky top-[50vh] mr-[18px] flex w-[324px] -translate-y-1/2 flex-col items-center gap-2 p-4">
       <SectionTitle title="큐레이션 카테고리" />
       <div className="grid grid-cols-2 gap-2">
         {CATEGORIES.map((category) => (
