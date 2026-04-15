@@ -1,8 +1,9 @@
 import { CurationDetailType } from "../types";
 import Image from "next/image";
+import ContentSection from "./ContentSection";
 
 export default function Wrapper({ data }: { data: CurationDetailType }) {
-  const { date, title, paragraphs, image, editorComment } = data;
+  const { date, title, paragraphs, mainImage, editorComment } = data;
 
   return (
     <section className="absolute mt-20 pr-20">
@@ -27,14 +28,16 @@ export default function Wrapper({ data }: { data: CurationDetailType }) {
 
       <section className="relative mt-9 h-[392px]">
         <Image
-          src={image}
+          src={mainImage}
           alt={title}
           fill
           className="rounded-[40px] object-cover"
         />
       </section>
 
-      <footer className="mt-40 flex gap-12 bg-[#1481FD] px-16 py-12 text-lg text-white">
+      <ContentSection data={data} />
+
+      <footer className="flex gap-12 bg-[#1481FD] px-16 py-12 text-lg text-white">
         <h4 className="shrink-0">에디터의 한 마디</h4>
         <div dangerouslySetInnerHTML={{ __html: editorComment }} />
       </footer>

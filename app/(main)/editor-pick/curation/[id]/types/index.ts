@@ -7,5 +7,11 @@ export interface CurationDetailType {
     description: string;
   }[];
   editorComment: string;
-  image: string;
+  mainImage: string;
+  subImages: string[];
+  texts: {
+    title: string;
+    description: string;
+  }[];
+  type: "A" | "B" | "C";
 }
