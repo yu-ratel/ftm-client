@@ -17,6 +17,7 @@ import {
   getGroomingStoryPopularPosts,
 } from "./api";
 import { useInfiniteGroomingStory } from "@/hooks/useInfiniteGroomingStory";
+import { useSigninPromptOnScroll } from "@/hooks/useSigninPromptOnScroll";
 import { UserPickPost, PostData } from "./types";
 import { openSigninSelectModal } from "@/utils/modal/OpenSigninSelectModal";
 import { useAuthStore } from "@/stores/AuthStore";
@@ -44,6 +45,8 @@ export default function UserPick() {
   const [activeCategory, setActiveCategory] =
     useState<CategoryTab>("grooming-award");
   const [sortOption, setSortOption] = useState<SortOption>("latest");
+
+  useSigninPromptOnScroll(!user);
 
   // useQuery로 API 호출 - 그루밍 어워드일 때만 활성화
   const {

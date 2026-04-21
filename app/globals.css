@@ -18,6 +18,8 @@ body {
     BlinkMacSystemFont,
     system-ui,
     sans-serif;
+  background-color: #fff;
+  overscroll-behavior-y: none;
 }
 
 main {

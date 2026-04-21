@@ -24,11 +24,20 @@ const VerificationStep = ({
   // 입력창 스타일 동적 생성
   const getInputClassName = () => {
     const baseStyle =
-      "h-[38px] w-full rounded-[10px] border bg-input-bg px-4 text-sm text-black placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500";
+      "h-[38px] w-full rounded-[10px] border px-4 text-sm text-black placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500";
 
-    if (!message) return `${baseStyle} border-input-border`;
-    if (message.includes("성공")) return `${baseStyle} border-green-500`;
-    return `${baseStyle} border-red-error`;
+    if (!message) return `${baseStyle} border-input-border bg-input-bg`;
+    if (message.includes("재전송되었습니다"))
+      return `${baseStyle} border-green-500 bg-input-bg`;
+    if (message.includes("다시 확인해주세요"))
+      return `${baseStyle} border-[#FF787A] bg-[#FF787A]/10 focus:ring-[#FF787A]/40`;
+    return `${baseStyle} border-red-error bg-input-bg`;
+  };
+
+  const getMessageTextClassName = () => {
+    if (message.includes("재전송되었습니다")) return "text-green-500";
+    if (message.includes("다시 확인해주세요")) return "text-[#FF787A]";
+    return "text-red-error";
   };
 
   // 버튼 스타일 동적 생성
@@ -134,7 +143,11 @@ const VerificationStep = ({
 
       <div className="mt-20 w-full max-w-[392px] space-y-4">
         {message && (
-          <p className="text-red-error text-center text-[12px]">{message}</p>
+          <p
+            className={`text-center text-[12px] ${getMessageTextClassName()}`}
+          >
+            {message}
+          </p>
         )}
         <button
           onClick={handleVerifyCode}

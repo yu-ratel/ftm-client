@@ -1,4 +1,5 @@
 import React from "react";
+import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { ROUTES } from "@/constants/routes";
 import { hideModal } from "@/stores/ModalStore";
@@ -24,7 +25,16 @@ const SigninSelectModal = () => {
   return (
     <div className="w-full max-w-[600px] space-y-6 rounded-[16px] bg-black/50 bg-white px-6 py-8 text-center shadow-lg">
       {/* 지구본 영역 */}
-      <div className="mx-auto h-[80px] w-[80px] rounded-full bg-gray-200" />
+      <div className="mx-auto flex h-[80px] w-[80px] items-center justify-center">
+        <Image
+          src="/fit_login_logo.png"
+          alt=""
+          width={80}
+          height={80}
+          className="h-full w-full object-contain"
+          priority
+        />
+      </div>
 
       {/* 텍스트 */}
       <p className="text-[14px] font-medium leading-[1.6] text-black">

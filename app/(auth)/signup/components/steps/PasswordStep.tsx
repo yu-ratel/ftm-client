@@ -120,7 +120,7 @@ const PasswordStep = ({ onPasswordSubmit, onPrevStep }: PasswordStepProps) => {
           <div>
             <input
               type="password"
-              placeholder="영문, 숫자, 특수문자 조합 8자 이상"
+              placeholder="*영문과 숫자와 특수기호의 조합으로 8자리 이상이어야 합니다."
               value={password}
               onChange={handlePasswordChange}
               className={getInputClassName(!!message)}
@@ -156,7 +156,7 @@ const PasswordStep = ({ onPasswordSubmit, onPrevStep }: PasswordStepProps) => {
       {/* 버튼들 */}
       <div className="mt-8 w-full max-w-[392px] space-y-4">
         <button onClick={handleSubmit} className={getSubmitButtonClassName()}>
-          다음단계
+          회원가입
         </button>
         <button
           onClick={onPrevStep}

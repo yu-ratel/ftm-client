@@ -20,7 +20,7 @@ const Header = () => {
 
   return (
     <>
-      <header className="relative z-[50] flex h-[64px] w-full items-center justify-between border-b-[1px] border-stroke-primary bg-white px-9">
+      <header className="sticky top-0 z-[50] flex h-[64px] w-full shrink-0 items-center justify-between border-b-[1px] border-stroke-primary bg-white px-9">
         {/* 로고 영역 */}
         <section className="flex items-center gap-3">
           <div className="h-9 w-9 rounded-full bg-black/10" />

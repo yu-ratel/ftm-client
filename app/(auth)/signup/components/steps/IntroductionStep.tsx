@@ -3,6 +3,7 @@
 import React, { useState } from "react";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { getSignupOptions, signup, socialSignup } from "../../api";
+import { signin } from "@/app/(auth)/signin/api";
 import { Age, SignupRequest } from "../../types";
 import { openAlert } from "@/utils/modal/OpenAlert";
 import { useRouter } from "next/navigation";
@@ -34,17 +35,22 @@ const IntroductionStep = ({
     queryFn: () => getSignupOptions(),
   });
 
-  // 일반 회원가입 mutation
+  // 일반 회원가입 → 바로 로그인(세션) 후 유저픽 이동
   const signupMutation = useMutation({
-    mutationFn: (data: SignupRequest) => signup(data),
-    onSuccess: () => {
+    mutationFn: async (data: SignupRequest) => {
+      await signup(data);
+      return signin({ email: data.email, password: data.password });
+    },
+    onSuccess: (loginResponse) => {
+      setUser(loginResponse.data);
       openAlert("회원가입이 완료되었습니다!", () => {
-        router.push(ROUTES.SIGNIN);
+        router.push(ROUTES.USER_PICK);
       });
     },
     onError: (error: AxiosError<{ message?: string }>) => {
       const errorMessage =
-        error.response?.data?.message || "회원가입에 실패했습니다.";
+        error.response?.data?.message ||
+        "회원가입 또는 로그인 처리 중 오류가 발생했습니다.";
       openAlert(errorMessage);
     },
   });
@@ -172,7 +178,7 @@ const IntroductionStep = ({
             onClick={onPrevStep}
             className="w-full text-center text-sm font-medium text-black hover:underline"
           >
-            이전 단계로 돌아가기
+            이전 단계로
           </button>
         </div>
       </div>

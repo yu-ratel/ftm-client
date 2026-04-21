@@ -55,10 +55,12 @@ const MobileMenu = ({ isOpen, onClose }: MobileMenuProps) => {
         aria-hidden={!isOpen}
       />
 
-      {/* 메뉴 드로어 */}
+      {/* 메뉴 드로어 — 닫힐 때 opacity까지 꺼서 iOS 오버스크롤 시 문구가 비치지 않게 함 */}
       <div
-        className={`fixed left-0 top-[64px] z-[45] h-auto w-full bg-white shadow-lg transition-transform duration-300 ease-out lg:hidden ${
-          isOpen ? "translate-y-0" : "-translate-y-full"
+        className={`fixed left-0 top-[64px] z-[45] h-auto w-full bg-white transition-[transform,opacity,box-shadow] duration-300 ease-out lg:hidden ${
+          isOpen
+            ? "translate-y-0 opacity-100 shadow-lg"
+            : "pointer-events-none -translate-y-full opacity-0 shadow-none"
         }`}
         aria-hidden={!isOpen}
       >
