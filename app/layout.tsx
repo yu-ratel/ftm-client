@@ -5,6 +5,7 @@ import ModalContainer from "@/components/modals/ModalContainer";
 import ToastPopup from "@/components/modals/common/ToastPopup";
 import SessionGuard from "@/components/guards/SessionGuard";
 import QueryProvider from "./Provider";
+import { MantineProvider } from "@mantine/core";
 
 export default function RootLayout({
   children,
@@ -16,7 +17,7 @@ export default function RootLayout({
       <body>
         <QueryProvider>
           <Header />
-          {children}
+          <MantineProvider>{children}</MantineProvider>
           <ModalContainer />
           <ToastPopup />
           <SessionGuard />

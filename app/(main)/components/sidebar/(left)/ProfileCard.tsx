@@ -1,13 +1,17 @@
 "use client";
+
+import Image from "next/image";
 import Link from "next/link";
 import Button from "@/components/ui/Button";
 import { useAuthStore } from "@/stores/AuthStore";
 import { openSigninSelectModal } from "@/utils/modal/OpenSigninSelectModal";
 import { ROUTES } from "@/constants/routes";
 import React from "react";
+import { formatImageUrl } from "@/app/(main)/user-pick/[postId]/utils";
 
 const ProfileCard: React.FC = () => {
   const user = useAuthStore((state) => state.user);
+
   const isLoggedIn = !!user;
   if (!isLoggedIn) {
     return (
@@ -29,13 +33,20 @@ const ProfileCard: React.FC = () => {
   return (
     <div className="flex h-[154px] w-72 flex-col justify-center gap-6 rounded-xl bg-[#f5f5f7] p-6">
       <section className="flex items-center gap-3">
-        <div className="h-12 w-12 rounded-full bg-[#d9d9d9]" />
+        <div className="relative size-12 rounded-full bg-[#d9d9d9]">
+          <Image
+            src={formatImageUrl(user?.profileImageUrl)}
+            alt="profile"
+            fill
+            className="rounded-full object-cover"
+          />
+        </div>
         <div>
           <h3 className="text-base font-bold leading-none text-black">
             {user?.nickname}
           </h3>
           <p className="text-sm leading-none text-black">
-            {user?.mildLevelName}, @asvb1234
+            {user?.mildLevelName}
           </p>
         </div>
       </section>
