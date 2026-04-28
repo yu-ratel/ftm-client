@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Image from "next/image";
 import Link from "next/link";
 import { FiMenu, FiX } from "react-icons/fi";
 import { headerLinks } from "./data/item";
@@ -23,13 +24,20 @@ const Header = () => {
       <header className="sticky top-0 z-[50] flex h-[64px] w-full shrink-0 items-center justify-between border-b-[1px] border-stroke-primary bg-white px-9">
         {/* 로고 영역 */}
         <section className="flex items-center gap-3">
-          <div className="h-9 w-9 rounded-full bg-black/10" />
+          <Image
+            src="/fit_main_logo.png"
+            alt="FITTHEMAN"
+            width={36}
+            height={36}
+            className="h-9 w-9 object-contain"
+            priority
+          />
           <Link
             href={ROUTES.ROOT}
-            className="text-base font-medium leading-4 text-[#374254]"
+            className="text-base font-medium leading-4 text-[#1481FD]"
             style={{ fontFamily: "Roboto, sans-serif" }}
           >
-            FITTHEMAN
+            ftmn
           </Link>
         </section>
 

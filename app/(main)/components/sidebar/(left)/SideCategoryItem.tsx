@@ -1,15 +1,16 @@
-import React, { ReactNode } from "react";
+import React from "react";
 import { twMerge } from "tailwind-merge";
+import SidebarIconFrame, {
+  SidebarFrameTileImage,
+} from "../SidebarIconFrame";
 
 interface SideCategoryItemProps {
-  icon: ReactNode;
   label: string;
   isActive?: boolean;
   onClick?: () => void;
 }
 
 export default function SidebarItem({
-  icon,
   label,
   isActive = false,
   onClick,
@@ -22,9 +23,9 @@ export default function SidebarItem({
       )}
       onClick={onClick}
     >
-      <div className={twMerge("mr-3", !isActive && "text-secondary")}>
-        {icon}
-      </div>
+      <SidebarIconFrame className="mr-3">
+        <SidebarFrameTileImage alt={`${label} 아이콘`} />
+      </SidebarIconFrame>
       <span className={twMerge(!isActive && "text-secondary")}>{label}</span>
     </li>
   );

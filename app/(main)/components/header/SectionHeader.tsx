@@ -1,5 +1,5 @@
 import React from "react";
-import SubTitleIcon from "@/assets/home/svgs/sub_title.svg";
+import Image from "next/image";
 
 interface SectionHeaderProps {
   title: string;
@@ -11,7 +11,15 @@ export default function SectionHeader({ title, hasIcon }: SectionHeaderProps) {
   return (
     <div className="flex items-center justify-between border-[#E1E1E7]">
       <div className="flex items-center gap-2">
-        {hasIcon && <SubTitleIcon />}
+        {hasIcon && (
+          <Image
+            src="/frame.png"
+            alt=""
+            width={24}
+            height={24}
+            className="h-6 w-6 shrink-0 object-contain"
+          />
+        )}
         <h2 className="text-2xl font-bold text-[#374254]">{title}</h2>
       </div>
       <div className="flex items-center gap-4">

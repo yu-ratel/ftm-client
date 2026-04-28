@@ -1,6 +1,5 @@
 "use client";
 import { useState, useEffect, useCallback } from "react";
-import { FiUser, FiBookmark, FiList } from "react-icons/fi";
 import SectionTitle from "../SectionTitle";
 import SideCategoryItem from "./SideCategoryItem";
 import ProfileCard from "./ProfileCard";
@@ -28,20 +27,20 @@ export default function LeftSidebar() {
   }, [getActiveMenuFromPath]);
 
   const allMenuItems = [
-    { id: "그루밍 라운지", icon: <FiUser />, label: "그루밍 라운지" },
-    { id: "해시태그 추천", icon: <FiBookmark />, label: "해시태그 추천" },
-    { id: "step-by-step", icon: <FiUser />, label: "스텝 바이 스텝" },
-    { id: "핏더맨 큐레이션", icon: <FiList />, label: "핏더맨 큐레이션" },
+    { id: "그루밍 라운지", label: "그루밍 라운지" },
+    { id: "해시태그 추천", label: "해시태그 추천" },
+    { id: "step-by-step", label: "스텝 바이 스텝" },
+    { id: "핏더맨 큐레이션", label: "핏더맨 큐레이션" },
   ];
 
   const userPickMenuItems = [
-    { id: "그루밍 라운지", icon: <FiUser />, label: "그루밍 라운지" },
-    { id: "해시태그 추천", icon: <FiBookmark />, label: "해시태그 추천" },
+    { id: "그루밍 라운지", label: "그루밍 라운지" },
+    { id: "해시태그 추천", label: "해시태그 추천" },
   ];
 
   const editorPickMenuItems = [
-    { id: "핏더맨 큐레이션", icon: <FiList />, label: "핏더맨 큐레이션" },
-    { id: "step-by-step", icon: <FiUser />, label: "스텝 바이 스텝" },
+    { id: "핏더맨 큐레이션", label: "핏더맨 큐레이션" },
+    { id: "step-by-step", label: "스텝 바이 스텝" },
   ];
 
   const menuItems = pathname.includes(ROUTES.EDITOR_PICK)
@@ -77,7 +76,6 @@ export default function LeftSidebar() {
           {menuItems.map((item) => (
             <SideCategoryItem
               key={item.id}
-              icon={item.icon}
               label={item.label}
               isActive={activeMenu === item.id}
               onClick={() => handleMenuClick(item.id)}

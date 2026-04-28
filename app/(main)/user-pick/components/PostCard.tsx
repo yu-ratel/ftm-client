@@ -1,5 +1,5 @@
 "use client";
-import { FiBookmark, FiThumbsUp } from "react-icons/fi";
+import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useBookmark } from "@/hooks/useBookmark";
 import { useQueryClient } from "@tanstack/react-query";
@@ -81,7 +81,10 @@ export default function PostCard({
   });
 
   const cardHeight =
-    imageAspect ?? (size === "small" ? "aspect-[391.5/264] sm:aspect-square" : "aspect-[391.5/264]");
+    imageAspect ??
+    (size === "small"
+      ? "aspect-[391.5/264] sm:aspect-square"
+      : "aspect-[391.5/264]");
   const cardWidth =
     cardMaxWidth ?? (size === "small" ? "sm:max-w-[253px]" : "md:w-[392px]");
   const titleSize = size === "small" ? "text-xl" : "text-lg";
@@ -115,9 +118,26 @@ export default function PostCard({
               }
             }}
           >
-            <FiBookmark
-              className={`h-6 w-6 transition-colors duration-200 ${isBookmarked ? "fill-[#1481fd] text-[#1481fd]" : "text-gray-600"}`}
-            />
+            <span className="relative inline-block h-6 w-6 shrink-0">
+              <Image
+                src="/favorite_btn.png"
+                alt=""
+                width={24}
+                height={24}
+                className={`absolute inset-0 object-contain transition-opacity duration-200 ease-out ${
+                  isBookmarked ? "opacity-0" : "opacity-100"
+                }`}
+              />
+              <Image
+                src="/favorite_btn_click_color.png"
+                alt=""
+                width={24}
+                height={24}
+                className={`absolute inset-0 object-contain transition-opacity duration-200 ease-out ${
+                  isBookmarked ? "opacity-100" : "opacity-0"
+                }`}
+              />
+            </span>
           </div>
         </div>
         <OptimizedImage
@@ -125,7 +145,11 @@ export default function PostCard({
           alt={title}
           fill
           objectFit="cover"
-          sizes={size === "small" ? "(min-width: 543px) 253px, 100vw" : "(min-width: 768px) 392px, 100vw"}
+          sizes={
+            size === "small"
+              ? "(min-width: 543px) 253px, 100vw"
+              : "(min-width: 768px) 392px, 100vw"
+          }
           enableHoverEffect={true}
           priority={priority}
           lazy={!priority}
@@ -140,13 +164,25 @@ export default function PostCard({
             </div>
             <div className="flex items-center gap-2.5">
               <div className="flex items-center gap-1.5 transition-transform duration-200 group-hover:scale-105">
-                <FiThumbsUp className="h-4 w-4 text-[#6f7c90]" />
+                <Image
+                  src="/like_btn.png"
+                  alt=""
+                  width={16}
+                  height={16}
+                  className="h-4 w-4 shrink-0 object-contain"
+                />
                 <span className="text-sm leading-none text-[#6f7c90]">
                   {likes.toString().padStart(2, "0")}
                 </span>
               </div>
               <div className="flex items-center gap-1.5 transition-transform duration-200 group-hover:scale-105">
-                <FiBookmark className="h-4 w-4 text-[#6f7c90]" />
+                <Image
+                  src="/favorite_btn.png"
+                  alt=""
+                  width={16}
+                  height={16}
+                  className="h-4 w-4 shrink-0 object-contain"
+                />
                 <span className="text-sm leading-none text-[#6f7c90]">
                   {bookmarks.toString().padStart(2, "0")}
                 </span>
