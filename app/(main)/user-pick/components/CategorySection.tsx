@@ -2,12 +2,16 @@
 
 import { useState, useRef, useEffect } from "react";
 import { HiAdjustmentsHorizontal } from "react-icons/hi2";
-import FilterPopup from "../../components/modal/FilterPopup";
+import FilterPopup, {
+  GroomingFilterApplyPayload,
+} from "../../components/modal/FilterPopup";
 
 interface CategorySectionProps {
   className?: string;
   onCategoryChange?: (category: CategoryTab) => void;
   onSortChange?: (sortOption: SortOption) => void;
+  onGroomingFilterApply?: (payload: GroomingFilterApplyPayload) => void;
+  appliedGroomingFilter?: GroomingFilterApplyPayload | null;
 }
 
 export type CategoryTab = "grooming-award" | "grooming-story";
@@ -17,6 +21,8 @@ export default function CategorySection({
   className = "",
   onCategoryChange,
   onSortChange,
+  onGroomingFilterApply,
+  appliedGroomingFilter = null,
 }: CategorySectionProps) {
   const [activeCategory, setActiveCategory] =
     useState<CategoryTab>("grooming-award");
@@ -121,9 +127,10 @@ export default function CategorySection({
             {isFilterOpen && (
               <div className="absolute right-0 top-[calc(100%+8px)] z-50 w-[448px] max-w-[calc(100vw-32px)]">
                 <FilterPopup
+                  appliedFilter={appliedGroomingFilter}
                   onClose={() => setIsFilterOpen(false)}
-                  onApply={(categories, tags) => {
-                    console.log({ categories, tags });
+                  onApply={(payload) => {
+                    onGroomingFilterApply?.(payload);
                     setIsFilterOpen(false);
                   }}
                 />

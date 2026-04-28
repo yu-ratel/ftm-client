@@ -7,15 +7,27 @@ interface FilterTag {
   label: string;
 }
 
+/** 필터 적용 시 부모에서 클라이언트 필터링에 사용 */
+export type GroomingFilterApplyPayload = {
+  selectedTags: { id: string; label: string }[];
+  /** 카테고리만 선택한 경우: 해당 카테고리 해시태그 name·tag 전부 */
+  categoryHashtagKeys: string[];
+  /** 팝업 재오픈 시 선택 UI 복원용 (category.name) */
+  selectedCategoryName: string | null;
+};
+
 interface FilterPopupProps {
   onClose: () => void;
-  onApply: (
-    selectedCategories: string[],
-    selectedTags: { id: string; label: string }[]
-  ) => void;
+  onApply: (payload: GroomingFilterApplyPayload) => void;
+  /** 적용 중인 필터 — 팝업을 다시 열었을 때 선택 상태 복원 */
+  appliedFilter?: GroomingFilterApplyPayload | null;
 }
 
-export default function FilterPopup({ onClose, onApply }: FilterPopupProps) {
+export default function FilterPopup({
+  onClose,
+  onApply,
+  appliedFilter = null,
+}: FilterPopupProps) {
   const [selectedCategory, setSelectedCategory] = useState<string>("");
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
   const [categories, setCategories] = useState<FilterTag[]>([]);
@@ -69,6 +81,19 @@ export default function FilterPopup({ onClose, onApply }: FilterPopupProps) {
     fetchFilterData();
   }, []);
 
+  useEffect(() => {
+    if (loading) return;
+
+    if (!appliedFilter) {
+      setSelectedCategory("");
+      setSelectedTags([]);
+      return;
+    }
+
+    setSelectedCategory(appliedFilter.selectedCategoryName ?? "");
+    setSelectedTags(appliedFilter.selectedTags.map((t) => t.id));
+  }, [loading, appliedFilter]);
+
   const toggleCategory = (categoryId: string) => {
     // 같은 카테고리 클릭 시 선택 해제, 다른 카테고리 클릭 시 선택
     if (selectedCategory === categoryId) {
@@ -89,16 +114,27 @@ export default function FilterPopup({ onClose, onApply }: FilterPopupProps) {
   };
 
   const handleApply = () => {
-    const selectedCategories = selectedCategory ? [selectedCategory] : [];
-    // 선택된 태그들의 id를 id와 label 객체로 변환
+    const categoryInfo = selectedCategory
+      ? categoryData.find((item) => item.category.name === selectedCategory)
+      : undefined;
+    const categoryHashtagKeys = categoryInfo
+      ? Array.from(
+          new Set(categoryInfo.hashtags.flatMap((h) => [h.name, h.tag]))
+        )
+      : [];
+
     const selectedTagObjects = selectedTags.map((tagId) => {
       const tag = filteredTags.find((t) => t.id === tagId);
       return tag
         ? { id: tag.id, label: tag.label }
         : { id: tagId, label: tagId };
     });
-    console.log("selectedTagObjects", selectedTagObjects);
-    onApply(selectedCategories, selectedTagObjects);
+
+    onApply({
+      selectedTags: selectedTagObjects,
+      categoryHashtagKeys,
+      selectedCategoryName: selectedCategory || null,
+    });
   };
 
   if (loading) {

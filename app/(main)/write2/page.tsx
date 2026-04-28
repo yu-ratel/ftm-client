@@ -16,7 +16,51 @@ import { openAlert } from "@/utils/modal/OpenAlert";
 import { openConfirm } from "@/utils/modal/OpenConfirm";
 import { openProductModal } from "@/utils/modal/OpenProductModal";
 import { showModal, hideModal } from "@/stores/ModalStore";
-import FilterPopup from "../components/modal/FilterPopup";
+import FilterPopup, {
+  GroomingFilterApplyPayload,
+} from "../components/modal/FilterPopup";
+
+function tagsMatch(
+  a: { id: string; label: string }[],
+  b: { id: string; label: string }[]
+): boolean {
+  if (a.length !== b.length) return false;
+  const idsA = [...a].map((t) => t.id).sort();
+  const idsB = [...b].map((t) => t.id).sort();
+  return idsA.every((id, i) => id === idsB[i]);
+}
+
+/** FilterPopup은 getHashtags 기준 — 상품용 hashtagData와 불일치 시 복원용 폴백 */
+function buildAppliedFilterForWrite2(
+  tags: { id: string; label: string }[],
+  categoryData: CategoryData[]
+): GroomingFilterApplyPayload | null {
+  if (tags.length === 0) return null;
+
+  const category =
+    categoryData.find((item) =>
+      tags.every((t) => item.hashtags.some((h) => h.name === t.id))
+    ) ??
+    categoryData.find((item) =>
+      item.hashtags.some((h) => h.name === tags[0].id)
+    );
+
+  if (!category) {
+    return {
+      selectedTags: tags,
+      categoryHashtagKeys: [],
+      selectedCategoryName: null,
+    };
+  }
+
+  return {
+    selectedTags: tags,
+    categoryHashtagKeys: Array.from(
+      new Set(category.hashtags.flatMap((h) => [h.name, h.tag]))
+    ),
+    selectedCategoryName: category.category.name,
+  };
+}
 
 // 동적 import로 에디터 관련 컴포넌트를 클라이언트에서만 로드
 const TiptapEditor = dynamic(() => import("./components/TiptapEditor"), {
@@ -39,6 +83,9 @@ const Write2Page = () => {
   // Form states
   const [title, setTitle] = useState("");
   const [hashtags, setHashtags] = useState<{ id: string; label: string }[]>([]);
+  /** 필터 팝업(getHashtags) 적용 직후 스냅샷 — 재오픈 시 카테고리·태그 UI 일치 */
+  const [tagFilterSnapshot, setTagFilterSnapshot] =
+    useState<GroomingFilterApplyPayload | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [postImages, setPostImages] = useState<File[]>([]);
   const [editorContent, setEditorContent] = useState<string>("");
@@ -113,15 +160,28 @@ const Write2Page = () => {
 
   // ===== TAG HANDLERS =====
   const handleOpenTagPopup = () => {
+    const appliedFilter =
+      hashtags.length > 0 &&
+      tagFilterSnapshot &&
+      tagsMatch(hashtags, tagFilterSnapshot.selectedTags)
+        ? tagFilterSnapshot
+        : buildAppliedFilterForWrite2(hashtags, hashtagData);
+
     showModal({
       component: (
         <FilterPopup
+          appliedFilter={appliedFilter}
           onClose={() => hideModal()}
-          onApply={(
-            selectedCategories: string[],
-            selectedTags: { id: string; label: string }[]
-          ) => {
-            setHashtags(selectedTags);
+          onApply={(payload) => {
+            setHashtags(payload.selectedTags);
+            if (
+              payload.selectedTags.length === 0 &&
+              payload.categoryHashtagKeys.length === 0
+            ) {
+              setTagFilterSnapshot(null);
+            } else {
+              setTagFilterSnapshot(payload);
+            }
             hideModal();
           }}
         />
@@ -131,7 +191,13 @@ const Write2Page = () => {
   };
 
   const removeTag = (tagToRemove: string) => {
-    setHashtags(hashtags.filter((tag) => tag.label !== tagToRemove));
+    setHashtags((prev) => prev.filter((tag) => tag.label !== tagToRemove));
+    setTagFilterSnapshot((snap) => {
+      if (!snap) return null;
+      const nextTags = snap.selectedTags.filter((t) => t.label !== tagToRemove);
+      if (nextTags.length === 0) return null;
+      return { ...snap, selectedTags: nextTags };
+    });
   };
 
   // ===== PRODUCT HANDLERS =====

@@ -21,6 +21,7 @@ import { useSigninPromptOnScroll } from "@/hooks/useSigninPromptOnScroll";
 import { UserPickPost, PostData } from "./types";
 import { openSigninSelectModal } from "@/utils/modal/OpenSigninSelectModal";
 import { useAuthStore } from "@/stores/AuthStore";
+import type { GroomingFilterApplyPayload } from "../components/modal/FilterPopup";
 
 // API 데이터를 PostSection에서 사용하는 형태로 변환하는 함수
 const transformApiDataToPostData = (apiData: UserPickPost[]): PostData[] => {
@@ -39,12 +40,41 @@ const transformApiDataToPostData = (apiData: UserPickPost[]): PostData[] => {
   }));
 };
 
+function filterPostsByGroomingFilter(
+  posts: PostData[],
+  filter: GroomingFilterApplyPayload | null
+): PostData[] {
+  if (!filter) return posts;
+
+  const { selectedTags, categoryHashtagKeys } = filter;
+
+  if (selectedTags.length > 0) {
+    return posts.filter((post) => {
+      const tags = post.tags ?? [];
+      return selectedTags.some(
+        (t) => tags.includes(t.id) || tags.includes(t.label)
+      );
+    });
+  }
+
+  if (categoryHashtagKeys.length > 0) {
+    return posts.filter((post) => {
+      const tags = post.tags ?? [];
+      return categoryHashtagKeys.some((key) => tags.includes(key));
+    });
+  }
+
+  return posts;
+}
+
 export default function UserPick() {
   const router = useRouter();
   const { user } = useAuthStore();
   const [activeCategory, setActiveCategory] =
     useState<CategoryTab>("grooming-award");
   const [sortOption, setSortOption] = useState<SortOption>("latest");
+  const [groomingFilter, setGroomingFilter] =
+    useState<GroomingFilterApplyPayload | null>(null);
 
   useSigninPromptOnScroll(!user);
 
@@ -139,6 +169,23 @@ export default function UserPick() {
           )
         : [];
 
+  const filteredPopularPosts = filterPostsByGroomingFilter(
+    popularPosts,
+    groomingFilter
+  );
+  const filteredBiblePosts = filterPostsByGroomingFilter(
+    biblePosts,
+    groomingFilter
+  );
+  const filteredTopBookmarksPosts = filterPostsByGroomingFilter(
+    topBookmarksPosts,
+    groomingFilter
+  );
+  const filteredGroomingStoryPosts = filterPostsByGroomingFilter(
+    groomingStoryPosts,
+    groomingFilter
+  );
+
   return (
     <>
       <div className="mx-auto mt-8 w-full max-w-[808px] px-4">
@@ -150,6 +197,17 @@ export default function UserPick() {
         className="mt-8"
         onCategoryChange={setActiveCategory}
         onSortChange={setSortOption}
+        appliedGroomingFilter={groomingFilter}
+        onGroomingFilterApply={(payload) => {
+          if (
+            payload.selectedTags.length === 0 &&
+            payload.categoryHashtagKeys.length === 0
+          ) {
+            setGroomingFilter(null);
+          } else {
+            setGroomingFilter(payload);
+          }
+        }}
       />
 
       {/* 그루밍 어워드일 때만 기존 섹션들 표시 */}
@@ -165,7 +223,7 @@ export default function UserPick() {
                   ? "데이터 로딩 실패 - 기본 데이터 표시 중"
                   : "지금 사람들은 유저들을 위한 바이블"
             }
-            posts={popularPosts}
+            posts={filteredPopularPosts}
             layout="2x2-grid"
             showRanking={true}
             sectionType="popular"
@@ -181,7 +239,7 @@ export default function UserPick() {
                   ? "데이터 로딩 실패 - 기본 데이터 표시 중"
                   : "북마크가 가장 많은 게시물"
             }
-            posts={topBookmarksPosts}
+            posts={filteredTopBookmarksPosts}
             sectionType="topBookmarks"
           />
 
@@ -195,7 +253,7 @@ export default function UserPick() {
                   ? "데이터 로딩 실패 - 기본 데이터 표시 중"
                   : "좋아요가 가장 많은 게시물"
             }
-            posts={biblePosts}
+            posts={filteredBiblePosts}
             layout="2x2-grid"
             showRanking={false}
             sectionType="bible"
@@ -220,7 +278,7 @@ export default function UserPick() {
                   ? "데이터 로딩 실패"
                   : "인기순으로 정렬된 게시물"
           }
-          posts={groomingStoryPosts}
+          posts={filteredGroomingStoryPosts}
           layout="3-column"
           showRanking={false}
           sectionType="groomingStory"

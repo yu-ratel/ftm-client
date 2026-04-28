@@ -126,11 +126,7 @@ const WritePage = () => {
       component: (
         <FilterPopup
           onClose={() => hideModal()}
-          onApply={(
-            selectedCategories: string[],
-            selectedTags: { id: string; label: string }[]
-          ) => {
-            // selectedTags는 이제 id와 label 객체 배열로 전달됨
+          onApply={({ selectedTags }) => {
             setHashtags(selectedTags);
             hideModal();
           }}
