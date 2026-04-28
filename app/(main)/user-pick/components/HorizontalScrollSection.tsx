@@ -30,7 +30,7 @@ export default function HorizontalScrollSection({
   }, []);
 
   return (
-    <div className="relative mx-auto mt-8 w-full max-w-[808px] px-3">
+    <div className="relative mx-auto mt-20 w-full max-w-[808px] px-3">
       <h3 className="text-xl font-bold text-[#374254]">{title}</h3>
       <p className="mt-1 text-base text-[#6f7c90]">{subtitle}</p>
 

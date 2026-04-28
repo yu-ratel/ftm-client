@@ -57,7 +57,7 @@ export default function PostSection({
   }, [hasNextPage, onLoadMore, isFetchingNextPage]);
 
   return (
-    <div className="relative mx-auto mt-8 w-full max-w-[808px] px-4">
+    <div className="relative mx-auto mt-10 w-full max-w-[808px] px-4">
       <h3 className="text-xl font-bold text-[#374254]">{title}</h3>
       <p className="mt-1 text-base text-[#6f7c90]">{subtitle}</p>
 

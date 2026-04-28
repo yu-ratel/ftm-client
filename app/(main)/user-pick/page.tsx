@@ -194,7 +194,7 @@ export default function UserPick() {
 
       {/* 카테고리 섹션 */}
       <CategorySection
-        className="mt-8"
+        className="mt-10"
         onCategoryChange={setActiveCategory}
         onSortChange={setSortOption}
         appliedGroomingFilter={groomingFilter}
