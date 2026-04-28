@@ -81,7 +81,7 @@ const ResultView = ({ saveData, answers }: Props) => {
 
       saveGroomingCheckResult(saveRequestData).catch(console.error);
     }
-  }, [answers]);
+  }, [answers, data]);
 
   // 추후 로딩 스피너 공통 컴포넌트 필요
   if (isLoading)

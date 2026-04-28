@@ -11,14 +11,11 @@ import CurationCategorySidebar from "./CurationCategorySidebar";
 
 export default function RightSidebar() {
   const pathname = usePathname();
+  const isEditorPickCuration = pathname.includes("/editor-pick/curation");
+  const isEditorPick = pathname.includes("/editor-pick");
+  const shouldFetchTrending = !isEditorPick;
 
-  if (pathname.includes("/editor-pick/curation")) {
-    return null;
-  }
-
-  if (pathname.includes("/editor-pick")) {
-    return <CurationCategorySidebar />;
-  }
+  const [postsPage, setPostsPage] = useState(1);
 
   const {
     data: trendingPostsData,
@@ -27,6 +24,7 @@ export default function RightSidebar() {
   } = useQuery({
     queryKey: ["trendingPosts"],
     queryFn: getTrendingPosts,
+    enabled: shouldFetchTrending,
   });
 
   const {
@@ -36,9 +34,8 @@ export default function RightSidebar() {
   } = useQuery({
     queryKey: ["trendingUsers"],
     queryFn: getTrendingUsers,
+    enabled: shouldFetchTrending,
   });
-
-  const [postsPage, setPostsPage] = useState(1);
 
   // 페이지네이션을 위한 데이터 슬라이싱
   const itemsPerPage = 5;
@@ -46,6 +43,14 @@ export default function RightSidebar() {
   const endIndex = startIndex + itemsPerPage;
   const currentPagePosts = trendingPostsData?.slice(startIndex, endIndex) || [];
   const totalPages = Math.ceil((trendingPostsData?.length || 0) / itemsPerPage);
+
+  if (isEditorPickCuration) {
+    return null;
+  }
+
+  if (isEditorPick) {
+    return <CurationCategorySidebar />;
+  }
 
   return (
     <div className="sticky top-4 mr-[18px] hidden h-auto min-h-[558px] w-[324px] flex-col gap-8 p-4 lg:flex">
