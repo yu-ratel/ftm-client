@@ -120,7 +120,7 @@ export default function PostCard({
           >
             <span className="relative inline-block h-6 w-6 shrink-0">
               <Image
-                src="/favorite_btn.png"
+                src="/fi_bookmark.png"
                 alt=""
                 width={24}
                 height={24}
