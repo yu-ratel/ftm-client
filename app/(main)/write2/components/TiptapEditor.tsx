@@ -12,6 +12,8 @@ import "./tiptap-styles.css";
 interface TiptapEditorProps {
   onContentChange: (content: string) => void;
   onImagesChange: (images: File[]) => void;
+  /** 수정 모드에서 사용하는 초기 HTML 콘텐츠 */
+  initialContent?: string;
 }
 
 interface ImageMapping {
@@ -22,6 +24,7 @@ interface ImageMapping {
 const TiptapEditor = ({
   onContentChange,
   onImagesChange,
+  initialContent,
 }: TiptapEditorProps) => {
   const [postImages, setPostImages] = useState<File[]>([]);
   const [imageMappings, setImageMappings] = useState<ImageMapping[]>([]);
@@ -94,6 +97,16 @@ const TiptapEditor = ({
   useEffect(() => {
     onImagesChange(postImages);
   }, [postImages, onImagesChange]);
+
+  // 수정 모드: 초기 콘텐츠 주입 (한 번만)
+  const hasInitializedRef = useRef(false);
+  useEffect(() => {
+    if (!editor || hasInitializedRef.current) return;
+    if (!initialContent) return;
+    editor.commands.setContent(initialContent, false);
+    onContentChange(editor.getHTML());
+    hasInitializedRef.current = true;
+  }, [editor, initialContent, onContentChange]);
 
   // ===== IMAGE HANDLERS =====
   const handleImageUpload = () => {

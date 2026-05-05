@@ -1,10 +1,16 @@
-import React from "react";
+import React, { useState } from "react";
+import Image from "next/image";
 import { useRouter } from "next/navigation";
+import { useQueryClient } from "@tanstack/react-query";
 import { PostDetail } from "../../../types/PostType";
 import { formatDate, formatImageUrl } from "../utils";
 import { useBookmark } from "@/hooks/useBookmark";
 import { useLike } from "@/hooks/useLike";
 import { useAuthStore } from "@/stores/AuthStore";
+import { openToast } from "@/utils/modal/OpenToast";
+import { openConfirm } from "@/utils/modal/OpenConfirm";
+import { openAlert } from "@/utils/modal/OpenAlert";
+import { deletePost } from "../../../api/post";
 import OptimizedImage from "../../components/OptimizedImage";
 
 interface PostHeaderProps {
@@ -18,6 +24,8 @@ const PostHeader = ({ postData }: PostHeaderProps) => {
   });
   const { user } = useAuthStore();
   const router = useRouter();
+  const queryClient = useQueryClient();
+  const [isDeleting, setIsDeleting] = useState(false);
   console.log("postData", postData);
 
   // 북마크 핸들러 래핑
@@ -31,6 +39,87 @@ const PostHeader = ({ postData }: PostHeaderProps) => {
   // 수정 페이지로 이동
   const handleEdit = () => {
     router.push(`/user-pick/${postData.postId}/edit`);
+  };
+
+  // 게시글 삭제 (확인 → API 호출 → 캐시 무효화 → /user-pick 이동)
+  const handleDelete = () => {
+    if (isDeleting) return;
+
+    openConfirm(
+      "게시글을 삭제하시겠습니까?\n삭제한 게시글은 복구할 수 없습니다.",
+      async () => {
+        try {
+          setIsDeleting(true);
+          await deletePost(postData.postId);
+
+          // 삭제된 상세 캐시는 즉시 제거 (재방문/뒤로가기 시 stale 표시 방지)
+          queryClient.removeQueries({
+            queryKey: ["post", String(postData.postId)],
+          });
+
+          // 목록/사이드바 쿼리 prefix 무효화 → mount 시 fresh fetch
+          // active 쿼리는 즉시 refetch가 트리거되므로 await으로 완료 보장
+          await Promise.all([
+            queryClient.invalidateQueries({ queryKey: ["userPickPopularPosts"] }),
+            queryClient.invalidateQueries({ queryKey: ["userPickBiblePosts"] }),
+            queryClient.invalidateQueries({ queryKey: ["userPickTopBookmarks"] }),
+            queryClient.invalidateQueries({ queryKey: ["groomingStoryPosts"] }),
+            queryClient.invalidateQueries({ queryKey: ["trendingPosts"] }),
+            queryClient.invalidateQueries({ queryKey: ["trendingUsers"] }),
+          ]);
+
+          openToast("삭제 완료", "게시글이 삭제되었습니다.", 3000);
+          // App Router 캐시까지 무효화한 뒤 목록으로 이동
+          router.refresh();
+          router.push("/user-pick");
+        } catch (error) {
+          console.error("게시글 삭제 실패:", error);
+          openAlert("게시글 삭제에 실패했습니다. 다시 시도해주세요.");
+        } finally {
+          setIsDeleting(false);
+        }
+      },
+      undefined,
+      "삭제",
+      "취소"
+    );
+  };
+
+  // 공유하기: Web Share API 우선, 미지원시 클립보드 복사 fallback
+  const handleShare = async () => {
+    if (typeof window === "undefined") return;
+
+    const shareUrl = window.location.href;
+    const shareData: ShareData = {
+      title: postData.title,
+      text: postData.title,
+      url: shareUrl,
+    };
+
+    if (typeof navigator !== "undefined" && navigator.share) {
+      try {
+        await navigator.share(shareData);
+        return;
+      } catch (error) {
+        // 사용자가 공유 시트를 닫은 경우는 조용히 종료
+        if ((error as Error).name === "AbortError") return;
+      }
+    }
+
+    try {
+      await navigator.clipboard.writeText(shareUrl);
+      openToast(
+        "링크 복사 완료",
+        "공유 링크가 클립보드에 복사되었습니다.",
+        3000
+      );
+    } catch {
+      openToast(
+        "공유 실패",
+        "링크 복사에 실패했습니다. 잠시 후 다시 시도해주세요.",
+        3000
+      );
+    }
   };
   return (
     <>
@@ -65,7 +154,11 @@ const PostHeader = ({ postData }: PostHeaderProps) => {
             </button>
 
             {/* 삭제 버튼 */}
-            <button className="flex items-center gap-2 text-sm font-medium text-gray-600 transition-colors hover:text-red-600">
+            <button
+              onClick={handleDelete}
+              disabled={isDeleting}
+              className="flex items-center gap-2 text-sm font-medium text-gray-600 transition-colors hover:text-red-600 disabled:cursor-not-allowed disabled:opacity-50"
+            >
               <svg
                 width="16"
                 height="16"
@@ -81,7 +174,7 @@ const PostHeader = ({ postData }: PostHeaderProps) => {
                 <line x1="10" y1="11" x2="10" y2="17" />
                 <line x1="14" y1="11" x2="14" y2="17" />
               </svg>
-              삭제
+              {isDeleting ? "삭제 중..." : "삭제"}
             </button>
           </div>
         )}
@@ -156,7 +249,7 @@ const PostHeader = ({ postData }: PostHeaderProps) => {
                 strokeLinejoin="round"
               />
             </svg>
-            <span className="text-xs text-gray-500">{postData.likeCount}</span>
+            {/* <span className="text-xs text-gray-500">{postData.likeCount}</span> */}
           </button>
 
           {/* 스크랩 버튼 */}
@@ -183,24 +276,13 @@ const PostHeader = ({ postData }: PostHeaderProps) => {
           </button>
 
           {/* 공유 버튼 */}
-          <button className="flex flex-col items-center rounded p-2 hover:bg-gray-50">
-            <svg
-              width="24"
-              height="24"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              className="text-[#374254]"
-            >
-              <circle cx="18" cy="5" r="3" />
-              <circle cx="6" cy="12" r="3" />
-              <circle cx="18" cy="19" r="3" />
-              <line x1="8.59" y1="13.51" x2="15.42" y2="17.49" />
-              <line x1="15.41" y1="6.51" x2="8.59" y2="10.49" />
-            </svg>
+          <button
+            type="button"
+            onClick={handleShare}
+            aria-label="공유하기"
+            className="flex flex-col items-center rounded p-2 hover:bg-gray-50"
+          >
+            <Image src="/fi_upload.png" alt="공유" width={24} height={24} />
           </button>
         </div>
       </div>
