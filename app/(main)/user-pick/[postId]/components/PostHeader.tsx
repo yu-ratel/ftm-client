@@ -10,6 +10,7 @@ import { useAuthStore } from "@/stores/AuthStore";
 import { openToast } from "@/utils/modal/OpenToast";
 import { openConfirm } from "@/utils/modal/OpenConfirm";
 import { openAlert } from "@/utils/modal/OpenAlert";
+import { openSigninSelectModal } from "@/utils/modal/OpenSigninSelectModal";
 import { deletePost } from "../../../api/post";
 import OptimizedImage from "../../components/OptimizedImage";
 
@@ -28,8 +29,21 @@ const PostHeader = ({ postData }: PostHeaderProps) => {
   const [isDeleting, setIsDeleting] = useState(false);
   console.log("postData", postData);
 
-  // 북마크 핸들러 래핑
+  // 좋아요 핸들러: 비로그인 시 로그인 유도
+  const onLikeClick = () => {
+    if (!user) {
+      openSigninSelectModal();
+      return;
+    }
+    handleLike();
+  };
+
+  // 북마크 핸들러: 비로그인 시 로그인 유도
   const onBookmarkClick = () => {
+    if (!user) {
+      openSigninSelectModal();
+      return;
+    }
     handleBookmark(postData.postId, postData.userBookmarkYn || false);
   };
 
@@ -230,7 +244,7 @@ const PostHeader = ({ postData }: PostHeaderProps) => {
         <div className="flex gap-2">
           {/* 좋아요 버튼 */}
           <button
-            onClick={handleLike}
+            onClick={onLikeClick}
             className="flex flex-col items-center rounded p-2 hover:bg-gray-50"
             disabled={likeLoading}
           >

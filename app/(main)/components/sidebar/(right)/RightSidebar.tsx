@@ -98,6 +98,7 @@ export default function RightSidebar() {
             {currentPagePosts.map((post) => (
               <TrendingPostItem
                 key={post.postId}
+                postId={post.postId}
                 num={post.ranking}
                 title={post.title}
                 viewCount={post.viewCount.toString()}

@@ -45,7 +45,7 @@ const ToolbarButton = ({
     onClick={onClick}
     disabled={disabled}
     title={title}
-    className={`rounded-md p-1.5 transition-colors ${
+    className={`shrink-0 rounded-md p-1.5 transition-colors ${
       isActive
         ? "bg-[#1481fd] text-white"
         : "text-[#374254] hover:bg-[#f5f5f7]"
@@ -55,11 +55,15 @@ const ToolbarButton = ({
   </button>
 );
 
-const Divider = () => <div className="mx-0.5 h-5 w-px bg-[#e1e1e7]" />;
+const Divider = () => (
+  <div className="mx-0.5 h-5 w-px shrink-0 bg-[#e1e1e7]" />
+);
 
 export const TiptapToolbar = ({ editor, onImageUpload }: TiptapToolbarProps) => {
   return (
-    <div className="sticky top-0 z-10 flex items-center gap-0.5 bg-white px-3 py-2">
+    // 모바일 등 좁은 폭에서 옵션이 잘리지 않도록 가로 스크롤 허용.
+    // 데스크톱에서는 ml-auto 가 자동 동작하여 Undo/Redo 가 오른쪽 끝에 정렬됨.
+    <div className="sticky top-0 z-10 flex items-center gap-0.5 overflow-x-auto bg-white px-3 py-2">
       {/* Text Formatting */}
       <ToolbarButton
         onClick={() => editor.chain().focus().toggleBold().run()}
@@ -190,7 +194,7 @@ export const TiptapToolbar = ({ editor, onImageUpload }: TiptapToolbarProps) => 
       </ToolbarButton>
 
       {/* Undo/Redo - 오른쪽 끝 */}
-      <div className="ml-auto flex items-center gap-0.5">
+      <div className="ml-auto flex shrink-0 items-center gap-0.5">
         <ToolbarButton
           onClick={() => editor.chain().focus().undo().run()}
           disabled={!editor.can().undo()}

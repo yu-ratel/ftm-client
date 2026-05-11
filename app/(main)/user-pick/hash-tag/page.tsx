@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
+import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { AxiosError } from "axios";
 import { useMutation, useQuery } from "@tanstack/react-query";
@@ -199,9 +200,18 @@ const HashTagPage = () => {
       {/* 메인 헤더 */}
       <div className="mb-6 sm:mb-[36px] md:mb-[72px]">
         <div className="mb-[24px] flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-          <h1 className="text-2xl font-bold leading-6 text-[#374254]">
-            해시태그 추천
-          </h1>
+          <div className="flex items-center gap-2">
+            <Image
+              src="/frame.png"
+              alt=""
+              width={24}
+              height={24}
+              className="h-6 w-6 shrink-0 object-contain"
+            />
+            <h1 className="text-2xl font-bold leading-6 text-[#374254]">
+              해시태그 추천
+            </h1>
+          </div>
         </div>
 
         {/* 모바일 카테고리 토글 (< 543px) */}
@@ -221,22 +231,16 @@ const HashTagPage = () => {
             <button
               type="button"
               onClick={() => setSelectedTags([])}
-              className="flex h-[42px] w-[42px] items-center justify-center rounded-lg bg-white text-[#58677f] transition-colors hover:text-[#1481fd]"
+              className="flex h-[42px] w-[42px] items-center justify-center rounded-lg bg-white transition-opacity hover:opacity-80"
               aria-label="태그 재생성"
             >
-              <svg
+              <Image
+                src="/reset_btn.png"
+                alt="태그 재생성"
+                width={18}
+                height={18}
                 className="h-[18px] w-[18px]"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
-                />
-              </svg>
+              />
             </button>
           </div>
         </div>
@@ -263,7 +267,7 @@ const HashTagPage = () => {
                 );
               })}
 
-              <button
+              {/* <button
                 type="button"
                 className="ml-auto flex h-[42px] w-[42px] flex-shrink-0 items-center justify-center rounded-lg bg-white text-[#9aabc5] transition-colors hover:text-[#1481fd]"
                 aria-label="카테고리 검색"
@@ -281,7 +285,7 @@ const HashTagPage = () => {
                     d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
                   />
                 </svg>
-              </button>
+              </button> */}
             </div>
           </div>
 
@@ -310,28 +314,22 @@ const HashTagPage = () => {
           )}
 
           {/* 3. 액션 영역 */}
-          {selectedTags.length > 0 && (
+          {selectedCategory && (
             <div className="flex flex-row flex-wrap items-end justify-between gap-1 px-[6px] py-[5px]">
               <div className="flex flex-wrap items-center gap-1 md:gap-[12px]">
                 <button
                   type="button"
                   onClick={() => setSelectedTags([])}
-                  className="flex h-[42px] w-[42px] items-center justify-center rounded-lg bg-white text-[#58677f] shadow-[0_8px_20px_rgba(55,66,84,0.08)] transition-colors hover:text-[#1481fd]"
+                  className="flex h-[42px] w-[42px] items-center justify-center rounded-lg bg-white shadow-[0_8px_20px_rgba(55,66,84,0.08)] transition-opacity hover:opacity-80"
                   aria-label="태그 재생성"
                 >
-                  <svg
+                  <Image
+                    src="/reset_btn.png"
+                    alt="태그 재생성"
+                    width={20}
+                    height={20}
                     className="h-5 w-5"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
-                    />
-                  </svg>
+                  />
                 </button>
 
                 {selectedTags.map((tagName) => {
@@ -359,7 +357,12 @@ const HashTagPage = () => {
 
               <button
                 type="button"
-                className="h-[42px] w-[92px] rounded-lg bg-[#1481fd] text-sm font-medium text-white shadow-[0_10px_24px_rgba(20,129,253,0.18)] transition-colors hover:bg-[#0f72e8]"
+                disabled={selectedTags.length === 0}
+                className={`h-[42px] w-[92px] rounded-lg text-sm font-medium text-white transition-colors ${
+                  selectedTags.length === 0
+                    ? "cursor-not-allowed bg-[#E1E1E7]"
+                    : "bg-[#1481fd] shadow-[0_10px_24px_rgba(20,129,253,0.18)] hover:bg-[#0f72e8]"
+                }`}
                 onClick={handleApplyTags}
               >
                 태그 적용
@@ -490,22 +493,16 @@ const HashTagPage = () => {
               <button
                 type="button"
                 onClick={() => setSelectedTags([])}
-                className="flex h-[58px] w-[58px] flex-shrink-0 items-center justify-center rounded-[11px] bg-[#f5f5f7] text-[#58677f] transition-colors hover:text-[#1481fd]"
+                className="flex h-[58px] w-[58px] flex-shrink-0 items-center justify-center rounded-[11px] bg-[#f5f5f7] transition-opacity hover:opacity-80"
                 aria-label="태그 재생성"
               >
-                <svg
+                <Image
+                  src="/reset_btn.png"
+                  alt="태그 재생성"
+                  width={25}
+                  height={25}
                   className="h-[25px] w-[25px]"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
-                  />
-                </svg>
+                />
               </button>
               <button
                 type="button"
@@ -545,10 +542,10 @@ const HashTagPage = () => {
               <div
                 key={product.id}
                 onClick={() => handleProductClick(product.postId)}
-                className="relative w-full cursor-pointer rounded-xl border border-transparent bg-[#f5f5f7] p-3 transition-all duration-300 hover:border-[#bcdbff] hover:shadow-lg md:max-w-[194px]"
+                className="relative w-full cursor-pointer rounded-xl border border-transparent bg-[#f5f5f7] p-3 transition-all duration-300 hover:border-[#bcdbff] hover:shadow-lg md:max-w-[190px]"
               >
                 {/* 상품 이미지 영역 */}
-                <div className="relative mx-auto mb-3 aspect-square h-auto w-full overflow-hidden rounded-lg bg-white transition-all duration-300 md:aspect-auto md:h-[170px] md:w-[170px]">
+                <div className="relative mx-auto mb-3 aspect-square h-auto w-full overflow-hidden rounded-lg bg-white transition-all duration-300">
                   <OptimizedImage
                     src={product.image}
                     alt={product.name}
@@ -558,26 +555,26 @@ const HashTagPage = () => {
                 </div>
 
                 {/* 상품명 */}
-                <h3 className="mb-[2px] text-sm font-medium leading-[14px] text-[#374254] transition-colors duration-300 md:font-semibold md:text-[#96a1b1]">
+                <h3 className="mb-2 text-sm font-medium leading-[14px] text-[#374254] transition-colors duration-300">
                   {product.name}
                 </h3>
 
                 {/* 상품 설명 */}
-                <p className="mb-2 text-xs leading-[12px] text-[#9aabc5] transition-colors duration-300 md:text-[#96a1b1]">
+                <p className="mb-3 text-xs font-normal leading-[12px] text-[#9aabc5] transition-colors duration-300">
                   {product.description}
                 </p>
 
                 {/* 하단 버튼 영역 - 항상 표시 */}
-                <div className="mt-2 flex w-full items-center justify-between md:w-auto md:justify-start md:gap-[4px]">
+                <div className="flex w-full items-center justify-between gap-1 md:w-auto md:justify-start md:gap-[4px]">
                   {/* 상품 정보 버튼 */}
                   <button
                     onClick={(e) => {
                       e.stopPropagation();
-                      // 상품 정보 클릭 핸들러
+                      handleProductClick(product.postId);
                     }}
-                    className="flex h-8 w-[104px] items-center justify-center rounded-[4px] border border-[#eaeaec] bg-white text-xs font-medium leading-[12px] text-[#374254] transition-colors hover:bg-[#f5f5f7] md:w-[108px]"
+                    className="flex h-8 w-[104px] items-center justify-center rounded-[4px] border border-[#eaeaec] bg-white text-xs font-medium leading-[12px] text-[#374254] transition-colors hover:bg-[#f5f5f7]"
                   >
-                    상품 정보
+                    게시물로 이동
                   </button>
 
                   {/* 좋아요 버튼 */}

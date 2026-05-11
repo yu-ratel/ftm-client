@@ -6,6 +6,8 @@ import { AxiosError } from "axios";
 import { PostDetail, PostProduct } from "../../../types/PostType";
 import { formatImageUrl } from "../utils";
 import { openProductModal } from "@/utils/modal/OpenProductModal";
+import { openSigninSelectModal } from "@/utils/modal/OpenSigninSelectModal";
+import { useAuthStore } from "@/stores/AuthStore";
 import { Product } from "@/app/(main)/write/types";
 import OptimizedImage from "../../components/OptimizedImage";
 import {
@@ -20,6 +22,7 @@ interface RecommendedProductsProps {
 
 const RecommendedProducts = ({ postData }: RecommendedProductsProps) => {
   const queryClient = useQueryClient();
+  const { user } = useAuthStore();
 
   const productLikeMutation = useMutation({
     mutationFn: createProductLike,
@@ -40,6 +43,10 @@ const RecommendedProducts = ({ postData }: RecommendedProductsProps) => {
     postProductId: number
   ) => {
     e.stopPropagation();
+    if (!user) {
+      openSigninSelectModal();
+      return;
+    }
     productLikeMutation.mutate(postProductId);
   };
 
