@@ -4,6 +4,7 @@ import React, { useState, useEffect, useMemo, useRef } from "react";
 import dynamic from "next/dynamic";
 import { useRouter } from "next/navigation";
 import { useQuery } from "@tanstack/react-query";
+import { AxiosError } from "axios";
 import {
   getPostDetail,
   getProductHashtags,
@@ -14,6 +15,7 @@ import {
 } from "../../../api/post";
 import { CategoryData, PostDetail } from "../../../types/PostType";
 import { Product } from "../../../write/types";
+import { ApiResponse } from "@/types/api";
 import {
   TitleInput,
   TagManager,
@@ -124,6 +126,18 @@ function productTagsToNames(
     }
     return tag;
   });
+}
+
+/**
+ * 서버가 자동 저장한 기본 상품 이미지(PostProductImage.createDefault) 여부 판정.
+ * application-storage.yml: product objectKey = "products/default-image.jpg".
+ * 기본 이미지의 id를 deleteProductImageId 로 보내면 CANNOT_DELETE_DEFAULT_IMAGE(400)
+ * 응답이 오므로, hydration 시점에 originalImageId 를 비워 두어 "원본 이미지 없음"
+ * 으로 처리한다 (사용자 스펙: "기본 → 새 이미지 추가" = deleteProductImageId 미전송).
+ */
+function isDefaultProductImage(imageUrl: string | undefined | null): boolean {
+  if (!imageUrl) return true;
+  return imageUrl.includes("products/default-image");
 }
 
 /** 게시글 본문에 포함된 이미지 URL 정규화 (blob: → 실제 URL, 상대경로 → 절대경로) */
@@ -278,24 +292,34 @@ const PostEditPage = ({ params }: PostEditPageProps) => {
     const hydratedHashtags = hashtagsFromPost(postData.hashtags, hashtagData);
     setHashtags(hydratedHashtags);
 
-    const initialProducts: Product[] = postData.postProducts.map((p) => ({
-      id: p.postProductId,
-      img: formatImageUrl(p.postProductImage?.imageUrl),
-      brand: p.brand,
-      title: p.name,
-      tags: productTagsToNames(p.hashtags, hashtagData),
-      originalImageId: p.postProductImage?.postProductImageId,
-    }));
+    const initialProducts: Product[] = postData.postProducts.map((p) => {
+      // 서버가 자동 저장한 기본 이미지는 originalImageId 로 추적하지 않는다.
+      // (deleteProductImageId 에 기본 이미지 id 가 들어가는 것을 차단)
+      const isDefaultImage = isDefaultProductImage(p.postProductImage?.imageUrl);
+      return {
+        id: p.postProductId,
+        img: formatImageUrl(p.postProductImage?.imageUrl),
+        brand: p.brand,
+        title: p.name,
+        tags: productTagsToNames(p.hashtags, hashtagData),
+        originalImageId: isDefaultImage
+          ? undefined
+          : p.postProductImage?.postProductImageId,
+      };
+    });
     setProducts(initialProducts);
 
     const productMap = new Map<number, OriginalProductSnapshot>();
     postData.postProducts.forEach((p) => {
+      const isDefaultImage = isDefaultProductImage(p.postProductImage?.imageUrl);
       productMap.set(p.postProductId, {
         id: p.postProductId,
         brand: p.brand,
         title: p.name,
         tags: productTagsToNames(p.hashtags, hashtagData),
-        imageId: p.postProductImage?.postProductImageId,
+        imageId: isDefaultImage
+          ? undefined
+          : p.postProductImage?.postProductImageId,
       });
     });
 
@@ -342,10 +366,15 @@ const PostEditPage = ({ params }: PostEditPageProps) => {
       payload.content = editorContent;
     }
 
-    // 4) deletePostImageIds — 본문에서 사라진 기존 이미지 ID 수집
+    // 4) deletePostImageIds — 사용자가 본문에서 명시적으로 제거한 이미지 ID만 수집
+    //    서버가 자동 저장하는 기본 이미지(POST_DEFAULT_IMAGE) 등 원래 본문에
+    //    임베드되어 있지 않던 PostImage 레코드는 삭제 대상에서 제외해야 한다.
+    const originalContentSrcs = new Set(extractImageSrcs(original.content));
     const remainingSrcs = new Set(extractImageSrcs(editorContent));
     const deletedPostImageIds = original.postImages
-      .filter((img) => !remainingSrcs.has(img.url))
+      .filter(
+        (img) => originalContentSrcs.has(img.url) && !remainingSrcs.has(img.url)
+      )
       .map((img) => img.id);
     if (deletedPostImageIds.length > 0) {
       payload.deletePostImageIds = deletedPostImageIds;
@@ -461,7 +490,14 @@ const PostEditPage = ({ params }: PostEditPageProps) => {
       router.push(`/user-pick/${postId}`);
     } catch (error) {
       console.error("게시글 수정 실패:", error);
-      openAlert("게시글 수정에 실패했습니다. 다시 시도해주세요.");
+
+      const axiosError = error as AxiosError<ApiResponse>;
+      const apiData = axiosError?.response?.data;
+      const message =
+        apiData?.message ?? "게시글 수정에 실패했습니다. 다시 시도해주세요.";
+      const code = apiData?.code;
+
+      openAlert(code ? `${message} (${code})` : message);
     } finally {
       setIsSubmitting(false);
     }

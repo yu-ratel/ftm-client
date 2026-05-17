@@ -69,8 +69,8 @@ export interface SocialSignupResponse {
   nickname: string;
   socialProvider: "KAKAO";
   profileImageUrl: string;
-  mildLevelName: string | null;
-  spicyLevelName: string | null;
+  normalLevelName: string | null;
+  truthLevelName: string | null;
   loginTime: string;
 }
 

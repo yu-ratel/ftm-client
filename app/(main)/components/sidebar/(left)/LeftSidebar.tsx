@@ -26,10 +26,11 @@ export default function LeftSidebar() {
     setActiveMenu(getActiveMenuFromPath());
   }, [getActiveMenuFromPath]);
 
+  // TODO: 스텝 바이 스텝 — 향후 개발 예정. 노출 시점에 주석 해제
   const allMenuItems = [
     { id: "그루밍 라운지", label: "그루밍 라운지" },
     { id: "해시태그 추천", label: "해시태그 추천" },
-    { id: "step-by-step", label: "스텝 바이 스텝" },
+    // { id: "step-by-step", label: "스텝 바이 스텝" },
     { id: "핏더맨 큐레이션", label: "핏더맨 큐레이션" },
   ];
 
@@ -40,7 +41,7 @@ export default function LeftSidebar() {
 
   const editorPickMenuItems = [
     { id: "핏더맨 큐레이션", label: "핏더맨 큐레이션" },
-    { id: "step-by-step", label: "스텝 바이 스텝" },
+    // { id: "step-by-step", label: "스텝 바이 스텝" },
   ];
 
   const menuItems = pathname.includes(ROUTES.EDITOR_PICK)

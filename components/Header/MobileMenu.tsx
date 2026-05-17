@@ -148,6 +148,7 @@ const MobileMenu = ({ isOpen, onClose }: MobileMenuProps) => {
                 >
                   핏더맨 큐레이션
                 </button>
+                {/* TODO: 스텝 바이 스텝 — 향후 개발 예정. 노출 시점에 주석 해제
                 <button
                   onClick={() =>
                     handleNavigation(ROUTES.EDITOR_PICK_STEP_BY_STEP)
@@ -160,6 +161,7 @@ const MobileMenu = ({ isOpen, onClose }: MobileMenuProps) => {
                 >
                   Step by Step
                 </button>
+                */}
               </div>
             )}
           </div>

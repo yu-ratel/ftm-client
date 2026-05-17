@@ -5,8 +5,8 @@ export interface UserInfo {
   id: number;
   nickname: string;
   profileImageUrl: string;
-  mildLevelName: string | null;
-  spicyLevelName: string | null;
+  normalLevelName: string | null;
+  truthLevelName: string | null;
   loginTime: string;
   socialProvider?: "KAKAO";
 }

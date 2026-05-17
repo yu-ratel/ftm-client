@@ -2,10 +2,12 @@
 
 import React, { useState, useEffect } from "react";
 import dynamic from "next/dynamic";
+import { AxiosError } from "axios";
 import { createPost, CreatePostData, getProductHashtags } from "../api/post";
 import { useRouter } from "next/navigation";
 import { Product } from "../write/types";
 import { CategoryData } from "../types/PostType";
+import { ApiResponse } from "@/types/api";
 import {
   TitleInput,
   TagManager,
@@ -152,7 +154,14 @@ const Write2Page = () => {
       router.push("/user-pick");
     } catch (error) {
       console.error("게시글 작성 실패:", error);
-      openAlert("게시글 작성에 실패했습니다. 다시 시도해주세요.");
+
+      const axiosError = error as AxiosError<ApiResponse>;
+      const apiData = axiosError?.response?.data;
+      const message =
+        apiData?.message ?? "게시글 작성에 실패했습니다. 다시 시도해주세요.";
+      const code = apiData?.code;
+
+      openAlert(code ? `${message} (${code})` : message);
     } finally {
       setIsSubmitting(false);
     }

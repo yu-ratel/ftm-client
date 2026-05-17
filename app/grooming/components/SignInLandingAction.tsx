@@ -8,7 +8,7 @@ const DefaultLandingAction = () => {
   const userInfo = localStorage.getItem("userInfo") as string;
   const parsed = JSON.parse(userInfo) as { state: { user: UserInfo } };
   const user: UserInfo = parsed.state.user;
-  const isFirstGroomingCheck = !!(user.mildLevelName && user.spicyLevelName);
+  const isFirstGroomingCheck = !!(user.normalLevelName && user.truthLevelName);
 
   return (
     <section className="flex flex-col gap-4 pr-32 max-xl:pr-0">

@@ -41,12 +41,12 @@ const ProfileCard: React.FC = () => {
             className="rounded-full object-cover"
           />
         </div>
-        <div>
+        <div className="flex flex-col gap-1.5">
           <h3 className="text-base font-bold leading-none text-black">
             {user?.nickname}
           </h3>
           <p className="text-sm leading-none text-black">
-            {user?.mildLevelName}
+            {user?.normalLevelName}
           </p>
         </div>
       </section>

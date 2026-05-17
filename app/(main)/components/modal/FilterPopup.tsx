@@ -95,14 +95,10 @@ export default function FilterPopup({
   }, [loading, appliedFilter]);
 
   const toggleCategory = (categoryId: string) => {
-    // 같은 카테고리 클릭 시 선택 해제, 다른 카테고리 클릭 시 선택
-    if (selectedCategory === categoryId) {
-      setSelectedCategory("");
-      setSelectedTags([]);
-    } else {
-      setSelectedCategory(categoryId);
-      setSelectedTags([]);
-    }
+    // 카테고리는 화면 표시(view)만 토글한다. 선택된 태그는 카테고리를
+    // 바꾸거나 같은 카테고리를 다시 눌러도 유지되어, 여러 카테고리에서
+    // 누적 선택이 가능하다. 개별 해제는 태그 버튼으로 한다.
+    setSelectedCategory((prev) => (prev === categoryId ? "" : categoryId));
   };
 
   const toggleTag = (tagId: string) => {
@@ -123,12 +119,18 @@ export default function FilterPopup({
         )
       : [];
 
-    const selectedTagObjects = selectedTags.map((tagId) => {
-      const tag = filteredTags.find((t) => t.id === tagId);
-      return tag
-        ? { id: tag.id, label: tag.label }
-        : { id: tagId, label: tagId };
+    // 선택된 태그가 여러 카테고리에 걸쳐 있을 수 있으므로 전 카테고리에서 라벨을 조회한다
+    const hashtagLabelMap = new Map<string, string>();
+    categoryData.forEach((item) => {
+      item.hashtags.forEach((h) => {
+        hashtagLabelMap.set(h.name, h.tag);
+      });
     });
+
+    const selectedTagObjects = selectedTags.map((tagId) => ({
+      id: tagId,
+      label: hashtagLabelMap.get(tagId) ?? tagId,
+    }));
 
     onApply({
       selectedTags: selectedTagObjects,
