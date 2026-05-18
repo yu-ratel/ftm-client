@@ -1,15 +1,16 @@
 import CurationTmpImage from "@editorPick/assets/images/tmp.png";
 import { CurationCardType } from "../curation/types";
+import { Hero_Img01 } from "../assets/images/01";
 
 const mockImg = CurationTmpImage.src;
 
 export const CURATION_MAIN_MOCK: CurationCardType = {
   id: 1,
-  title: "LESS IS MORE",
-  date: "2025. 11. 24",
+  title: "돌아온 페스티벌의 계절",
+  date: "2026. 04. 28",
   source: "핏더맨 B",
-  category: ["스킨케어", "패션"],
-  image: mockImg,
+  category: ["라이프스타일"],
+  image: Hero_Img01.src,
 };
 
 export const CURATION_CARD_MOCKS: CurationCardType[] = [

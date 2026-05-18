@@ -11,7 +11,7 @@ const config: Config = {
       screens: {
         sm: "543px",
         md: "879px",
-        lg: "1503px",
+        lg: "1356px",
         xl: "1920px",
       },
       fontFamily: {

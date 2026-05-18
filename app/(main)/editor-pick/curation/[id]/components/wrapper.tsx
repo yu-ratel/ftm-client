@@ -6,9 +6,9 @@ export default function Wrapper({ data }: { data: CurationDetailType }) {
   const { date, title, paragraphs, mainImage, editorComment } = data;
 
   return (
-    <section className="absolute mt-20 pr-20">
-      <section className="flex justify-between">
-        <div className="flex flex-col justify-between">
+    <section className="absolute mt-20 px-[36px] lg:px-0 lg:pr-20">
+      <section className="flex flex-col justify-between gap-10 lg:flex-row lg:gap-0">
+        <div className="flex flex-col justify-between gap-5 lg:gap-0">
           <div className="flex justify-between">
             <h4>핏더맨 큐레이션</h4>
             <p>{date}</p>

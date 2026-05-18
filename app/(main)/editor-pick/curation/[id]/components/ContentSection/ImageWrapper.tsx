@@ -12,7 +12,7 @@ export default function ImageWrapper({ src, className }: Props) {
         src={src}
         alt="큐레이션 이미지"
         fill
-        className="rounded-[20px] object-cover"
+        className="rounded-[20px] object-fill lg:object-cover"
       />
     </div>
   );

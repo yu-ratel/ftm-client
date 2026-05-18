@@ -11,7 +11,7 @@ export const MainCard = ({ data }: { data: CurationCardType }) => {
     >
       <figure className="relative my-7 flex h-96 w-full items-end justify-between overflow-hidden rounded-3xl p-4">
         <Image src={image} alt={title} fill className="object-cover" />
-        <div className="absolute inset-0 bg-black/35" />
+        <div className="absolute inset-0" />
 
         <div className="relative z-10 flex flex-col gap-2">
           <div className="flex gap-2">
