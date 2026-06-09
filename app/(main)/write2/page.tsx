@@ -20,11 +20,12 @@ import { openProductModal } from "@/utils/modal/OpenProductModal";
 import { showModal, hideModal } from "@/stores/ModalStore";
 import FilterPopup, {
   GroomingFilterApplyPayload,
+  GroomingFilterSelectedTag,
 } from "../components/modal/FilterPopup";
 
 function tagsMatch(
-  a: { id: string; label: string }[],
-  b: { id: string; label: string }[]
+  a: GroomingFilterSelectedTag[],
+  b: GroomingFilterSelectedTag[]
 ): boolean {
   if (a.length !== b.length) return false;
   const idsA = [...a].map((t) => t.id).sort();
@@ -34,7 +35,7 @@ function tagsMatch(
 
 /** FilterPopup은 getHashtags 기준 — 상품용 hashtagData와 불일치 시 복원용 폴백 */
 function buildAppliedFilterForWrite2(
-  tags: { id: string; label: string }[],
+  tags: GroomingFilterSelectedTag[],
   categoryData: CategoryData[]
 ): GroomingFilterApplyPayload | null {
   if (tags.length === 0) return null;
@@ -84,7 +85,7 @@ const Write2Page = () => {
   // ===== STATE MANAGEMENT =====
   // Form states
   const [title, setTitle] = useState("");
-  const [hashtags, setHashtags] = useState<{ id: string; label: string }[]>([]);
+  const [hashtags, setHashtags] = useState<GroomingFilterSelectedTag[]>([]);
   /** 필터 팝업(getHashtags) 적용 직후 스냅샷 — 재오픈 시 카테고리·태그 UI 일치 */
   const [tagFilterSnapshot, setTagFilterSnapshot] =
     useState<GroomingFilterApplyPayload | null>(null);
@@ -127,9 +128,15 @@ const Write2Page = () => {
         .map((product) => product.imageFile)
         .filter((file): file is File => file !== undefined);
 
+      const expandedHashtags = hashtags.flatMap(
+        (tag) => tag.apiIds ?? [tag.id]
+      );
+
       const postData: CreatePostData = {
         title,
-        hashtags: hashtags.map((tag) => tag.id),
+        // "전체" 가상 태그(apiIds)는 하위 해시태그 또는 상위 카테고리 name 으로 expand 한다.
+        // "전체" 라는 값 자체는 API 로 보내지 않는다.
+        hashtags: expandedHashtags,
         content: editorContent, // HTML 문자열 그대로 전송
         postImageFiles: postImages,
         products: products.map((product) => {
@@ -148,7 +155,26 @@ const Write2Page = () => {
         productImageFiles,
       };
 
-      console.log("postData", postData);
+      console.groupCollapsed("[게시글 작성 API] payload");
+      console.log("title:", title);
+      console.log("hashtags(state):", hashtags);
+      console.log("hashtags(API 전송):", expandedHashtags);
+      console.log("content:", editorContent);
+      console.log("products:", postData.products);
+      console.log(
+        "postImageFiles:",
+        postImages.map((f) => ({ name: f.name, size: f.size, type: f.type }))
+      );
+      console.log(
+        "productImageFiles:",
+        productImageFiles.map((f) => ({
+          name: f.name,
+          size: f.size,
+          type: f.type,
+        }))
+      );
+      console.log("full postData:", postData);
+      console.groupEnd();
 
       await createPost(postData);
       router.push("/user-pick");
@@ -179,6 +205,7 @@ const Write2Page = () => {
     showModal({
       component: (
         <FilterPopup
+          enableAllOption
           appliedFilter={appliedFilter}
           onClose={() => hideModal()}
           onApply={(payload) => {
@@ -211,19 +238,29 @@ const Write2Page = () => {
 
   // ===== PRODUCT HANDLERS =====
   const handleAddProduct = () => {
-    openProductModal((product: Product) => {
-      setProducts((prevProducts) => [...prevProducts, product]);
-    });
+    openProductModal(
+      (product: Product) => {
+        setProducts((prevProducts) => [...prevProducts, product]);
+      },
+      undefined,
+      true,
+      hashtagData
+    );
   };
 
   const handleEditProduct = (productToEdit: Product) => {
-    openProductModal((updatedProduct: Product) => {
-      setProducts((prevProducts) =>
-        prevProducts.map((product) =>
-          product.id === productToEdit.id ? updatedProduct : product
-        )
-      );
-    }, productToEdit);
+    openProductModal(
+      (updatedProduct: Product) => {
+        setProducts((prevProducts) =>
+          prevProducts.map((product) =>
+            product.id === productToEdit.id ? updatedProduct : product
+          )
+        );
+      },
+      productToEdit,
+      true,
+      hashtagData
+    );
   };
 
   const handleDeleteProduct = (productToDelete: Product) => {

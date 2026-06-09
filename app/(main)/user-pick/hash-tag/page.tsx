@@ -1,29 +1,44 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo, useRef } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { AxiosError } from "axios";
-import { useMutation, useQuery } from "@tanstack/react-query";
+import {
+  useMutation,
+  useInfiniteQuery,
+  useQueryClient,
+  type InfiniteData,
+} from "@tanstack/react-query";
 import {
   getProductHashtags,
   createProductLike,
   getProductsByHashtags,
   ProductByHashtag,
+  ProductsByHashtagResponse,
 } from "@/app/(main)/api/post";
 import { HashtagsResponse, CategoryData } from "@/app/(main)/types/PostType";
 import { ApiResponse } from "@/types/api";
 import { openToast } from "@/utils/modal/OpenToast";
 import OptimizedImage from "../components/OptimizedImage";
 
+const PRODUCTS_QUERY_KEY = "productsByHashtags";
+
+type ProductsInfiniteData = InfiniteData<
+  ApiResponse<ProductsByHashtagResponse>
+>;
+
 const HashTagPage = () => {
   const router = useRouter();
+  const queryClient = useQueryClient();
   const [hashtagsData, setHashtagsData] = useState<HashtagsResponse | null>(
     null
   );
   const [selectedCategory, setSelectedCategory] = useState<string>("");
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
+  const [appliedTags, setAppliedTags] = useState<string[]>([]);
   const [isBottomSheetOpen, setIsBottomSheetOpen] = useState(false);
+  const loadMoreRef = useRef<HTMLDivElement>(null);
 
   // API에서 해시태그 데이터 가져오기
   useEffect(() => {
@@ -102,72 +117,99 @@ const HashTagPage = () => {
     postId: number;
   }
 
-  const [products, setProducts] = useState<Product[]>([]);
-
-  // 해시태그로 상품 목록 조회 (최초 진입 시 빈 배열로 자동 호출)
-  const { data: productsData, refetch: refetchProducts } = useQuery({
-    queryKey: ["productsByHashtags", selectedTags],
-    queryFn: async () => {
-      // 빈 배열이어도 API 호출 (전체 상품 최신순 반환)
-      const response = await getProductsByHashtags({
-        hashTagList: selectedTags,
-      });
-      return response.data;
+  // 해시태그로 상품 목록 조회 (무한 스크롤)
+  const {
+    data: productsData,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+  } = useInfiniteQuery({
+    queryKey: [PRODUCTS_QUERY_KEY, appliedTags],
+    queryFn: ({ pageParam }) =>
+      getProductsByHashtags(
+        { hashTagList: appliedTags },
+        { lastScore: pageParam }
+      ),
+    getNextPageParam: (lastPage) => {
+      const pageData = lastPage.data;
+      return pageData.hasNext ? pageData.lastScore : undefined;
     },
-    enabled: false, // 자동 호출 비활성화
+    initialPageParam: undefined as number | undefined,
   });
 
-  // 최초 진입 시 전체 상품 조회
-  useEffect(() => {
-    refetchProducts();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  // API 응답 데이터를 products state로 변환
-  useEffect(() => {
-    if (productsData?.data) {
-      const transformedProducts: Product[] = productsData.data.map(
-        (item: ProductByHashtag) => ({
-          id: item.productId,
-          productId: item.productId,
-          postId: item.postId,
-          name: item.productName,
-          description: item.brand || "",
-          image: item.productImage.startsWith("http")
-            ? item.productImage
-            : `https://${item.productImage}`,
-          liked: item.likeYn,
-          likeCount: item.recommendedCount,
-        })
-      );
-      setProducts(transformedProducts);
-    }
+  // 페이지 데이터를 평탄화하여 상품 목록 생성
+  const products = useMemo<Product[]>(() => {
+    if (!productsData) return [];
+    return productsData.pages.flatMap((page) =>
+      page.data.data.map((item: ProductByHashtag) => ({
+        id: item.productId,
+        productId: item.productId,
+        postId: item.postId,
+        name: item.productName,
+        description: item.brand || "",
+        image: item.productImage.startsWith("http")
+          ? item.productImage
+          : `https://${item.productImage}`,
+        liked: item.likeYn,
+        likeCount: item.recommendedCount,
+      }))
+    );
   }, [productsData]);
 
-  // 상품 좋아요 mutation
+  // IntersectionObserver로 다음 페이지 자동 로드
+  useEffect(() => {
+    if (!hasNextPage) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting && !isFetchingNextPage) {
+          fetchNextPage();
+        }
+      },
+      { threshold: 0.1 }
+    );
+
+    const target = loadMoreRef.current;
+    if (target) observer.observe(target);
+
+    return () => observer.disconnect();
+  }, [hasNextPage, isFetchingNextPage, fetchNextPage]);
+
+  // 상품 좋아요 mutation: 모든 페이지의 캐시를 업데이트
   const productLikeMutation = useMutation({
     mutationFn: createProductLike,
     onSuccess: (response, productId) => {
-      if (response.status === 200) {
-        // isCreated: true면 좋아요 생성, false면 좋아요 취소
-        setProducts((prevProducts) =>
-          prevProducts.map((product) =>
-            product.productId === productId
-              ? {
-                  ...product,
-                  liked: response.data.isCreated,
-                  likeCount: response.data.isCreated
-                    ? product.likeCount + 1
-                    : Math.max(0, product.likeCount - 1),
-                }
-              : product
-          )
-        );
-      }
+      if (response.status !== 200) return;
+
+      queryClient.setQueryData<ProductsInfiniteData>(
+        [PRODUCTS_QUERY_KEY, appliedTags],
+        (oldData) => {
+          if (!oldData) return oldData;
+          return {
+            ...oldData,
+            pages: oldData.pages.map((page) => ({
+              ...page,
+              data: {
+                ...page.data,
+                data: page.data.data.map((item) =>
+                  item.productId === productId
+                    ? {
+                        ...item,
+                        likeYn: response.data.isCreated,
+                        recommendedCount: response.data.isCreated
+                          ? item.recommendedCount + 1
+                          : Math.max(0, item.recommendedCount - 1),
+                      }
+                    : item
+                ),
+              },
+            })),
+          };
+        }
+      );
     },
     onError: (error: AxiosError<ApiResponse>) => {
       console.error("상품 좋아요 실패:", error);
-      // 404 에러 처리
       if (error.response?.status === 404) {
         alert("요청한 상품을 찾을 수 없습니다.");
       } else {
@@ -185,9 +227,9 @@ const HashTagPage = () => {
     productLikeMutation.mutate(productId);
   };
 
-  // 태그 적용 버튼 클릭 핸들러
+  // 태그 적용 버튼 클릭 핸들러: appliedTags 변경 시 useInfiniteQuery가 자동 재호출
   const handleApplyTags = () => {
-    refetchProducts();
+    setAppliedTags(selectedTags);
   };
 
   // 상품 카드 클릭 핸들러
@@ -531,7 +573,7 @@ const HashTagPage = () => {
         {products.length === 0 ? (
           <div className="flex items-center justify-center py-12">
             <p className="text-sm text-[#6F7C90]">
-              {selectedTags.length === 0
+              {appliedTags.length === 0
                 ? "태그를 선택하고 적용 버튼을 눌러주세요"
                 : "해당 태그로 검색된 상품이 없습니다"}
             </p>
@@ -609,6 +651,24 @@ const HashTagPage = () => {
                 </div>
               </div>
             ))}
+          </div>
+        )}
+
+        {/* 무한 스크롤 트리거 & 로딩 인디케이터 */}
+        {hasNextPage && (
+          <div
+            ref={loadMoreRef}
+            className="mt-8 flex justify-center pb-4"
+            aria-hidden={!isFetchingNextPage}
+          >
+            {isFetchingNextPage ? (
+              <div className="flex items-center gap-2 text-[#6F7C90]">
+                <div className="h-4 w-4 animate-spin rounded-full border-2 border-[#6F7C90] border-t-transparent" />
+                <span className="text-sm">더 많은 상품을 불러오는 중...</span>
+              </div>
+            ) : (
+              <div className="text-sm text-[#6F7C90]">스크롤하여 더 보기</div>
+            )}
           </div>
         )}
       </div>

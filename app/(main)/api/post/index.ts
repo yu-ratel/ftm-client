@@ -335,13 +335,26 @@ export interface ProductsByHashtagRequest {
   hashTagList: string[];
 }
 
+export interface GetProductsByHashtagsParams {
+  size?: number;
+  lastScore?: number;
+}
+
 export const getProductsByHashtags = async (
-  request: ProductsByHashtagRequest
+  request: ProductsByHashtagRequest,
+  params: GetProductsByHashtagsParams = {}
 ): Promise<ApiResponse<ProductsByHashtagResponse>> => {
   try {
+    const { size = 20, lastScore } = params;
     const response = await api.post<ApiResponse<ProductsByHashtagResponse>>(
-      `${BASE_PATH}/products?size=20`,
-      request
+      `${BASE_PATH}/products`,
+      request,
+      {
+        params: {
+          size,
+          ...(lastScore !== undefined && { lastScore }),
+        },
+      }
     );
     return response.data;
   } catch (error) {

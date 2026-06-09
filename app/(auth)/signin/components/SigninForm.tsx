@@ -106,10 +106,10 @@ const SigninForm = () => {
         </button>
       </div>
 
-      <div className="mt-4 flex w-full max-w-[392px] justify-between text-sm text-black">
-        <button type="button" className="hover:underline">
+      <div className="mt-4 flex w-full max-w-[392px] justify-end text-sm text-black">
+        {/* <button type="button" className="hover:underline">
           비밀번호 찾기
-        </button>
+        </button> */}
         <button
           type="button"
           onClick={handleSignup}

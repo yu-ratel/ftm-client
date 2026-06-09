@@ -4,18 +4,31 @@ import { Product } from "../types";
 import { CategoryData } from "../../types/PostType";
 import ProductModal from "./ProductModal";
 import { openAlert } from "@/utils/modal/OpenAlert";
+import { openToast } from "@/utils/modal/OpenToast";
 import { getProductHashtags } from "../../api/post";
+import {
+  MAX_SELECTED_TAGS,
+  MAX_SELECTED_TAGS_MESSAGE,
+} from "../../components/modal/FilterPopup";
 
 interface ProductModalContainerProps {
   onProductSave: (product: Product) => void;
   initialProduct?: Product;
   isEditMode?: boolean;
+  /**
+   * 호출 페이지가 보유한 상품 해시태그 데이터를 그대로 주입.
+   * - 페이지의 변환(예: productTagsToNames) 기준 데이터와 동일해야
+   *   initialProduct.tags(enum name) 매칭이 어긋나지 않음.
+   * - 미전달 시 자체 fetch (이전 동작 유지)
+   */
+  hashtagData?: CategoryData[];
 }
 
 const ProductModalContainer = ({
   onProductSave,
   initialProduct,
   isEditMode = true,
+  hashtagData: externalHashtagData,
 }: ProductModalContainerProps) => {
   const hideModal = useModalStore((state) => state.hideModal);
 
@@ -30,20 +43,32 @@ const ProductModalContainer = ({
     []
   );
 
-  // API 데이터 상태
-  const [hashtagData, setHashtagData] = useState<CategoryData[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
+  // API 데이터 상태 (외부 주입 우선, 없을 때만 자체 fetch)
+  const hasExternalHashtagData =
+    externalHashtagData !== undefined && externalHashtagData.length > 0;
+  const [internalHashtagData, setInternalHashtagData] = useState<
+    CategoryData[]
+  >([]);
+  const [isLoading, setIsLoading] = useState(!hasExternalHashtagData);
+  const hashtagData = hasExternalHashtagData
+    ? externalHashtagData
+    : internalHashtagData;
 
   // Refs
   const productImageInputRef = useRef<HTMLInputElement>(null);
 
-  // API 데이터 로드
+  // API 데이터 로드 (외부 주입 시 skip)
   useEffect(() => {
+    if (hasExternalHashtagData) {
+      setIsLoading(false);
+      return;
+    }
+
     const fetchHashtags = async () => {
       try {
         setIsLoading(true);
         const response = await getProductHashtags();
-        setHashtagData(response.results);
+        setInternalHashtagData(response.results);
       } catch (error) {
         console.error("Failed to fetch hashtags:", error);
         openAlert("카테고리 정보를 불러오는데 실패했습니다.");
@@ -53,7 +78,7 @@ const ProductModalContainer = ({
     };
 
     fetchHashtags();
-  }, []);
+  }, [hasExternalHashtagData]);
 
   // 초기 상품 데이터 설정
   useEffect(() => {
@@ -70,26 +95,30 @@ const ProductModalContainer = ({
         initialProduct.tags.length > 0 &&
         hashtagData.length > 0
       ) {
+        // 작성 시 카테고리를 전환하며 누적 선택이 가능하므로(`handleMainCategorySelect`),
+        // 복원 시에도 모든 카테고리를 순회하여 매칭되는 하위 태그를 모두 누적한다.
+        // selectedMainCategory 는 단일 값이라 첫 매칭 카테고리를 기본 active 로 둔다.
         let foundMainCategory = "";
-        let matchingSubCategories: string[] = [];
+        const matchingSubCategories: string[] = [];
 
-        // 각 메인 카테고리를 순회하면서 초기 태그들이 포함된 카테고리 찾기
         for (const categoryData of hashtagData) {
-          // name과 tag 둘 다 확인하여 매칭
+          // name(enum) / tag(한국어) 둘 다 확인하여 매칭
           const matchingHashtags = categoryData.hashtags.filter(
             (hashtag) =>
               initialProduct.tags.includes(hashtag.name) ||
               initialProduct.tags.includes(hashtag.tag)
           );
 
-          if (matchingHashtags.length > 0) {
+          if (matchingHashtags.length === 0) continue;
+
+          if (!foundMainCategory) {
             foundMainCategory = categoryData.category.name;
-            // 매칭된 해시태그의 tag 값들을 사용
-            matchingSubCategories = matchingHashtags.map(
-              (hashtag) => hashtag.tag
-            );
-            break;
           }
+          matchingHashtags.forEach((hashtag) => {
+            if (!matchingSubCategories.includes(hashtag.tag)) {
+              matchingSubCategories.push(hashtag.tag);
+            }
+          });
         }
 
         if (foundMainCategory) {
@@ -149,18 +178,26 @@ const ProductModalContainer = ({
   };
 
   const handleMainCategorySelect = (categoryKey: string) => {
+    // 상위 카테고리를 변경해도 이전에 선택한 하위 태그들은 유지한다.
+    // (FilterPopup 과 동일하게 누적 선택 가능)
     setSelectedMainCategory(categoryKey);
-    setSelectedSubCategories([]);
   };
 
   const handleSubCategoryToggle = (subCategory: string) => {
-    setSelectedSubCategories((prev) => {
-      if (prev.includes(subCategory)) {
-        return prev.filter((cat) => cat !== subCategory);
-      } else {
-        return [...prev, subCategory];
-      }
-    });
+    // 해제는 항상 허용 (개수 제한과 무관)
+    if (selectedSubCategories.includes(subCategory)) {
+      setSelectedSubCategories(
+        selectedSubCategories.filter((cat) => cat !== subCategory)
+      );
+      return;
+    }
+
+    if (selectedSubCategories.length >= MAX_SELECTED_TAGS) {
+      openToast("www.fittheman.com 내용:", MAX_SELECTED_TAGS_MESSAGE);
+      return;
+    }
+
+    setSelectedSubCategories([...selectedSubCategories, subCategory]);
   };
 
   const handleProductChange = (updates: Partial<Product>) => {

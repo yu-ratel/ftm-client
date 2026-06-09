@@ -127,6 +127,7 @@ export default function CategorySection({
             {isFilterOpen && (
               <div className="absolute right-0 top-[calc(100%+8px)] z-50 w-[448px] max-w-[calc(100vw-32px)]">
                 <FilterPopup
+                  enableAllOption
                   appliedFilter={appliedGroomingFilter}
                   onClose={() => setIsFilterOpen(false)}
                   onApply={(payload) => {

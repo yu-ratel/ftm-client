@@ -49,11 +49,16 @@ function filterPostsByGroomingFilter(
   const { selectedTags, categoryHashtagKeys } = filter;
 
   if (selectedTags.length > 0) {
+    // "전체" 가상 태그(예: 향수)는 id/label 이 게시글 tags 와 매칭되지 않으므로
+    // apiIds 까지 함께 후보군에 포함해야 한다.
     return posts.filter((post) => {
       const tags = post.tags ?? [];
-      return selectedTags.some(
-        (t) => tags.includes(t.id) || tags.includes(t.label)
-      );
+      return selectedTags.some((t) => {
+        const candidates = t.apiIds ?? [t.id];
+        return (
+          candidates.some((id) => tags.includes(id)) || tags.includes(t.label)
+        );
+      });
     });
   }
 
@@ -199,10 +204,9 @@ export default function UserPick() {
         onSortChange={setSortOption}
         appliedGroomingFilter={groomingFilter}
         onGroomingFilterApply={(payload) => {
-          if (
-            payload.selectedTags.length === 0 &&
-            payload.categoryHashtagKeys.length === 0
-          ) {
+          // 태그가 하나도 선택되지 않은 적용은 "필터 해제" 로 간주한다.
+          // (카테고리만 선택된 상태에서 적용해도 필터가 풀리도록)
+          if (payload.selectedTags.length === 0) {
             setGroomingFilter(null);
           } else {
             setGroomingFilter(payload);

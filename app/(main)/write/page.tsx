@@ -16,7 +16,9 @@ import { openAlert } from "@/utils/modal/OpenAlert";
 import { openConfirm } from "@/utils/modal/OpenConfirm";
 import { openProductModal } from "@/utils/modal/OpenProductModal";
 import { showModal, hideModal } from "@/stores/ModalStore";
-import FilterPopup from "../components/modal/FilterPopup";
+import FilterPopup, {
+  GroomingFilterSelectedTag,
+} from "../components/modal/FilterPopup";
 
 // 동적 import로 에디터 관련 컴포넌트와 훅들을 클라이언트에서만 로드
 const EditorComponent = dynamic(() => import("./components/EditorComponent"), {
@@ -38,7 +40,7 @@ const WritePage = () => {
   // ===== STATE MANAGEMENT =====
   // Form states
   const [title, setTitle] = useState("");
-  const [hashtags, setHashtags] = useState<{ id: string; label: string }[]>([]);
+  const [hashtags, setHashtags] = useState<GroomingFilterSelectedTag[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [postImages, setPostImages] = useState<File[]>([]);
   const [editorContent, setEditorContent] = useState<unknown>(null);
@@ -82,7 +84,8 @@ const WritePage = () => {
       const postData: CreatePostData = {
         title,
         // groomingCategory: "BEAUTY", // 기본 카테고리로 설정
-        hashtags: hashtags.map((tag) => tag.id), // id 값만 전송
+        // "전체" 가상 태그(apiIds)는 하위 해시태그 또는 상위 카테고리 name 으로 expand 한다.
+        hashtags: hashtags.flatMap((tag) => tag.apiIds ?? [tag.id]),
         content: JSON.stringify(content),
         postImageFiles: postImages,
         products: products.map((product) => {
@@ -125,6 +128,7 @@ const WritePage = () => {
     showModal({
       component: (
         <FilterPopup
+          enableAllOption
           onClose={() => hideModal()}
           onApply={({ selectedTags }) => {
             setHashtags(selectedTags);
@@ -142,19 +146,29 @@ const WritePage = () => {
 
   // ===== PRODUCT HANDLERS =====
   const handleAddProduct = () => {
-    openProductModal((product: Product) => {
-      setProducts((prevProducts) => [...prevProducts, product]);
-    });
+    openProductModal(
+      (product: Product) => {
+        setProducts((prevProducts) => [...prevProducts, product]);
+      },
+      undefined,
+      true,
+      hashtagData
+    );
   };
 
   const handleEditProduct = (productToEdit: Product) => {
-    openProductModal((updatedProduct: Product) => {
-      setProducts((prevProducts) =>
-        prevProducts.map((product) =>
-          product.id === productToEdit.id ? updatedProduct : product
-        )
-      );
-    }, productToEdit);
+    openProductModal(
+      (updatedProduct: Product) => {
+        setProducts((prevProducts) =>
+          prevProducts.map((product) =>
+            product.id === productToEdit.id ? updatedProduct : product
+          )
+        );
+      },
+      productToEdit,
+      true,
+      hashtagData
+    );
   };
 
   const handleDeleteProduct = (productToDelete: Product) => {

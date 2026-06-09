@@ -7,6 +7,7 @@ import { useQuery } from "@tanstack/react-query";
 import { AxiosError } from "axios";
 import {
   getPostDetail,
+  getHashtags,
   getProductHashtags,
   updatePost,
   UpdatePostData,
@@ -28,6 +29,7 @@ import { openProductModal } from "@/utils/modal/OpenProductModal";
 import { showModal, hideModal } from "@/stores/ModalStore";
 import FilterPopup, {
   GroomingFilterApplyPayload,
+  GroomingFilterSelectedTag,
 } from "../../../components/modal/FilterPopup";
 import { formatImageUrl } from "../utils";
 import LoadingState from "../components/LoadingState";
@@ -42,8 +44,8 @@ interface PostEditPageProps {
 
 // ===== UTILS =====
 function tagsMatch(
-  a: { id: string; label: string }[],
-  b: { id: string; label: string }[]
+  a: GroomingFilterSelectedTag[],
+  b: GroomingFilterSelectedTag[]
 ): boolean {
   if (a.length !== b.length) return false;
   const idsA = [...a].map((t) => t.id).sort();
@@ -60,7 +62,7 @@ function arraysEqualUnordered(a: string[], b: string[]): boolean {
 
 /** FilterPopup은 getHashtags 기준 — 상품용 hashtagData와 불일치 시 복원용 폴백 */
 function buildAppliedFilter(
-  tags: { id: string; label: string }[],
+  tags: GroomingFilterSelectedTag[],
   categoryData: CategoryData[]
 ): GroomingFilterApplyPayload | null {
   if (tags.length === 0) return null;
@@ -101,7 +103,7 @@ function buildAppliedFilter(
 function hashtagsFromPost(
   hashtagTags: string[],
   categoryData: CategoryData[]
-): { id: string; label: string }[] {
+): GroomingFilterSelectedTag[] {
   return hashtagTags.map((tag) => {
     for (const category of categoryData) {
       const found = category.hashtags.find((h) => h.tag === tag);
@@ -245,14 +247,19 @@ const PostEditPage = ({ params }: PostEditPageProps) => {
 
   // ===== STATE =====
   const [title, setTitle] = useState("");
-  const [hashtags, setHashtags] = useState<{ id: string; label: string }[]>([]);
+  const [hashtags, setHashtags] = useState<GroomingFilterSelectedTag[]>([]);
   const [tagFilterSnapshot, setTagFilterSnapshot] =
     useState<GroomingFilterApplyPayload | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [postImages, setPostImages] = useState<File[]>([]);
   const [editorContent, setEditorContent] = useState<string>("");
   const [products, setProducts] = useState<Product[]>([]);
-  const [hashtagData, setHashtagData] = useState<CategoryData[]>([]);
+  // 게시글 해시태그(getHashtags) — FilterPopup 카테고리/태그 복원 기준
+  const [postHashtagData, setPostHashtagData] = useState<CategoryData[]>([]);
+  // 상품 해시태그(getProductHashtags) — ProductManager / 상품 태그 변환 기준
+  const [productHashtagData, setProductHashtagData] = useState<CategoryData[]>(
+    []
+  );
   const [isHashtagDataReady, setIsHashtagDataReady] = useState(false);
   const [isFormHydrated, setIsFormHydrated] = useState(false);
 
@@ -271,8 +278,14 @@ const PostEditPage = ({ params }: PostEditPageProps) => {
   useEffect(() => {
     const fetchHashtags = async () => {
       try {
-        const response = await getProductHashtags();
-        setHashtagData(response.results);
+        // 게시글/상품 해시태그는 서로 다른 enum(PostHashtag vs ProductHashtag)이므로
+        // 각각 fetch해서 용도별로 분리해 사용한다.
+        const [postRes, productRes] = await Promise.all([
+          getHashtags(),
+          getProductHashtags(),
+        ]);
+        setPostHashtagData(postRes.results);
+        setProductHashtagData(productRes.results);
       } catch (error) {
         console.error("Failed to fetch hashtags:", error);
       } finally {
@@ -289,19 +302,24 @@ const PostEditPage = ({ params }: PostEditPageProps) => {
 
     setTitle(postData.title);
 
-    const hydratedHashtags = hashtagsFromPost(postData.hashtags, hashtagData);
+    const hydratedHashtags = hashtagsFromPost(
+      postData.hashtags,
+      postHashtagData
+    );
     setHashtags(hydratedHashtags);
 
     const initialProducts: Product[] = postData.postProducts.map((p) => {
       // 서버가 자동 저장한 기본 이미지는 originalImageId 로 추적하지 않는다.
       // (deleteProductImageId 에 기본 이미지 id 가 들어가는 것을 차단)
-      const isDefaultImage = isDefaultProductImage(p.postProductImage?.imageUrl);
+      const isDefaultImage = isDefaultProductImage(
+        p.postProductImage?.imageUrl
+      );
       return {
         id: p.postProductId,
         img: formatImageUrl(p.postProductImage?.imageUrl),
         brand: p.brand,
         title: p.name,
-        tags: productTagsToNames(p.hashtags, hashtagData),
+        tags: productTagsToNames(p.hashtags, productHashtagData),
         originalImageId: isDefaultImage
           ? undefined
           : p.postProductImage?.postProductImageId,
@@ -311,12 +329,14 @@ const PostEditPage = ({ params }: PostEditPageProps) => {
 
     const productMap = new Map<number, OriginalProductSnapshot>();
     postData.postProducts.forEach((p) => {
-      const isDefaultImage = isDefaultProductImage(p.postProductImage?.imageUrl);
+      const isDefaultImage = isDefaultProductImage(
+        p.postProductImage?.imageUrl
+      );
       productMap.set(p.postProductId, {
         id: p.postProductId,
         brand: p.brand,
         title: p.name,
-        tags: productTagsToNames(p.hashtags, hashtagData),
+        tags: productTagsToNames(p.hashtags, productHashtagData),
         imageId: isDefaultImage
           ? undefined
           : p.postProductImage?.postProductImageId,
@@ -337,7 +357,8 @@ const PostEditPage = ({ params }: PostEditPageProps) => {
     setIsFormHydrated(true);
   }, [
     postData,
-    hashtagData,
+    postHashtagData,
+    productHashtagData,
     isHashtagDataReady,
     isFormHydrated,
     initialContent,
@@ -355,8 +376,8 @@ const PostEditPage = ({ params }: PostEditPageProps) => {
       payload.title = title;
     }
 
-    // 2) hashtags
-    const currentHashtagIds = hashtags.map((t) => t.id);
+    // 2) hashtags — "전체" 가상 태그(apiIds)는 하위 해시태그 또는 상위 카테고리 name 으로 expand
+    const currentHashtagIds = hashtags.flatMap((t) => t.apiIds ?? [t.id]);
     if (!arraysEqualUnordered(currentHashtagIds, original.hashtagIds)) {
       payload.hashtags = currentHashtagIds;
     }
@@ -510,11 +531,12 @@ const PostEditPage = ({ params }: PostEditPageProps) => {
       tagFilterSnapshot &&
       tagsMatch(hashtags, tagFilterSnapshot.selectedTags)
         ? tagFilterSnapshot
-        : buildAppliedFilter(hashtags, hashtagData);
+        : buildAppliedFilter(hashtags, postHashtagData);
 
     showModal({
       component: (
         <FilterPopup
+          enableAllOption
           appliedFilter={appliedFilter}
           onClose={() => hideModal()}
           onApply={(payload) => {
@@ -547,25 +569,35 @@ const PostEditPage = ({ params }: PostEditPageProps) => {
 
   // ===== PRODUCT HANDLERS =====
   const handleAddProduct = () => {
-    openProductModal((product: Product) => {
-      setProducts((prev) => [...prev, product]);
-    });
+    openProductModal(
+      (product: Product) => {
+        setProducts((prev) => [...prev, product]);
+      },
+      undefined,
+      true,
+      productHashtagData
+    );
   };
 
   const handleEditProduct = (productToEdit: Product) => {
-    openProductModal((updatedProduct: Product) => {
-      setProducts((prev) =>
-        prev.map((p) =>
-          p.id === productToEdit.id
-            ? {
-                ...updatedProduct,
-                id: productToEdit.id,
-                originalImageId: productToEdit.originalImageId,
-              }
-            : p
-        )
-      );
-    }, productToEdit);
+    openProductModal(
+      (updatedProduct: Product) => {
+        setProducts((prev) =>
+          prev.map((p) =>
+            p.id === productToEdit.id
+              ? {
+                  ...updatedProduct,
+                  id: productToEdit.id,
+                  originalImageId: productToEdit.originalImageId,
+                }
+              : p
+          )
+        );
+      },
+      productToEdit,
+      true,
+      productHashtagData
+    );
   };
 
   const handleDeleteProduct = (productToDelete: Product) => {
@@ -621,7 +653,7 @@ const PostEditPage = ({ params }: PostEditPageProps) => {
 
         <ProductManager
           products={products}
-          hashtagData={hashtagData}
+          hashtagData={productHashtagData}
           onOpenProductModal={handleAddProduct}
           onEditProduct={handleEditProduct}
           onDeleteProduct={handleDeleteProduct}

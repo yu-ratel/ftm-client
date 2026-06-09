@@ -12,14 +12,16 @@ const SigninSelectModal = () => {
     initiateKakaoLogin();
   };
 
+  // ModalContainer 가 hideModal() 동기 set 으로 즉시 unmount 되면서
+  // 같은 tick 에 호출된 router.push 가 무시되는 케이스 회피 → push 를 먼저 호출
   const handleEmailLogin = () => {
-    hideModal();
     router.push(ROUTES.SIGNIN);
+    hideModal();
   };
 
   const handleSignup = () => {
-    hideModal();
     router.push(ROUTES.SIGNUP);
+    hideModal();
   };
 
   return (
