@@ -10,5 +10,6 @@ export const ROUTES = {
   SIGNIN: "/signin",
   SIGNUP: "/signup",
   MY_PAGE: "/mypage",
+  MY_PAGE_GROOMING: "/mypage/grooming",
   ACCOUNT_DELETE: "/account-delete",
 } as const;

@@ -2,6 +2,8 @@
 
 import { useState, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
+import Link from "next/link";
+import { ROUTES } from "@/constants/routes";
 import {
   createGroomingCheckResult,
   saveGroomingCheckResult,
@@ -117,9 +119,12 @@ const ResultView = ({ saveData, answers }: Props) => {
           </div>
         </div>
         <div className="flex gap-4 text-white">
-          <button className="h-[70px] w-full rounded-3xl bg-[#71819A]">
+          <Link
+            href={ROUTES.GROOMING_CHECK}
+            className="flex h-[70px] w-full items-center justify-center rounded-3xl bg-[#71819A] text-center"
+          >
             그루밍 지수 재검사
-          </button>
+          </Link>
           <button className="h-[70px] w-full rounded-3xl bg-[#1481FD]">
             검사 결과 공유하기
           </button>

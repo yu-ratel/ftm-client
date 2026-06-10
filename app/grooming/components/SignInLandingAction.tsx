@@ -21,10 +21,10 @@ const DefaultLandingAction = () => {
           : "그루밍지수 검사하러가기"}
       </Link>
       <Link
-        href={ROUTES.ROOT}
+        href={ROUTES.MY_PAGE_GROOMING}
         className="h-24 w-full content-center self-center rounded-3xl bg-gray-300 px-4 py-2 text-center text-2xl text-gray-400 max-md:text-lg"
       >
-        로그인 없이 둘러보기
+        이전 지수 검사 결과 보러가기
       </Link>
     </section>
   );
