@@ -6,6 +6,12 @@ import ProfileCard from "./ProfileCard";
 import { usePathname, useRouter } from "next/navigation";
 import { ROUTES } from "@/constants/routes";
 
+type SidebarMenuItem = {
+  id: string;
+  label: string;
+  iconSrc?: string;
+};
+
 export default function LeftSidebar() {
   // 현재 경로에 따라 activeMenu 결정
   const pathname = usePathname();
@@ -27,20 +33,28 @@ export default function LeftSidebar() {
   }, [getActiveMenuFromPath]);
 
   // TODO: 스텝 바이 스텝 — 향후 개발 예정. 노출 시점에 주석 해제
-  const allMenuItems = [
-    { id: "그루밍 라운지", label: "그루밍 라운지" },
-    { id: "해시태그 추천", label: "해시태그 추천" },
+  const allMenuItems: SidebarMenuItem[] = [
+    {
+      id: "그루밍 라운지",
+      label: "그루밍 라운지",
+      iconSrc: "/grooming-lounge-icon.png",
+    },
+    { id: "해시태그 추천", label: "해시태그 추천", iconSrc: "/hashtag-recommend-icon.png" },
     // { id: "step-by-step", label: "스텝 바이 스텝" },
-    { id: "핏더맨 큐레이션", label: "핏더맨 큐레이션" },
+    { id: "핏더맨 큐레이션", label: "핏더맨 큐레이션", iconSrc: "/curation-icon.png" },
   ];
 
-  const userPickMenuItems = [
-    { id: "그루밍 라운지", label: "그루밍 라운지" },
-    { id: "해시태그 추천", label: "해시태그 추천" },
+  const userPickMenuItems: SidebarMenuItem[] = [
+    {
+      id: "그루밍 라운지",
+      label: "그루밍 라운지",
+      iconSrc: "/grooming-lounge-icon.png",
+    },
+    { id: "해시태그 추천", label: "해시태그 추천", iconSrc: "/hashtag-recommend-icon.png" },
   ];
 
-  const editorPickMenuItems = [
-    { id: "핏더맨 큐레이션", label: "핏더맨 큐레이션" },
+  const editorPickMenuItems: SidebarMenuItem[] = [
+    { id: "핏더맨 큐레이션", label: "핏더맨 큐레이션", iconSrc: "/curation-icon.png" },
     // { id: "step-by-step", label: "스텝 바이 스텝" },
   ];
 
@@ -68,7 +82,7 @@ export default function LeftSidebar() {
   return (
     <div className="sticky top-4 ml-[18px] flex h-auto min-h-[558px] w-[324px] flex-col gap-[110px] p-4">
       <div className="min-h-[200px] w-[288px]">
-        <SectionTitle title="마이 프로필" />
+        <SectionTitle title="마이 프로필" iconSrc="/my-profile-icon.png" />
         <ProfileCard />
       </div>
 
@@ -78,6 +92,7 @@ export default function LeftSidebar() {
             <SideCategoryItem
               key={item.id}
               label={item.label}
+              iconSrc={item.iconSrc}
               isActive={activeMenu === item.id}
               onClick={() => handleMenuClick(item.id)}
             />

@@ -8,7 +8,11 @@ export default function CurationPage() {
 
   return (
     <section className="mt-12">
-      <SectionHeader title="핏더맨 큐레이션" hasIcon />
+      <SectionHeader
+        title="핏더맨 큐레이션"
+        hasIcon
+        iconSrc="/curation-icon.png"
+      />
       <MainCard data={CURATION_MAIN_MOCK} />
       <section className="mt-8 columns-1 gap-6 md:columns-2">
         {leftColumn.map((card) => (

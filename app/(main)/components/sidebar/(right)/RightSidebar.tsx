@@ -56,7 +56,7 @@ export default function RightSidebar() {
     <div className="sticky top-4 mr-[18px] hidden h-auto min-h-[558px] w-[324px] flex-col gap-8 p-4 lg:flex">
       {/* 트렌딩 픽더맨 섹션 */}
       <div className="w-[288px]">
-        <SectionTitle title="트렌딩 핏더맨" />
+        <SectionTitle title="트렌딩 핏더맨" iconSrc="/trending-ftm-icon.png" />
         <div className="relative h-[232px] w-72 rounded-3xl bg-[#f5f5f7] p-6">
           <ul className="flex flex-col space-y-4">
             {isLoadingUsers ? (
@@ -92,7 +92,7 @@ export default function RightSidebar() {
 
       {/* 트렌딩 게시물 섹션 */}
       <div className="relative w-72">
-        <SectionTitle title="트렌딩 게시물" />
+        <SectionTitle title="트렌딩 게시물" iconSrc="/trending-post-icon.png" />
         <div className="h-full w-full rounded-3xl bg-[#f5f5f7] p-5">
           <ul className="flex flex-col space-y-[38px]">
             {currentPagePosts.map((post) => (

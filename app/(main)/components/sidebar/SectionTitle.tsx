@@ -3,9 +3,10 @@ import SidebarIconFrame, { SidebarFrameTileImage } from "./SidebarIconFrame";
 
 interface SectionTitleProps {
   title: string;
+  iconSrc?: string;
 }
 
-export default function SectionTitle({ title }: SectionTitleProps) {
+export default function SectionTitle({ title, iconSrc }: SectionTitleProps) {
   return (
     // <div className="mb-2 flex items-center">
     //   <div className="mr-2 text-gray-600">{icon}</div>
@@ -13,7 +14,7 @@ export default function SectionTitle({ title }: SectionTitleProps) {
     // </div>
     <div className="flex h-12 w-72 items-center pr-5">
       <SidebarIconFrame>
-        <SidebarFrameTileImage alt={`${title} 아이콘`} />
+        <SidebarFrameTileImage alt={`${title} 아이콘`} src={iconSrc} />
       </SidebarIconFrame>
       <div className="ml-3 text-base font-semibold tracking-[-0.02em] text-[#374254]">
         {title}

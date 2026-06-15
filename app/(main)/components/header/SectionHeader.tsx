@@ -4,16 +4,21 @@ import Image from "next/image";
 interface SectionHeaderProps {
   title: string;
   hasIcon?: boolean;
+  iconSrc?: string;
   description?: string;
 }
 
-export default function SectionHeader({ title, hasIcon }: SectionHeaderProps) {
+export default function SectionHeader({
+  title,
+  hasIcon,
+  iconSrc = "/frame.png",
+}: SectionHeaderProps) {
   return (
     <div className="flex items-center justify-between border-[#E1E1E7]">
       <div className="flex items-center gap-2">
         {hasIcon && (
           <Image
-            src="/frame.png"
+            src={iconSrc}
             alt=""
             width={24}
             height={24}

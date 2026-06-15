@@ -2,10 +2,16 @@ import React, { ReactNode } from "react";
 import Image from "next/image";
 import { twMerge } from "tailwind-merge";
 
-export function SidebarFrameTileImage({ alt }: { alt: string }) {
+export function SidebarFrameTileImage({
+  alt,
+  src = "/frame.png",
+}: {
+  alt: string;
+  src?: string;
+}) {
   return (
     <Image
-      src="/frame.png"
+      src={src}
       alt={alt}
       width={16}
       height={16}

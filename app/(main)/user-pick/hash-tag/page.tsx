@@ -128,7 +128,7 @@ const HashTagPage = () => {
     queryFn: ({ pageParam }) =>
       getProductsByHashtags(
         { hashTagList: appliedTags },
-        { lastScore: pageParam }
+        { size: 200, lastScore: pageParam }
       ),
     getNextPageParam: (lastPage) => {
       const pageData = lastPage.data;
@@ -244,7 +244,7 @@ const HashTagPage = () => {
         <div className="mb-[24px] flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div className="flex items-center gap-2">
             <Image
-              src="/frame.png"
+              src="/hashtag-recommend-icon.png"
               alt=""
               width={24}
               height={24}

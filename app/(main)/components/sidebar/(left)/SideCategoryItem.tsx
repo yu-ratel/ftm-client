@@ -6,12 +6,14 @@ import SidebarIconFrame, {
 
 interface SideCategoryItemProps {
   label: string;
+  iconSrc?: string;
   isActive?: boolean;
   onClick?: () => void;
 }
 
 export default function SidebarItem({
   label,
+  iconSrc,
   isActive = false,
   onClick,
 }: SideCategoryItemProps) {
@@ -24,7 +26,7 @@ export default function SidebarItem({
       onClick={onClick}
     >
       <SidebarIconFrame className="mr-3">
-        <SidebarFrameTileImage alt={`${label} 아이콘`} />
+        <SidebarFrameTileImage alt={`${label} 아이콘`} src={iconSrc} />
       </SidebarIconFrame>
       <span className={twMerge(!isActive && "text-secondary")}>{label}</span>
     </li>

@@ -194,7 +194,11 @@ export default function UserPick() {
   return (
     <>
       <div className="mx-auto mt-8 w-full max-w-[808px] px-4">
-        <SectionHeader title="그루밍 라운지" hasIcon={true} />
+        <SectionHeader
+          title="그루밍 라운지"
+          hasIcon={true}
+          iconSrc="/grooming-lounge-icon.png"
+        />
       </div>
 
       {/* 카테고리 섹션 */}
